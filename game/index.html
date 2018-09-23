@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Melodemons</title>
+		<script node> getAsset("meta") </script>node>
+		<script node> getAsset("google fonts") </script>node>
+		<link rel="shortcut icon" type="image/png" href="logo.png"/>
+		<link rel="stylesheet" type="text/css" href="./game/stylesheet.css"/>
+		<script type="text/javascript" src="./game/script.js"></script>
+		<script node>
+			var player = request.game.players[request.session.id]
+			var opponents = Object.keys(request.game.players).filter(function (p) {
+				return ((p !== request.session.id) && (request.game.players[p].connected))
+			})
+			null
+		</script>node>
+	</head>
+	<body>
+		<div id="error" class="hidden"></div>
+		<div id="container">
+			<canvas id="canvas"></canvas>
+			<pre id="dataview" style="text-align: left; position: absolute; top: 0px; left: 0px; height: 100%; width: 100%; font-size: 12px; overflow: scroll; padding: 0px; margin: 0px"></pre>
+		</div>
+	</body>
+</html>

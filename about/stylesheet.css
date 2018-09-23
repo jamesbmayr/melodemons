@@ -1,0 +1,113 @@
+/*** page ***/
+	/* container */
+		#container {
+			margin: 0px;
+			padding: 10px;
+			border: 0px;
+			width: calc(100vw - 20px);
+			height: calc(100vh - 20px);
+			text-align: left;
+			overflow-x: hidden;
+			overflow-y: scroll;
+			background: linear-gradient(#445566, #001122);
+		}
+
+		#container-inner {
+			width: 100%;
+			max-width: 800px;
+			margin-left: auto;
+			margin-right: auto;
+		}
+
+	/* title */
+		#title {
+			text-align: center;
+			width: calc(100% - 8px);
+			height: 200px;
+			padding: 4px;
+			margin-top: 5%;
+			display: block;
+			border-radius: 10px;
+			background: linear-gradient(#121212, #171717);
+		}
+
+		#logotype {
+			display: inline-block;
+			background-color: transparent;
+			background-image: url(./banner.png);
+			background-repeat: no-repeat;
+			background-position: center;
+			background-size: cover;
+			text-align: center;
+			user-select: none;
+			height: 200px;
+			width: 200px;
+			cursor: pointer;
+			margin: 0px;
+		}
+
+	/* sections */
+		.section {
+			margin: 0% 0% 10% 0%;
+			font-weight: normal;
+			cursor: default;
+			color: #111111;
+			line-height: 1.25;
+			border-radius: 10px;
+			width: 100%;
+			text-align: center;
+			background: transparent;
+		}
+
+		.header {
+			font-size: 150%;
+			width: 100%;
+			background-color: #111111;
+			color: #dddddd;
+			cursor: default;
+			text-align: center;
+			border-radius: 10px;
+			box-shadow: 0px 0px 25px #111111;
+			padding: 8px 0px 8px 0px;
+		}
+
+		.content {
+			background: linear-gradient(#121212, #171717);
+			padding: 5%;
+			margin: 0px 8px 0px 8px;
+			font-size: 100%;
+			color: #dddddd;
+			cursor: default;
+			text-align: center;
+			border-radius: 0px 0px 10px 10px;
+			width: calc(100% - 10% - 16px);
+			box-shadow: 0px 0px 25px #111111;
+		}
+
+	/* feedback */
+		#feedback-text {
+			padding: 10px;
+			max-width: calc(100% - 28px);
+			min-width: calc(100% - 28px);
+			margin-bottom: 2%;
+			border-radius: 10px;
+			border: 0px;
+		}
+
+		#feedback-email {
+			width: calc(100% - 28px - 100px);
+			padding: 10px;
+			border-radius: 10px 0px 0px 10px;
+			border: 0px;
+		}
+
+		#feedback-submit {
+			vertical-align: bottom;
+			padding: 10px;
+			width: 100px;
+			border-radius: 0px 10px 10px 0px;
+			border: 0px;
+			background-color: #dddddd;
+			color: #111111;
+		}
+		
