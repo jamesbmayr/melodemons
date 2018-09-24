@@ -7,18 +7,12 @@
 		<link rel="shortcut icon" type="image/png" href="logo.png"/>
 		<link rel="stylesheet" type="text/css" href="./game/stylesheet.css"/>
 		<script type="text/javascript" src="./game/script.js"></script>
-		<script node>
-			var player = request.game.players[request.session.id]
-			var opponents = Object.keys(request.game.players).filter(function (p) {
-				return ((p !== request.session.id) && (request.game.players[p].connected))
-			})
-			null
-		</script>node>
+		<script>window.id = "<script node>request.session.id</script>node>"</script>
 	</head>
 	<body>
 		<div id="error" class="hidden"></div>
+		<canvas id="canvas" height="640" width="1280"></canvas>
 		<div id="container">
-			<canvas id="canvas"></canvas>
 			<pre id="dataview" style="text-align: left; position: absolute; top: 0px; left: 0px; height: 100%; width: 100%; font-size: 12px; overflow: scroll; padding: 0px; margin: 0px"></pre>
 		</div>
 	</body>

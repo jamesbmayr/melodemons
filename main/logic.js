@@ -87,9 +87,9 @@
 									start: false,
 									end:   false,
 									beat:  0,
-									theme: null,
 									count: 0
 								},
+								theme:   null,
 								heroes:  {},
 								demons:  [],
 								towers:  [],
@@ -112,18 +112,19 @@
 
 					case "state":
 						return {
-							health: 255,
-							x:      0,
-							y:      0,
-							vx:     0,
-							vy:     0,
-							left:   false,
-							right:  false,
-							up:     false,
-							down:   false,
-							keys:   [],
-							songs:  [],
-							points: 0
+							left:      false,
+							right:     false,
+							up:        false,
+							down:      false,
+							jumpReset: false,
+							health:    255,
+							x:         0,
+							y:         0,
+							vx:        0,
+							vy:        0,
+							keys:      [],
+							songs:     [],
+							points:    0
 						}
 					break
 
@@ -131,48 +132,56 @@
 						return [
 							{
 								name: "Grace",
+								team: "heroes",
 								instrument: "glassical",
 								colors: ["green","yellow"],
 								song: "health-up"
 							},
 							{
 								name: "Arthur",
+								team: "heroes",
 								instrument: "chordstrum",
 								colors: ["blue","purple"],
 								song: "object-shield"
 							},
 							{
 								name: "Emily",
+								team: "heroes",
 								instrument: "lazerz",
 								colors: ["red","orange"],
 								song: "double-attack-damage"
 							},
 							{
 								name: "Clark",
+								team: "heroes",
 								instrument: "jangle",
 								colors: ["blue","green"],
 								song: "double-jump-height"
 							},
 							{
 								name: "Abigail",
+								team: "heroes",
 								instrument: "swello",
 								colors: ["purple","black"],
 								song: "half-move-speed"
 							},
 							{
 								name: "Geoffrey",
+								team: "heroes",
 								instrument: "buzzorgan",
 								colors: ["magenta","yellow"],
 								song: "half-attack-speed"
 							},
 							{
 								name: "Charlotte",
+								team: "heroes",
 								instrument: "qube",
 								colors: ["orange","blue"],
 								song: "player-shield"
 							},
 							{
 								name: "Dorian",
+								team: "heroes",
 								instrument: "shimmer",
 								colors: ["red","green"],
 								song: "health-down"
@@ -184,48 +193,56 @@
 						return [
 							{
 								name: "Armistopheles",
+								team: "demons",
 								instrument: "glassical",
 								colors: ["green","yellow"],
 								song: "health-up"
 							},
 							{
 								name: "Ebborthrosh",
+								team: "demons",
 								instrument: "chordstrum",
 								colors: ["blue","purple"],
 								song: "object-shield"
 							},
 							{
 								name: "Dumrog",
+								team: "demons",
 								instrument: "lazerz",
 								colors: ["red","orange"],
 								song: "double-attack-damage"
 							},
 							{
 								name: "Gifflegorn",
+								team: "demons",
 								instrument: "jangle",
 								colors: ["blue","green"],
 								song: "double-jump-height"
 							},
 							{
 								name: "Chrynthos",
+								team: "demons",
 								instrument: "swello",
 								colors: ["purple","black"],
 								song: "half-move-speed"
 							},
 							{
 								name: "Archnus",
+								team: "demons",
 								instrument: "buzzorgan",
 								colors: ["magenta","yellow"],
 								song: "half-attack-speed"
 							},
 							{
 								name: "Golardios",
+								team: "demons",
 								instrument: "qube",
 								colors: ["orange","blue"],
 								song: "player-shield"
 							},
 							{
 								name: "Draphost",
+								team: "demons",
 								instrument: "shimmer",
 								colors: ["red","green"],
 								song: "health-down"
@@ -386,7 +403,57 @@
 					break									
 
 					case "themes":
-						return ["coastal", "mountain", "forest", "volcano"]
+						return [
+							{
+								name: "coastal",
+								terrain: "#91773f",
+								terrainBackground: "#d8cbad",
+								platform: "#513802",
+								platformBackground: "#827761",
+								pit: "#2b5572",
+								pitBackground: "#617787",
+								tower: "#e5dc79",
+								towerBackground: "#f9f6cf",
+								sky: "#c0eded"
+								
+							},
+							{
+								name: "mountain",
+								terrain: "#232526",
+								terrainBackground: "#afbabf",
+								platform: "#4b5256",
+								platformBackground: "#b8c1c6",
+								pit: "#151819",
+								pitBackground: "#919191",
+								tower: "#afa389",
+								towerBackground: "#cec8b9",
+								sky: "#aebdc4"
+							},
+							{
+								name: "forest",
+								terrain: "#053007",
+								terrainBackground: "#6a8c6c",
+								platform: "#442103",
+								platformBackground: "#937b66",
+								pit: "#180c26",
+								pitBackground: "#786e84",
+								tower: "#4f4037",
+								towerBackground: "#a5958b",
+								sky: "#beeaca"
+							},
+							{
+								name: "volcano",
+								terrain: "#232222",
+								terrainBackground: "#919191",
+								platform: "#474545",
+								platformBackground: "#a5a2a2",
+								pit: "#7c0808",
+								pitBackground: "#c17474",
+								tower: "#3d465e",
+								towerBackground: "#a3aecc",
+								sky: "#e2cccc"
+							}
+						]
 					break
 
 					default:

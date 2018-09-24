@@ -69,7 +69,7 @@
 						var themes = main.getAsset("themes")
 
 					// set theme
-						if (!request.game.data.state.theme) {
+						if (!request.game.data.theme) {
 							if (request.post.key == "up") {
 								player.selection = Math.max(0, player.selection - 1)
 								callback([request.session.id], {success: true, selection: player.selection})
@@ -79,8 +79,7 @@
 								callback([request.session.id], {success: true, selection: player.selection})
 							}
 							else if (request.post.key == "right") {
-								request.game.data.state.theme = themes[player.selection]
-								player.selection = null
+								request.game.data.theme = themes[player.selection]
 								callback([request.session.id], {success: true, selection: player.selection})
 							}
 						}
@@ -88,8 +87,7 @@
 					// start game ?
 						else {
 							if (request.post.key == "left") {
-								player.selection = themes.indexOf(request.game.data.state.theme)
-								request.game.data.state.theme = null
+								request.game.data.theme = null
 								callback([request.session.id], {success: true, selection: player.selection})
 							}
 							else if (request.post.key == "right") {
@@ -171,6 +169,17 @@
 							while (request.game.data.map.length < (players.length + 1) * 64) {
 								request.game.data.map.push(createColumn(request))
 							}
+
+						// heroes - positions
+							var heroKeys = Object.keys(request.game.data.heroes)
+							for (var key in heroKeys) {
+								setStartingPosition(request, request.game.data.heroes[heroKeys[key]])
+							}
+
+						// demons - positions
+							for (var d in request.game.data.demons) {
+								setStartingPosition(request, request.game.data.demons[d])
+							}
 		
 						// start game
 							request.game.data.state.start = new Date().getTime() + 3000
@@ -201,6 +210,11 @@
 					var demon = main.chooseRandom(allDemons)
 						demon.state = main.getAsset("state")
 						demon.state.songs.push(demon.song)
+
+				// first demon ?
+					if (!currentDemons.length) {
+						demon.state.selected = true
+					}
 
 				return demon
 			}
@@ -351,9 +365,19 @@
 				}
 
 			// tower
-				if (map.length % 64 < 4) { // first 4 columns
+				if ([62,63,4,5].includes(map.length % 64)) { // columns around tower
+					if (column[0]) { 
+						column[0].top = Math.max(0, Math.min(4, column[0].top))
+					}
+				}
+				else if ([0,1,2,3].includes(map.length % 64)) { // first 4 columns
+					if (column[0]) { 
+						column[0].top = Math.max(0, Math.min(3, column[0].top))
+					}
+
 					var tower = request.game.data.towers[Math.floor(map.length / 64)]
 					var towerX = map.length % 64
+
 					column[1] = {bottom: tower.platforms[towerX    ].y, top: tower.platforms[towerX    ].y, note: tower.platforms[towerX    ].note, team: tower.platforms[towerX    ].team}
 					column[2] = {bottom: tower.platforms[towerX + 4].y, top: tower.platforms[towerX + 4].y, note: tower.platforms[towerX + 4].note, team: tower.platforms[towerX + 4].team}
 				}
@@ -392,30 +416,264 @@
 
 		}
 
-/*** gameplay ***/
+/*** triggers ***/
 	/* triggerMove */
 		module.exports.triggerMove = triggerMove
-		function triggerMove() {
+		function triggerMove(request, callback) {
 			try {
-				return null
+				// get avatar
+					if (request.game.players[request.session.id].admin) { // demons
+						var avatar = request.game.data.demons.find(function(d) {
+							return d.state.selected
+						})
+					}
+					else { // heroes
+						var avatar = request.game.data.heroes[request.session.id]
+					}
+
+				// update velocity
+					if (!avatar) {
+						callback({success: false, message: "no avatar selected"})
+					}
+					else {
+						avatar.state[request.post.key] = request.post.press
+						if (request.post.key == "up" && !request.post.press) {
+							avatar.state.jumpReset = true
+						}
+					}
 			}
 			catch (error) {main.logError(error)}
 		}
 
 	/* triggerNote */
 		module.exports.triggerNote = triggerNote
-		function triggerNote() {
+		function triggerNote(request, callback) {
 			try {
-				return null
+				// get avatar
+					if (request.game.players[request.session.id].admin) { // demons
+						var avatar = request.game.data.demons.find(function(d) {
+							return d.state.selected
+						})
+					}
+					else { // heroes
+						var avatar = request.game.data.heroes[request.session.id]
+					}
+
+				// update velocity
+					if (!avatar) {
+						callback({success: false, message: "no avatar selected"})
+					}
+					else if (request.post.press && !avatar.state.keys.includes(request.post.key)) {
+						avatar.state.keys.push(request.post.key)
+					}
+					else if (!request.post.press && avatar.state.keys.includes(request.post.key)) {
+						avatar.state.keys.splice(avatar.state.keys.indexOf(request.post.press), 1)
+					}
 			}
 			catch (error) {main.logError(error)}
 		}
 
 	/* triggerNumber */
 		module.exports.triggerNumber = triggerNumber
-		function triggerNumber() {
+		function triggerNumber(request, callback) {
 			try {
 				return null
+			}
+			catch (error) {main.logError(error)}
+		}
+
+/*** movement ***/
+	/* getCells */
+		module.exports.getCells = getCells
+		function getCells(mapLength, x, y, width, height) {
+			try {
+				return {
+					left:  (Math.floor(x / 32)                          + mapLength) % mapLength,
+					right: (Math.floor(x / 32) + Math.floor(width / 32) + mapLength) % mapLength,
+					bottom: Math.floor(y / 32),
+					top:    Math.floor(y / 32) + Math.floor(height / 32)
+				}
+			}
+			catch (error) {main.logError(error)}
+		}
+
+	/* setStartingPosition */
+		module.exports.setStartingPosition = setStartingPosition
+		function setStartingPosition(request, avatar) {
+			try {
+				// heroes
+					if (avatar.team == "heroes") {
+						var tower = request.game.data.towers[0]
+						var heroKeys = Object.keys(request.game.data.heroes)
+
+						do {
+							var platform = main.chooseRandom(tower.platforms)
+							avatar.state.x =  platform.x      * 32
+							avatar.state.y = (platform.y + 1) * 32 + 16
+						}
+						while (heroKeys.find(function(h) {
+							return ((heroKeys[h] !== request.session.id)
+								 && (request.game.data.heroes[heroKeys[h]].state.x == avatar.state.x)
+								 && (request.game.data.heroes[heroKeys[h]].state.y == avatar.state.y))
+						}))
+					}
+
+				// demons
+					else {
+						var tower = request.game.data.towers[Math.floor(request.game.players.length / 2) + 1]
+
+						do {
+							var platform = main.chooseRandom(tower.platforms)
+							avatar.state.x =  platform.x      * 32
+							avatar.state.y = (platform.y + 1) * 32 + 16
+						}
+						while (demons.find(function(d) {
+							return ((demons.name !== avatar.name)
+								 && (demons.state.x == avatar.state.x)
+								 && (demons.state.y == avatar.state.y))
+						}))
+					}
+			}
+			catch (error) {main.logError(error)}
+		}
+
+	/* updateState */
+		module.exports.updateState = updateState
+		function updateState(request, callback) {
+			try {
+				// menu
+					if (!request.game.data.state.start) {
+						callback(Object.keys(request.game.players), request.game.data)
+					}
+
+				// gameplay
+					else {
+						// beat
+							request.game.data.state.beat++
+
+						// map
+							var map     = request.game.data.map
+							var towers  = request.game.data.towers
+							var objects = request.game.data.objects
+
+						// heroes
+							var heroKeys = Object.keys(request.game.data.heroes)
+							for (var key in heroKeys) {
+								updatePosition(request, request.game.data.heroes[heroKeys[key]])
+							}
+
+						// demons
+							for (var d in request.game.data.demons) {
+								updatePosition(request, request.game.data.demons[d])
+							}
+
+						callback(Object.keys(request.game.players), request.game.data)
+					}
+			}
+			catch (error) {main.logError(error)}
+		}
+
+	/* updatePosition */
+		module.exports.updatePosition = updatePosition
+		function updatePosition(request, avatar) {
+			try {
+				// map
+					var map = request.game.data.map
+
+				// adjust vx
+					if (avatar.state.left && avatar.state.right) {
+						avatar.state.vx = Math.max(-16, Math.min(16, avatar.state.vx))
+					}
+					else if (avatar.state.left) {
+						avatar.state.vx = Math.max(-16, Math.min(16, avatar.state.vx - 1))
+					}
+					else if (avatar.state.right) {
+						avatar.state.vx = Math.max(-16, Math.min(16, avatar.state.vx + 1))
+					}
+
+				// adjust vy
+					if (avatar.state.up && !avatar.state.jumpReset) {
+						avatar.state.vy = Math.max(-24, Math.min(24, avatar.state.vy + 8))
+
+						if (avatar.state.vy > 16) {
+							avatar.state.jumpReset = true
+						}
+					}
+					else {
+						avatar.state.vy = Math.max(-24, Math.min(24, avatar.state.vy - 4))
+						avatar.state.jumpReset = true
+					}
+
+				// adjust x & y
+					var mapLength = map.length * 32
+					var currentCells = getCells(mapLength, avatar.state.x, avatar.state.y, 32, 64)
+						avatar.state.x = (avatar.state.x + avatar.state.vx + mapLength) % mapLength
+						avatar.state.y = Math.min(640, Math.max(-32, avatar.state.x + avatar.state.vy))
+					var futureCells  = getCells(mapLength, avatar.state.x, avatar.state.y, 32, 64)
+
+				// changing rows
+					if (currentCells.bottom != futureCells.bottom) {
+						// collision down
+							if ((map[futureCells.left ][0] && futureCells.bottom <= map[futureCells.left ][0].top) 
+							 || (map[futureCells.right][0] && futureCells.bottom <= map[futureCells.right][0].top)
+							 || (map[futureCells.left ][1] && futureCells.bottom <= map[futureCells.left ][1].top) 
+							 || (map[futureCells.right][1] && futureCells.bottom <= map[futureCells.right][1].top)
+							 || (map[futureCells.left ][2] && futureCells.bottom <= map[futureCells.left ][2].top) 
+							 || (map[futureCells.right][2] && futureCells.bottom <= map[futureCells.right][2].top)) {
+								futureCells.bottom++
+								futureCells.top++
+								var collisionDown = true
+							}
+					}
+
+				// changing columns
+					if (currentCells.left != futureCells.left) {
+						// collision left
+							if ((map[futureCells.left][0] && futureCells.top    >= map[futureCells.left][0].bottom && futureCells.top    <= map[futureCells.left][0].top) 
+							 || (map[futureCells.left][0] && futureCells.bottom >= map[futureCells.left][0].bottom && futureCells.bottom <= map[futureCells.left][0].top)
+							 || (map[futureCells.left][1] && futureCells.top    >= map[futureCells.left][1].bottom && futureCells.top    <= map[futureCells.left][1].top) 
+							 || (map[futureCells.left][1] && futureCells.bottom >= map[futureCells.left][1].bottom && futureCells.bottom <= map[futureCells.left][1].top)
+							 || (map[futureCells.left][2] && futureCells.top    >= map[futureCells.left][2].bottom && futureCells.top    <= map[futureCells.left][2].top) 
+							 || (map[futureCells.left][2] && futureCells.bottom >= map[futureCells.left][2].bottom && futureCells.bottom <= map[futureCells.left][2].top)) {
+								futureCells.left++
+								futureCells.right++
+								avatar.state.vx = Math.max(0, avatar.state.vx)
+								avatar.state.x  = futureCells.left * 32 + 8
+							}
+
+						// collision right
+							else if ((map[futureCells.right][0] && futureCells.top    >= map[futureCells.right][0].bottom && futureCells.top    <= map[futureCells.right][0].top) 
+							      || (map[futureCells.right][0] && futureCells.bottom >= map[futureCells.right][0].bottom && futureCells.bottom <= map[futureCells.right][0].top)
+							      || (map[futureCells.right][1] && futureCells.top    >= map[futureCells.right][1].bottom && futureCells.top    <= map[futureCells.right][1].top) 
+							      || (map[futureCells.right][1] && futureCells.bottom >= map[futureCells.right][1].bottom && futureCells.bottom <= map[futureCells.right][1].top)
+							      || (map[futureCells.right][2] && futureCells.top    >= map[futureCells.right][2].bottom && futureCells.top    <= map[futureCells.right][2].top) 
+							      || (map[futureCells.right][2] && futureCells.bottom >= map[futureCells.right][2].bottom && futureCells.bottom <= map[futureCells.right][2].top)) {
+								futureCells.left--
+								futureCells.right--
+								avatar.state.vx = Math.min(0, avatar.state.vx)
+								avatar.state.x  = futureCells.right * 32 - 8
+							}
+					}
+
+				// check collisionDown again (to avoid hitting the "surface" inside a wall)
+					if (collisionDown) {
+						if ((map[futureCells.left ][0] && futureCells.bottom - 1 <= map[futureCells.left ][0].top) 
+						 || (map[futureCells.right][0] && futureCells.bottom - 1 <= map[futureCells.right][0].top)
+						 || (map[futureCells.left ][1] && futureCells.bottom - 1 <= map[futureCells.left ][1].top) 
+						 || (map[futureCells.right][1] && futureCells.bottom - 1 <= map[futureCells.right][1].top)
+						 || (map[futureCells.left ][2] && futureCells.bottom - 1 <= map[futureCells.left ][2].top) 
+						 || (map[futureCells.right][2] && futureCells.bottom - 1 <= map[futureCells.right][2].top)) {
+							avatar.state.vy = 0
+							avatar.state.y  = futureCells.bottom * 32
+							avatar.state.jumpReset = false
+						}
+					}
+
+				// dead ?
+					if (avatar.state.y <= -32) {
+						avatar.state.y = -32
+						avatar.state.health = 0
+					}
 			}
 			catch (error) {main.logError(error)}
 		}
@@ -470,7 +728,7 @@
 					
 					// still players
 						else {
-							callback(opponents, {success: true, data: game.data})
+							callback(Object.keys(request.game.players), {success: true, data: request.game.data})
 						}
 				}
 			}

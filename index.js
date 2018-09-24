@@ -447,13 +447,7 @@
 					// loop
 						if (request.game && !request.game.loop) {
 							request.game.loop = setInterval(function() {
-								// update measure
-									if (request.game.data.state.start) {
-										request.game.data.state.beat++
-									}
-
-								// send data
-									var recipients = Object.keys(request.game.players)
+								game.updateState(request, function(recipients, data) {
 									for (var r in recipients) {
 										try {
 											if (request.game.players[recipients[r]].connected) {
@@ -462,7 +456,8 @@
 										}
 										catch (error) {main.logError(error)}
 									}
-							}, 125)
+								})
+							}, 50)
 						}
 				}
 				catch (error) {
