@@ -133,7 +133,7 @@
 							{
 								name: "Grace",
 								team: "heroes",
-								instrument: "glassical",
+								instrument: "honeyharp",
 								colors: ["green","yellow"],
 								song: "health-up"
 							},
@@ -175,7 +175,7 @@
 							{
 								name: "Charlotte",
 								team: "heroes",
-								instrument: "qube",
+								instrument: "glassical",
 								colors: ["orange","blue"],
 								song: "player-shield"
 							},
@@ -194,42 +194,42 @@
 							{
 								name: "Armistopheles",
 								team: "demons",
-								instrument: "glassical",
+								instrument: "square",
 								colors: ["green","yellow"],
 								song: "health-up"
 							},
 							{
 								name: "Ebborthrosh",
 								team: "demons",
-								instrument: "chordstrum",
+								instrument: "sine",
 								colors: ["blue","purple"],
 								song: "object-shield"
 							},
 							{
 								name: "Dumrog",
 								team: "demons",
-								instrument: "lazerz",
+								instrument: "sawtooth",
 								colors: ["red","orange"],
 								song: "double-attack-damage"
 							},
 							{
 								name: "Gifflegorn",
 								team: "demons",
-								instrument: "jangle",
+								instrument: "triangle",
 								colors: ["blue","green"],
 								song: "double-jump-height"
 							},
 							{
 								name: "Chrynthos",
 								team: "demons",
-								instrument: "swello",
+								instrument: "clarinaut",
 								colors: ["purple","black"],
 								song: "half-move-speed"
 							},
 							{
 								name: "Archnus",
 								team: "demons",
-								instrument: "buzzorgan",
+								instrument: "reedles",
 								colors: ["magenta","yellow"],
 								song: "half-attack-speed"
 							},
@@ -243,7 +243,7 @@
 							{
 								name: "Draphost",
 								team: "demons",
-								instrument: "shimmer",
+								instrument: "accordienne",
 								colors: ["red","green"],
 								song: "health-down"
 							}
@@ -394,7 +394,7 @@
 								platforms: [{x: 0, y: 11, note: "A"}, {x: 1, y: 9, note: "E"}, {x: 2, y: 9, note: "G"}, {x: 3, y: 9, note: "E"}, {x: 0, y: 7, note: "D"}, {x: 1, y: 5, note: "E"}, {x: 2, y: 5, note: "G"}, {x: 3, y: 5, note: "E"}]
 							},
 							{
-								name: "Dorian",
+								name: "pain",
 								colors: ["red","green"],
 								song: "health-down",
 								platforms: [{x: 0, y: 11, note: "A"}, {x: 1, y: 9, note: "E"}, {x: 2, y: 8, note: "D"}, {x: 3, y: 8, note: "C"}, {x: 0, y: 7, note: "G"}, {x: 1, y: 5, note: "E"}, {x: 2, y: 4, note: "D"}, {x: 3, y: 4, note: "C"}]
@@ -412,9 +412,10 @@
 								platformBackground: "#827761",
 								pit: "#2b5572",
 								pitBackground: "#617787",
-								tower: "#e5dc79",
-								towerBackground: "#f9f6cf",
-								sky: "#c0eded"
+								tower: "#dbd590",
+								towerBackground: "#f2eebf",
+								skyTop: "#d3ffff",
+								skyBottom: "#a8e0e0"
 								
 							},
 							{
@@ -427,7 +428,8 @@
 								pitBackground: "#919191",
 								tower: "#afa389",
 								towerBackground: "#cec8b9",
-								sky: "#aebdc4"
+								skyTop: "#daeaf2",
+								skyBottom: "#aebdc4"
 							},
 							{
 								name: "forest",
@@ -439,7 +441,8 @@
 								pitBackground: "#786e84",
 								tower: "#4f4037",
 								towerBackground: "#a5958b",
-								sky: "#beeaca"
+								skyTop: "#dbffe4",
+								skyBottom: "#beeaca"
 							},
 							{
 								name: "volcano",
@@ -449,9 +452,10 @@
 								platformBackground: "#a5a2a2",
 								pit: "#7c0808",
 								pitBackground: "#c17474",
-								tower: "#3d465e",
-								towerBackground: "#a3aecc",
-								sky: "#e2cccc"
+								tower: "#473d5e",
+								towerBackground: "#a397bf",
+								skyTop: "#ffeaea",
+								skyBottom: "#dbbebe"
 							}
 						]
 					break

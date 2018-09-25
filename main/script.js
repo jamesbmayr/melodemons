@@ -99,6 +99,7 @@
 			// close
 				socket.onclose = function() {
 					socket = null
+					window.location = "../../../../"
 				}
 
 			// message

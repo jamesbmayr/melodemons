@@ -1,5 +1,6 @@
 /*** modules ***/
 	var main = require("../main/logic")
+	var game = require("../game/logic")
 	module.exports = {}
 
 /*** creates ***/
@@ -14,7 +15,8 @@
 				// create player
 					request.game.players[request.session.id] = createPlayer(request)
 					request.game.players[request.session.id].admin = true
-				
+					request.game.data.demons.push(game.createDemon(request))
+
 				callback({success: true, message: "game created", location: "../../game/" + request.game.id})
 			}
 			catch (error) {

@@ -383,21 +383,27 @@
 				}
 
 			// obstacle
-				else if (map.length % 64 >= 30 && map.length % 64 < 38) { // middle 8 columns
+				else if (map.length % 64 >= 28 && map.length % 64 < 40) { // middle 12 columns
 					var obstacleX = (map.length % 64)
-					if ([0,7].includes(obstacleX)) { // space around edges
-						column[0] = {bottom: 0, top: Math.max(0, Math.min(7, column[0] ? column[0].top : 3))}
+					if ([28,39].includes(obstacleX)) { // space around edges
+						column[0] = {bottom: 0, top: Math.max(0, Math.min(6, column[0] ? column[0].top : 5))}
 					}
-					else if ([1,6].includes(obstacleX)) { // space around edges
-						column[0] = {bottom: 0, top: Math.max(0, Math.min(5, column[0] ? column[0].top : 3))}
+					else if ([29,38].includes(obstacleX)) { // space around edges
+						column[0] = {bottom: 0, top: Math.max(0, Math.min(5, column[0] ? column[0].top : 4))}
 					}
-					else if ([2,5].includes(obstacleX)) { // obstacle
+					else if ([30,37].includes(obstacleX)) { // space around edges
+						column[0] = {bottom: 0, top: Math.max(0, Math.min(4, column[0] ? column[0].top : 3))}
+					}
+					else if ([31,36].includes(obstacleX)) { // space around edges
 						column[0] = {bottom: 0, top: Math.max(0, Math.min(3, column[0] ? column[0].top : 3))}
-						column[1] = {bottom: column[0].top + 3, top: column[0].top + 3}
 					}
-					else if ([3,4].includes(obstacleX)) { // obstacle
+					else if ([32,35].includes(obstacleX)) { // obstacle
 						column[0] = {bottom: 0, top: Math.max(0, Math.min(3, column[0] ? column[0].top : 3))}
-						column[1] = {bottom: column[0].top + 3, top: column[0].top + 4}
+						column[1] = {bottom: column[0].top + 5, top: column[0].top + 5}
+					}
+					else if ([33,34].includes(obstacleX)) { // obstacle
+						column[0] = {bottom: 0, top: Math.max(0, Math.min(3, column[0] ? column[0].top : 3))}
+						column[1] = {bottom: column[0].top + 5, top: column[0].top + 6}
 					}
 				}
 
@@ -485,11 +491,11 @@
 /*** movement ***/
 	/* getCells */
 		module.exports.getCells = getCells
-		function getCells(mapLength, x, y, width, height) {
+		function getCells(columnCount, x, y, width, height) {
 			try {
 				return {
-					left:  (Math.floor(x / 32)                          + mapLength) % mapLength,
-					right: (Math.floor(x / 32) + Math.floor(width / 32) + mapLength) % mapLength,
+					left:  (Math.floor(x / 32)                          + columnCount) % columnCount,
+					right: (Math.floor(x / 32) + Math.floor(width / 32) + columnCount) % columnCount,
 					bottom: Math.floor(y / 32),
 					top:    Math.floor(y / 32) + Math.floor(height / 32)
 				}
@@ -504,33 +510,34 @@
 				// heroes
 					if (avatar.team == "heroes") {
 						var tower = request.game.data.towers[0]
-						var heroKeys = Object.keys(request.game.data.heroes)
+						var keys = Object.keys(request.game.data.heroes)
 
 						do {
 							var platform = main.chooseRandom(tower.platforms)
 							avatar.state.x =  platform.x      * 32
 							avatar.state.y = (platform.y + 1) * 32 + 16
 						}
-						while (heroKeys.find(function(h) {
-							return ((heroKeys[h] !== request.session.id)
-								 && (request.game.data.heroes[heroKeys[h]].state.x == avatar.state.x)
-								 && (request.game.data.heroes[heroKeys[h]].state.y == avatar.state.y))
+						while (keys.find(function(k) {
+							return ((request.game.data.heroes[k].name    != avatar.name)
+								 && (request.game.data.heroes[k].state.x == avatar.state.x)
+								 && (request.game.data.heroes[k].state.y == avatar.state.y))
 						}))
 					}
 
 				// demons
 					else {
-						var tower = request.game.data.towers[Math.floor(request.game.players.length / 2) + 1]
+						var towerNumber = Math.floor(Object.keys(request.game.players).length / 2) + 1
+						var tower = request.game.data.towers[towerNumber]
 
 						do {
 							var platform = main.chooseRandom(tower.platforms)
-							avatar.state.x =  platform.x      * 32
-							avatar.state.y = (platform.y + 1) * 32 + 16
+							avatar.state.x = towerNumber * 64 * 32 + platform.x      * 32
+							avatar.state.y =                        (platform.y + 1) * 32 + 16
 						}
-						while (demons.find(function(d) {
-							return ((demons.name !== avatar.name)
-								 && (demons.state.x == avatar.state.x)
-								 && (demons.state.y == avatar.state.y))
+						while (request.game.data.demons.find(function(d) {
+							return ((d.name    != avatar.name)
+								 && (d.state.x == avatar.state.x)
+								 && (d.state.y == avatar.state.y))
 						}))
 					}
 			}
@@ -582,17 +589,20 @@
 
 				// adjust vx
 					if (avatar.state.left && avatar.state.right) {
-						avatar.state.vx = Math.max(-16, Math.min(16, avatar.state.vx))
+						avatar.state.vx = Math.max(-10, Math.min(10, avatar.state.vx))
 					}
 					else if (avatar.state.left) {
-						avatar.state.vx = Math.max(-16, Math.min(16, avatar.state.vx - 1))
+						avatar.state.vx = Math.max(-10, Math.min(10, avatar.state.vx - 1))
 					}
 					else if (avatar.state.right) {
-						avatar.state.vx = Math.max(-16, Math.min(16, avatar.state.vx + 1))
+						avatar.state.vx = Math.max(-10, Math.min(10, avatar.state.vx + 1))
+					}
+					else {
+						avatar.state.vx = Math.max(-10, Math.min(10, Math.sign(avatar.state.vx) * (Math.abs(avatar.state.vx) - 1)))
 					}
 
 				// adjust vy
-					if (avatar.state.up && !avatar.state.jumpReset) {
+					if (avatar.state.up && (!avatar.state.jumpReset || !avatar.state.health) && avatar.state.y < 544) {
 						avatar.state.vy = Math.max(-24, Math.min(24, avatar.state.vy + 8))
 
 						if (avatar.state.vy > 16) {
@@ -606,24 +616,28 @@
 
 				// adjust x & y
 					var mapLength = map.length * 32
-					var currentCells = getCells(mapLength, avatar.state.x, avatar.state.y, 32, 64)
+					var currentCells = getCells(map.length, avatar.state.x, avatar.state.y, 32, 64)
 						avatar.state.x = (avatar.state.x + avatar.state.vx + mapLength) % mapLength
-						avatar.state.y = Math.min(640, Math.max(-32, avatar.state.x + avatar.state.vy))
-					var futureCells  = getCells(mapLength, avatar.state.x, avatar.state.y, 32, 64)
+						avatar.state.y = Math.min(576, Math.max(-32, avatar.state.y + avatar.state.vy))
+					var futureCells  = getCells(map.length, avatar.state.x, avatar.state.y, 32, 64)
 
 				// changing rows
 					if (currentCells.bottom != futureCells.bottom) {
 						// collision down
-							if ((map[futureCells.left ][0] && futureCells.bottom <= map[futureCells.left ][0].top) 
+							if ((avatar.state.vy <= 0) &&
+							   ((map[futureCells.left ][0] && futureCells.bottom <= map[futureCells.left ][0].top) 
 							 || (map[futureCells.right][0] && futureCells.bottom <= map[futureCells.right][0].top)
 							 || (map[futureCells.left ][1] && futureCells.bottom <= map[futureCells.left ][1].top) 
 							 || (map[futureCells.right][1] && futureCells.bottom <= map[futureCells.right][1].top)
 							 || (map[futureCells.left ][2] && futureCells.bottom <= map[futureCells.left ][2].top) 
-							 || (map[futureCells.right][2] && futureCells.bottom <= map[futureCells.right][2].top)) {
-								futureCells.bottom++
-								futureCells.top++
-								var collisionDown = true
+							 || (map[futureCells.right][2] && futureCells.bottom <= map[futureCells.right][2].top))) {
+								futureCells.bottom = (futureCells.bottom + 1 + map.length) % map.length
+								futureCells.top    = (futureCells.top    + 1 + map.length) % map.length
+								var collisionDown  = true
 							}
+
+						// collision up
+							//
 					}
 
 				// changing columns
@@ -635,10 +649,10 @@
 							 || (map[futureCells.left][1] && futureCells.bottom >= map[futureCells.left][1].bottom && futureCells.bottom <= map[futureCells.left][1].top)
 							 || (map[futureCells.left][2] && futureCells.top    >= map[futureCells.left][2].bottom && futureCells.top    <= map[futureCells.left][2].top) 
 							 || (map[futureCells.left][2] && futureCells.bottom >= map[futureCells.left][2].bottom && futureCells.bottom <= map[futureCells.left][2].top)) {
-								futureCells.left++
-								futureCells.right++
+								futureCells.left  = (futureCells.left  + 1 + map.length) % map.length
+								futureCells.right = (futureCells.right + 1 + map.length) % map.length
 								avatar.state.vx = Math.max(0, avatar.state.vx)
-								avatar.state.x  = futureCells.left * 32 + 8
+								avatar.state.x  = ((futureCells.left * 32 + 8) + mapLength) % mapLength
 							}
 
 						// collision right
@@ -648,10 +662,10 @@
 							      || (map[futureCells.right][1] && futureCells.bottom >= map[futureCells.right][1].bottom && futureCells.bottom <= map[futureCells.right][1].top)
 							      || (map[futureCells.right][2] && futureCells.top    >= map[futureCells.right][2].bottom && futureCells.top    <= map[futureCells.right][2].top) 
 							      || (map[futureCells.right][2] && futureCells.bottom >= map[futureCells.right][2].bottom && futureCells.bottom <= map[futureCells.right][2].top)) {
-								futureCells.left--
-								futureCells.right--
+								futureCells.left  = (futureCells.left  - 1 + map.length) % map.length
+								futureCells.right = (futureCells.right - 1 + map.length) % map.length
 								avatar.state.vx = Math.min(0, avatar.state.vx)
-								avatar.state.x  = futureCells.right * 32 - 8
+								avatar.state.x  = ((futureCells.right * 32 - 8) + mapLength) % mapLength 
 							}
 					}
 
