@@ -400,10 +400,17 @@
 											var tl,  tr,  br,  bl
 												tl = tr = br = bl = 0
 											var color = data.theme.terrainBackground
+											var height = 20
 
 											if (cell > 0) { // platforms
-												tl = tr = br = bl = 8
 												color = data.theme.platformBackground
+												if (column[cell].note) {
+													height = 5
+													tl = tr = br = bl = 5
+												}
+												else {
+													tl = tr = br = bl = 8
+												}
 											}
 											else if (y == column[cell].top) { // terrain
 												if (!columnNumber) { // first column
@@ -420,7 +427,7 @@
 												}
 											}
 
-											drawRectangle(1280 - (canvasX / 1.6), (y * 20) + 40, 20, 20, {color: color, shadow: color, radii: {topLeft: tl, topRight: tr, bottomRight: br, bottomLeft: bl}})
+											drawRectangle(1280 - (canvasX / 1.6), (y * 20) + (20 - height) + 40, 20, height, {color: color, shadow: color, radii: {topLeft: tl, topRight: tr, bottomRight: br, bottomLeft: bl}})
 										}
 									}
 								}
@@ -525,10 +532,14 @@
 											var tl,  tr,  br,  bl
 												tl = tr = br = bl = 0
 											var color = data.theme.terrain
+											var height = 32
 
 											if (cell > 0) { // platforms
 												tl = tr = br = bl = 8
 												color = data.theme.platform
+												if (column[cell].note) {
+													height = 8
+												}
 											}
 											else if (y == column[cell].top) { // terrain
 												if (!columnNumber) { // first column
@@ -545,7 +556,7 @@
 												}
 											}
 
-											drawRectangle(canvasX, y * 32, 32, 32, {color: color, shadow: color, radii: {topLeft: tl, topRight: tr, bottomRight: br, bottomLeft: bl}})
+											drawRectangle(canvasX, y * 32 + (32 - height), 32, height, {color: color, shadow: color, radii: {topLeft: tl, topRight: tr, bottomRight: br, bottomLeft: bl}})
 										}
 									}
 								}
@@ -587,15 +598,16 @@
 		function drawAvatar(x, y, width, height, avatar) {
 			// variables
 				var healthColor = avatar.state.health ? ("rgb(128, " + avatar.state.health + ", 000)") : "rgb(255,255,255)"
+				var healthWidth = avatar.state.health ? Math.floor((avatar.state.health + 1) * width / 256) : width
 				var opacity     = avatar.state.health ? 1 : 0.5
 					opacity     = opacity * (width == 32 ? 1 : 0.5)
 				var eyeColor    = avatar.team == "heroes" ? heroColor : demonColor
-				var xOffset     = avatar.state.vx > 0 ? 2 : avatar.state.vx < 0 ? -2 : 0
+				var xOffset     = avatar.state.right  ? 2 : avatar.state.left   ? -2 : 0
 				var yOffset     = avatar.state.vy > 0 ? 2 : avatar.state.vy < 0 ? -2 : 0
 
 			// draw
 				drawText(     x +      (width / 2)           , y + (2.5 * height / 2)                                           , avatar.name                             , {opacity: opacity, color: eyeColor, size: (width / 4)})                                                                                          // name
-				drawLine(     x                              , y + (4.5 * height / 4)                                           ,  x + width      , y + (4.5 * height / 4), {opacity: opacity, color: healthColor,      shadow: healthColor})                                                                // health bar
+				drawLine(     x                              , y + (4.5 * height / 4)                                           ,  x + healthWidth, y + (4.5 * height / 4), {opacity: opacity, color: healthColor,      shadow: healthColor})                                                                // health bar
 				drawCircle(   x +      (width / 2)           , y +       (height / 2) + (width / 2)                             ,     (width /  2),                         {opacity: opacity, color: avatar.colors[1], shadow: "#222222"})                                                                  // head
 				drawCircle(   x + ( 2 * width / 8)  + xOffset, y + (6.5 * height / 8)                                 + yOffset ,     (width /  8),                         {opacity: opacity, color: eyeColor})                                                                                             // left eye
 				drawCircle(   x + ( 6 * width / 8)  + xOffset, y + (6.5 * height / 8)                                 + yOffset ,     (width /  8),                         {opacity: opacity, color: eyeColor})                                                                                             // right eye

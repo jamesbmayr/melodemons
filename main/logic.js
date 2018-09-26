@@ -122,6 +122,11 @@
 							y:         0,
 							vx:        0,
 							vy:        0,
+							colLeft:   0,
+							colRight:  0,
+							rowUp:     0,
+							rowDown:   0,
+							tower:     null,
 							keys:      [],
 							songs:     [],
 							points:    0
@@ -177,7 +182,7 @@
 								team: "heroes",
 								instrument: "glassical",
 								colors: ["orange","blue"],
-								song: "player-shield"
+								song: "silence-magic"
 							},
 							{
 								name: "Dorian",
@@ -238,7 +243,7 @@
 								team: "demons",
 								instrument: "qube",
 								colors: ["orange","blue"],
-								song: "player-shield"
+								song: "silence-magic"
 							},
 							{
 								name: "Draphost",
@@ -258,49 +263,57 @@
 								name: "health-up",
 								description: "heroes and demons within regenerate health",
 								melody: "CDEGAGED",
-								cells: shapes.circle
+								cells: shapes.circle,
+								colors: ["green","yellow"]
 							},
 							"object-shield": {
 								name: "object-shield",
 								description: "attacks collide with shield walls",
 								melody: "CGAGCGAG",
-								cells: shapes.square
+								cells: shapes.square,
+								colors: ["blue","purple"]
 							},
 							"double-attack-damage": {
 								name: "double-attack-damage",
 								description: "attacks fired from within deal double damage",
 								melody: "CDCAGACA",
-								cells: shapes.octagon
+								cells: shapes.octagon,
+								colors: ["red","orange"]
 							},
 							"double-jump-height": {
 								name: "jump-up",
 								description: "heroes and demons within jump twice as high",
 								melody: "CGEGCGEG",
-								cells: shapes.diamond
+								cells: shapes.diamond,
+								colors: ["blue","green"]
 							},
 							"half-move-speed": {
 								name: "half-move-speed",
 								description: "heroes and demons within move half as fast",
 								melody: "ACDEDCDE",
-								cells: shapes.diamond
+								cells: shapes.diamond,
+								colors: ["purple","black"]
 							},
 							"half-attack-speed": {
 								name: "half-attack-speed",
 								description: "attacks fired from within move half as fast",
 								melody: "ACAGACAG",
-								cells: shapes.octagon
+								cells: shapes.octagon,
+								colors: ["magenta","yellow"]
 							},
-							"player-shield": {
-								name: "player-shield",
-								description: "heroes and demons collide with shield walls",
+							"silence-magic": {
+								name: "silence-magic",
+								description: "other songs collide with shield walls",
 								melody: "AEGEDEGE",
-								cells: shapes.square
+								cells: shapes.square,
+								colors: ["orange","blue"]
 							},
 							"health-down": {
 								name: "health-down",
 								description: "heroes and demons within lose health",
 								melody: "AEDCGEDC",
-								cells: shapes.circle
+								cells: shapes.circle,
+								colors: ["red","green"]
 							}
 						}
 					break
@@ -355,43 +368,43 @@
 								name: "healing",
 								colors: ["green","yellow"],
 								song: "health-up",
-								platforms: [{x: 0, y: 11, note: "C"}, {x: 1, y: 10, note: "D"}, {x: 2, y: 9, note: "E"}, {x: 3, y: 8, note: "G"}, {x: 0, y: 7, note: "A"}, {x: 1, y: 6, note: "G"}, {x: 2, y: 5, note: "E"}, {x: 3, y: 4, note: "D"}]
+								platforms: [{x: 0, y: 11, note: "C"}, {x: 1, y: 11, note: "D"}, {x: 2, y: 11, note: "E"}, {x: 3, y: 8, note: "G"}, {x: 0, y: 7, note: "A"}, {x: 1, y: 7, note: "G"}, {x: 2, y: 7, note: "E"}, {x: 3, y: 4, note: "D"}]
 							},
 							{
 								name: "protection",
 								colors: ["blue","purple"],
 								song: "object-shield",
-								platforms: [{x: 0, y: 11, note: "C"}, {x: 1, y: 11, note: "G"}, {x: 2, y: 9, note: "A"}, {x: 3, y: 9, note: "G"}, {x: 0, y: 7, note: "C"}, {x: 1, y: 7, note: "G"}, {x: 2, y: 5, note: "A"}, {x: 3, y: 5, note: "G"}]
+								platforms: [{x: 0, y: 11, note: "C"}, {x: 1, y: 11, note: "G"}, {x: 2, y: 10, note: "A"}, {x: 3, y: 8, note: "G"}, {x: 0, y: 7, note: "C"}, {x: 1, y: 7, note: "G"}, {x: 2, y: 6, note: "A"}, {x: 3, y: 4, note: "G"}]
 							},
 							{
 								name: "strength",
 								colors: ["red","orange"],
 								song: "double-attack-damage",
-								platforms: [{x: 0, y: 11, note: "C"}, {x: 1, y: 10, note: "D"}, {x: 2, y: 10, note: "C"}, {x: 3, y: 9, note: "A"}, {x: 0, y: 7, note: "G"}, {x: 1, y: 6, note: "A"}, {x: 2, y: 6, note: "C"}, {x: 3, y: 5, note: "A"}]
+								platforms: [{x: 0, y: 11, note: "C"}, {x: 1, y: 11, note: "D"}, {x: 2, y: 9, note: "C"}, {x: 3, y: 8, note: "A"}, {x: 0, y: 7, note: "G"}, {x: 1, y: 7, note: "A"}, {x: 2, y: 5, note: "C"}, {x: 3, y: 4, note: "A"}]
 							},
 							{
 								name: "flight",
 								colors: ["blue","green"],
 								song: "double-jump-height",
-								platforms: [{x: 0, y: 11, note: "C"}, {x: 1, y: 10, note: "G"}, {x: 2, y: 8, note: "E"}, {x: 3, y: 8, note: "G"}, {x: 0, y: 7, note: "C"}, {x: 1, y: 6, note: "G"}, {x: 2, y: 5, note: "E"}, {x: 3, y: 5, note: "G"}]
+								platforms: [{x: 0, y: 11, note: "C"}, {x: 1, y: 10, note: "G"}, {x: 2, y: 10, note: "E"}, {x: 3, y: 8, note: "G"}, {x: 0, y: 7, note: "C"}, {x: 1, y: 6, note: "G"}, {x: 2, y: 6, note: "E"}, {x: 3, y: 4, note: "G"}]
 							},
 							{
 								name: "immobility",
 								colors: ["purple","black"],
 								song: "half-move-speed",
-								platforms: [{x: 0, y: 11, note: "A"}, {x: 1, y: 11, note: "C"}, {x: 2, y: 9, note: "D"}, {x: 3, y: 8, note: "E"}, {x: 0, y: 7, note: "D"}, {x: 1, y: 7, note: "C"}, {x: 2, y: 5, note: "D"}, {x: 3, y: 4, note: "E"}]
+								platforms: [{x: 0, y: 11, note: "A"}, {x: 1, y: 10, note: "C"}, {x: 2, y: 9, note: "D"}, {x: 3, y: 8, note: "E"}, {x: 0, y: 7, note: "D"}, {x: 1, y: 6, note: "C"}, {x: 2, y: 5, note: "D"}, {x: 3, y: 4, note: "E"}]
 							},
 							{
 								name: "evasion",
 								colors: ["magenta","yellow"],
 								song: "half-attack-speed",
-								platforms: [{x: 0, y: 11, note: "A"}, {x: 1, y: 10, note: "C"}, {x: 2, y: 9, note: "A"}, {x: 3, y: 9, note: "G"}, {x: 0, y: 7, note: "A"}, {x: 1, y: 6, note: "C"}, {x: 2, y: 5, note: "A"}, {x: 3, y: 5, note: "G"}]
+								platforms: [{x: 0, y: 11, note: "A"}, {x: 1, y: 10, note: "C"}, {x: 2, y: 8, note: "A"}, {x: 3, y: 8, note: "G"}, {x: 0, y: 7, note: "A"}, {x: 1, y: 6, note: "C"}, {x: 2, y: 4, note: "A"}, {x: 3, y: 4, note: "G"}]
 							},
 							{
-								name: "resistance",
+								name: "silence",
 								colors: ["orange","blue"],
-								song: "player-shield",
-								platforms: [{x: 0, y: 11, note: "A"}, {x: 1, y: 9, note: "E"}, {x: 2, y: 9, note: "G"}, {x: 3, y: 9, note: "E"}, {x: 0, y: 7, note: "D"}, {x: 1, y: 5, note: "E"}, {x: 2, y: 5, note: "G"}, {x: 3, y: 5, note: "E"}]
+								song: "silence-magic",
+								platforms: [{x: 0, y: 11, note: "A"}, {x: 1, y: 9, note: "E"}, {x: 2, y: 9, note: "G"}, {x: 3, y: 8, note: "E"}, {x: 0, y: 7, note: "D"}, {x: 1, y: 5, note: "E"}, {x: 2, y: 5, note: "G"}, {x: 3, y: 4, note: "E"}]
 							},
 							{
 								name: "pain",
@@ -624,7 +637,7 @@
 		function sortRandom(array) {
 			try {
 				// duplicate array
-					var output = duplicateArray(array)
+					var output = duplicateObject(array)
 
 				// fisher-yates shuffle
 					var x = output.length
@@ -656,16 +669,11 @@
 			}
 		}
 
-	/* duplicateArray */
-		module.exports.duplicateArray = duplicateArray
-		function duplicateArray(array) {
+	/* duplicateObject */
+		module.exports.duplicateObject = duplicateObject
+		function duplicateObject(object) {
 			try {
-				if (!Array.isArray(array)) {
-					return false
-				}
-				else {
-					return JSON.parse(JSON.stringify(array))
-				}
+				return JSON.parse(JSON.stringify(object))
 			}
 			catch (error) {
 				logError(error)

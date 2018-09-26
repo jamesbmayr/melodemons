@@ -300,12 +300,12 @@
 				var column = null
 
 			// previous columns
-				var lastColumn = main.duplicateArray(map[map.length - 1])
+				var lastColumn = map.length ? main.duplicateObject(map[map.length - 1]) : null
 				var lastFullColumn = null
 				var lastX = map.length - 1
 				while (!lastFullColumn && lastX > -1) {
 					if (map[lastX][0]) {
-						lastFullColumn = main.duplicateArray(map[lastX])
+						lastFullColumn = main.duplicateObject(map[lastX])
 					}
 					else {
 						lastX--
@@ -313,8 +313,8 @@
 				}
 
 			// starting terrain
-				if (map.length < 4) { // hero tower
-					column = [{bottom: 0, top: 2}]
+				if (map.length % 64 < 4) { // tower
+					column = [{bottom: 0, top: Math.floor(Math.random() * 3) + 1}]
 				}
 
 			// random terrain
@@ -383,26 +383,29 @@
 				}
 
 			// obstacle
-				else if (map.length % 64 >= 28 && map.length % 64 < 40) { // middle 12 columns
+				else if (map.length % 64 >= 27 && map.length % 64 < 41) { // middle 12 columns
 					var obstacleX = (map.length % 64)
-					if ([28,39].includes(obstacleX)) { // space around edges
-						column[0] = {bottom: 0, top: Math.max(0, Math.min(6, column[0] ? column[0].top : 5))}
+					if      ([27,40].includes(obstacleX)) { // space around spaces
+						column[0] = {bottom: 0, top: Math.max(0, Math.min(7, column[0] ? column[0].top : 6))}
+					}
+					else if ([28,39].includes(obstacleX)) { // space around spaces
+						column[0] = {bottom: 0, top: Math.max(0, Math.min(4, column[0] ? column[0].top : 4))}
 					}
 					else if ([29,38].includes(obstacleX)) { // space around edges
-						column[0] = {bottom: 0, top: Math.max(0, Math.min(5, column[0] ? column[0].top : 4))}
+						column[0] = {bottom: 0, top: Math.max(0, Math.min(3, column[0] ? column[0].top : 3))}
 					}
 					else if ([30,37].includes(obstacleX)) { // space around edges
-						column[0] = {bottom: 0, top: Math.max(0, Math.min(4, column[0] ? column[0].top : 3))}
+						column[0] = {bottom: 0, top: Math.max(0, Math.min(3, column[0] ? column[0].top : 3))}
 					}
 					else if ([31,36].includes(obstacleX)) { // space around edges
 						column[0] = {bottom: 0, top: Math.max(0, Math.min(3, column[0] ? column[0].top : 3))}
 					}
 					else if ([32,35].includes(obstacleX)) { // obstacle
-						column[0] = {bottom: 0, top: Math.max(0, Math.min(3, column[0] ? column[0].top : 3))}
+						column[0] = {bottom: 0, top: Math.max(2, Math.min(3, column[0] ? column[0].top : 3))}
 						column[1] = {bottom: column[0].top + 5, top: column[0].top + 5}
 					}
 					else if ([33,34].includes(obstacleX)) { // obstacle
-						column[0] = {bottom: 0, top: Math.max(0, Math.min(3, column[0] ? column[0].top : 3))}
+						column[0] = {bottom: 0, top: Math.max(2, Math.min(3, column[0] ? column[0].top : 3))}
 						column[1] = {bottom: column[0].top + 5, top: column[0].top + 6}
 					}
 				}
@@ -465,7 +468,7 @@
 						var avatar = request.game.data.heroes[request.session.id]
 					}
 
-				// update velocity
+				// update keys
 					if (!avatar) {
 						callback({success: false, message: "no avatar selected"})
 					}
@@ -483,7 +486,16 @@
 		module.exports.triggerNumber = triggerNumber
 		function triggerNumber(request, callback) {
 			try {
-				return null
+				if (!request.game.players[request.session.id].admin) {
+					callback({success: false, message: "not demons"})
+				}
+				else {
+					for (var d in request.game.data.demons) {
+						request.game.data.demons[d].state.selected = false
+					}
+
+					request.game.data.demons[request.post.key - 1].state.selected = true
+				}
 			}
 			catch (error) {main.logError(error)}
 		}
@@ -494,11 +506,58 @@
 		function getCells(columnCount, x, y, width, height) {
 			try {
 				return {
-					left:  (Math.floor(x / 32)                          + columnCount) % columnCount,
-					right: (Math.floor(x / 32) + Math.floor(width / 32) + columnCount) % columnCount,
-					bottom: Math.floor(y / 32),
-					top:    Math.floor(y / 32) + Math.floor(height / 32)
+					colLeft:  (Math.floor(x / 32)                           + columnCount) % columnCount,
+					colRight: (Math.floor(x / 32) + Math.floor(width  / 32) + columnCount) % columnCount,
+					rowDown:   Math.floor(y / 32),
+					rowUp:     Math.floor(y / 32) + Math.floor(height / 32) - 1
 				}
+			}
+			catch (error) {main.logError(error)}
+		}
+
+	/* getTower */
+		module.exports.getTower = getTower
+		function getTower(request, avatar) {
+			try {
+				// blank data
+					var touchedTower = {
+						name: null,
+						platforms: []
+					}
+					
+				// left side
+					if (avatar.state.colLeft  % 64 < 4) {
+						var tower = request.game.data.towers[Math.floor(avatar.state.colLeft  / 64)]
+						if      (tower.platforms[avatar.state.colLeft  % 64    ].y == avatar.state.rowDown - 1) {
+							touchedTower.name = tower.name
+							touchedTower.platforms.push(main.duplicateObject(tower.platforms[avatar.state.colLeft  % 64    ]))
+						}
+						else if (tower.platforms[avatar.state.colLeft  % 64 + 4].y == avatar.state.rowDown - 1) {
+							touchedTower.name = tower.name
+							touchedTower.platforms.push(main.duplicateObject(tower.platforms[avatar.state.colLeft  % 64 + 4]))
+						}
+					}
+
+				// right side
+					if (avatar.state.colRight % 64 < 4) {
+						var tower = request.game.data.towers[Math.floor(avatar.state.colRight / 64)]
+						if      (tower.platforms[avatar.state.colRight % 64    ].y == avatar.state.rowDown - 1) {
+							touchedTower.name = tower.name
+							touchedTower.platforms.push(main.duplicateObject(tower.platforms[avatar.state.colRight % 64    ]))
+						}
+						else if (tower.platforms[avatar.state.colRight % 64 + 4].y == avatar.state.rowDown - 1) {
+							touchedTower.name = tower.name
+							touchedTower.platforms.push(main.duplicateObject(tower.platforms[avatar.state.colRight % 64 + 4]))
+						}
+					}
+
+				// data ?
+					if (touchedTower.name) {
+						return touchedTower
+					}
+					else {
+						return null
+					}
 			}
 			catch (error) {main.logError(error)}
 		}
@@ -513,9 +572,19 @@
 						var keys = Object.keys(request.game.data.heroes)
 
 						do {
-							var platform = main.chooseRandom(tower.platforms)
+							var platform   = main.chooseRandom(tower.platforms)
 							avatar.state.x =  platform.x      * 32
 							avatar.state.y = (platform.y + 1) * 32 + 16
+							avatar.state.tower = {
+								name: tower.name,
+								platforms: [main.duplicateObject(platform)]
+							}
+							
+							var cells = getCells(request.game.data.map.length, avatar.state.x, avatar.state.y, 32, 64)
+							avatar.state.colLeft  = cells.colLeft
+							avatar.state.colRight = cells.colRight
+							avatar.state.rowUp    = cells.rowUp
+							avatar.state.rowDown  = cells.rowDown
 						}
 						while (keys.find(function(k) {
 							return ((request.game.data.heroes[k].name    != avatar.name)
@@ -530,9 +599,19 @@
 						var tower = request.game.data.towers[towerNumber]
 
 						do {
-							var platform = main.chooseRandom(tower.platforms)
+							var platform   = main.chooseRandom(tower.platforms)
 							avatar.state.x = towerNumber * 64 * 32 + platform.x      * 32
 							avatar.state.y =                        (platform.y + 1) * 32 + 16
+							avatar.state.tower = {
+								name: tower.name,
+								platforms: [main.duplicateObject(platform)]
+							}
+
+							var cells = getCells(request.game.data.map.length, avatar.state.x, avatar.state.y, 32, 64)
+							avatar.state.colLeft  = cells.colLeft
+							avatar.state.colRight = cells.colRight
+							avatar.state.rowUp    = cells.rowUp
+							avatar.state.rowDown  = cells.rowDown
 						}
 						while (request.game.data.demons.find(function(d) {
 							return ((d.name    != avatar.name)
@@ -566,12 +645,18 @@
 						// heroes
 							var heroKeys = Object.keys(request.game.data.heroes)
 							for (var key in heroKeys) {
-								updatePosition(request, request.game.data.heroes[heroKeys[key]])
+								var hero = request.game.data.heroes[heroKeys[key]]
+								updatePosition(request, hero)
+								updateHealth(  request, hero)
+								updateTower(   request, hero)
 							}
 
 						// demons
 							for (var d in request.game.data.demons) {
-								updatePosition(request, request.game.data.demons[d])
+								var demon = request.game.data.demons[d]
+								updatePosition(request, demon)
+								updateHealth(  request, demon)
+								updateTower(   request, demon)
 							}
 
 						callback(Object.keys(request.game.players), request.game.data)
@@ -615,79 +700,191 @@
 					}
 
 				// adjust x & y
-					var mapLength = map.length * 32
-					var currentCells = getCells(map.length, avatar.state.x, avatar.state.y, 32, 64)
+					var mapLength      = map.length * 32
 						avatar.state.x = (avatar.state.x + avatar.state.vx + mapLength) % mapLength
 						avatar.state.y = Math.min(576, Math.max(-32, avatar.state.y + avatar.state.vy))
-					var futureCells  = getCells(map.length, avatar.state.x, avatar.state.y, 32, 64)
+					var future    = getCells(map.length, avatar.state.x, avatar.state.y, 32, 64)
 
 				// changing rows
-					if (currentCells.bottom != futureCells.bottom) {
+					if (avatar.state.rowDown != future.rowDown || avatar.state.rowUp != future.rowUp) {
 						// collision down
 							if ((avatar.state.vy <= 0) &&
-							   ((map[futureCells.left ][0] && futureCells.bottom <= map[futureCells.left ][0].top) 
-							 || (map[futureCells.right][0] && futureCells.bottom <= map[futureCells.right][0].top)
-							 || (map[futureCells.left ][1] && futureCells.bottom <= map[futureCells.left ][1].top) 
-							 || (map[futureCells.right][1] && futureCells.bottom <= map[futureCells.right][1].top)
-							 || (map[futureCells.left ][2] && futureCells.bottom <= map[futureCells.left ][2].top) 
-							 || (map[futureCells.right][2] && futureCells.bottom <= map[futureCells.right][2].top))) {
-								futureCells.bottom = (futureCells.bottom + 1 + map.length) % map.length
-								futureCells.top    = (futureCells.top    + 1 + map.length) % map.length
-								var collisionDown  = true
+							   ((map[future.colLeft ][0] && future.rowDown <= map[future.colLeft ][0].top)
+							 || (map[future.colRight][0] && future.rowDown <= map[future.colRight][0].top)
+							 || (map[future.colLeft ][1] && future.rowDown <= map[future.colLeft ][1].top && future.rowUp >= map[future.colLeft ][1].top)
+							 || (map[future.colRight][1] && future.rowDown <= map[future.colRight][1].top && future.rowUp >= map[future.colRight][1].top)
+							 || (map[future.colLeft ][2] && future.rowDown <= map[future.colLeft ][2].top && future.rowUp >= map[future.colLeft ][2].top)
+							 || (map[future.colRight][2] && future.rowDown <= map[future.colRight][2].top && future.rowUp >= map[future.colRight][2].top))) {
+								future.rowDown    = future.rowDown + 1
+								future.rowUp      = future.rowUp    + 1
+								var collisionDown = true
 							}
 
 						// collision up
-							//
+							else if ((avatar.state.vy > 0) &&
+							   ((map[future.colLeft ][1] && !map[future.colLeft ][1].note && future.rowUp >= map[future.colLeft ][1].bottom && future.rowDown <= map[future.colLeft ][1].bottom)
+							 || (map[future.colRight][1] && !map[future.colRight][1].note && future.rowUp >= map[future.colRight][1].bottom && future.rowDown <= map[future.colRight][1].bottom)
+							 || (map[future.colLeft ][2] && !map[future.colLeft ][2].note && future.rowUp >= map[future.colLeft ][2].bottom && future.rowDown <= map[future.colLeft ][2].bottom)
+							 || (map[future.colRight][2] && !map[future.colRight][2].note && future.rowUp >= map[future.colRight][2].bottom && future.rowDown <= map[future.colRight][2].bottom))) {
+								future.rowDown  = future.rowDown - 1
+								future.rowUp    = future.rowUp   - 1
+								avatar.state.y  = Math.min(576, Math.max(-32, avatar.state.y - avatar.state.vy))
+								avatar.state.vy = Math.max(-24, Math.min(0, avatar.state.vy))
+							}
 					}
 
 				// changing columns
-					if (currentCells.left != futureCells.left) {
+					if (avatar.state.colLeft != future.colLeft || avatar.state.colRight != future.colRight) {
 						// collision left
-							if ((map[futureCells.left][0] && futureCells.top    >= map[futureCells.left][0].bottom && futureCells.top    <= map[futureCells.left][0].top) 
-							 || (map[futureCells.left][0] && futureCells.bottom >= map[futureCells.left][0].bottom && futureCells.bottom <= map[futureCells.left][0].top)
-							 || (map[futureCells.left][1] && futureCells.top    >= map[futureCells.left][1].bottom && futureCells.top    <= map[futureCells.left][1].top) 
-							 || (map[futureCells.left][1] && futureCells.bottom >= map[futureCells.left][1].bottom && futureCells.bottom <= map[futureCells.left][1].top)
-							 || (map[futureCells.left][2] && futureCells.top    >= map[futureCells.left][2].bottom && futureCells.top    <= map[futureCells.left][2].top) 
-							 || (map[futureCells.left][2] && futureCells.bottom >= map[futureCells.left][2].bottom && futureCells.bottom <= map[futureCells.left][2].top)) {
-								futureCells.left  = (futureCells.left  + 1 + map.length) % map.length
-								futureCells.right = (futureCells.right + 1 + map.length) % map.length
+							if      ((map[future.colLeft ][0] &&                                  future.rowUp   >= map[future.colLeft ][0].bottom && future.rowUp   <= map[future.colLeft ][0].top)
+							      || (map[future.colLeft ][0] &&                                  future.rowDown >= map[future.colLeft ][0].bottom && future.rowDown <= map[future.colLeft ][0].top)
+							      || (map[future.colLeft ][1] && !map[future.colLeft ][1].note && future.rowUp   >= map[future.colLeft ][1].bottom && future.rowUp   <= map[future.colLeft ][1].top)
+							      || (map[future.colLeft ][1] && !map[future.colLeft ][1].note && future.rowDown >= map[future.colLeft ][1].bottom && future.rowDown <= map[future.colLeft ][1].top)
+							      || (map[future.colLeft ][2] && !map[future.colLeft ][2].note && future.rowUp   >= map[future.colLeft ][2].bottom && future.rowUp   <= map[future.colLeft ][2].top)
+							      || (map[future.colLeft ][2] && !map[future.colLeft ][2].note && future.rowDown >= map[future.colLeft ][2].bottom && future.rowDown <= map[future.colLeft ][2].top)) {
+								future.colLeft  = (future.colLeft  + 1       + map.length) % map.length
+								future.colRight = (future.colRight + 1       + map.length) % map.length
 								avatar.state.vx = Math.max(0, avatar.state.vx)
-								avatar.state.x  = ((futureCells.left * 32 + 8) + mapLength) % mapLength
+								avatar.state.x  = ((future.colLeft * 32 + 8) + mapLength) % mapLength
 							}
 
 						// collision right
-							else if ((map[futureCells.right][0] && futureCells.top    >= map[futureCells.right][0].bottom && futureCells.top    <= map[futureCells.right][0].top) 
-							      || (map[futureCells.right][0] && futureCells.bottom >= map[futureCells.right][0].bottom && futureCells.bottom <= map[futureCells.right][0].top)
-							      || (map[futureCells.right][1] && futureCells.top    >= map[futureCells.right][1].bottom && futureCells.top    <= map[futureCells.right][1].top) 
-							      || (map[futureCells.right][1] && futureCells.bottom >= map[futureCells.right][1].bottom && futureCells.bottom <= map[futureCells.right][1].top)
-							      || (map[futureCells.right][2] && futureCells.top    >= map[futureCells.right][2].bottom && futureCells.top    <= map[futureCells.right][2].top) 
-							      || (map[futureCells.right][2] && futureCells.bottom >= map[futureCells.right][2].bottom && futureCells.bottom <= map[futureCells.right][2].top)) {
-								futureCells.left  = (futureCells.left  - 1 + map.length) % map.length
-								futureCells.right = (futureCells.right - 1 + map.length) % map.length
+							else if ((map[future.colRight][0] &&                                  future.rowUp   >= map[future.colRight][0].bottom && future.rowUp   <= map[future.colRight][0].top)
+							      || (map[future.colRight][0] &&                                  future.rowDown >= map[future.colRight][0].bottom && future.rowDown <= map[future.colRight][0].top)
+							      || (map[future.colRight][1] && !map[future.colRight][1].note && future.rowUp   >= map[future.colRight][1].bottom && future.rowUp   <= map[future.colRight][1].top)
+							      || (map[future.colRight][1] && !map[future.colRight][1].note && future.rowDown >= map[future.colRight][1].bottom && future.rowDown <= map[future.colRight][1].top)
+							      || (map[future.colRight][2] && !map[future.colRight][2].note && future.rowUp   >= map[future.colRight][2].bottom && future.rowUp   <= map[future.colRight][2].top)
+							      || (map[future.colRight][2] && !map[future.colRight][2].note && future.rowDown >= map[future.colRight][2].bottom && future.rowDown <= map[future.colRight][2].top)) {
+
+								future.colLeft  =  (future.colLeft  - 1       + map.length) % map.length
+								future.colRight =  (future.colRight - 1       + map.length) % map.length
 								avatar.state.vx = Math.min(0, avatar.state.vx)
-								avatar.state.x  = ((futureCells.right * 32 - 8) + mapLength) % mapLength 
+								avatar.state.x  = ((future.colRight * 32 - 8) + mapLength ) % mapLength 
 							}
 					}
 
 				// check collisionDown again (to avoid hitting the "surface" inside a wall)
 					if (collisionDown) {
-						if ((map[futureCells.left ][0] && futureCells.bottom - 1 <= map[futureCells.left ][0].top) 
-						 || (map[futureCells.right][0] && futureCells.bottom - 1 <= map[futureCells.right][0].top)
-						 || (map[futureCells.left ][1] && futureCells.bottom - 1 <= map[futureCells.left ][1].top) 
-						 || (map[futureCells.right][1] && futureCells.bottom - 1 <= map[futureCells.right][1].top)
-						 || (map[futureCells.left ][2] && futureCells.bottom - 1 <= map[futureCells.left ][2].top) 
-						 || (map[futureCells.right][2] && futureCells.bottom - 1 <= map[futureCells.right][2].top)) {
+						if ((map[future.colLeft ][0] && future.rowDown - 1 <= map[future.colLeft ][0].top)
+						 || (map[future.colRight][0] && future.rowDown - 1 <= map[future.colRight][0].top)
+						 || (map[future.colLeft ][1] && future.rowDown - 1 <= map[future.colLeft ][1].top && future.rowDown - 1 >= map[future.colLeft ][1].bottom)
+						 || (map[future.colRight][1] && future.rowDown - 1 <= map[future.colRight][1].top && future.rowDown - 1 >= map[future.colRight][1].bottom)
+						 || (map[future.colLeft ][2] && future.rowDown - 1 <= map[future.colLeft ][2].top && future.rowDown - 1 >= map[future.colLeft ][2].bottom)
+						 || (map[future.colRight][2] && future.rowDown - 1 <= map[future.colRight][2].top && future.rowDown - 1 >= map[future.colRight][2].bottom)) {
 							avatar.state.vy = 0
-							avatar.state.y  = futureCells.bottom * 32
+							avatar.state.y  = Math.min(576, Math.max(-32, future.rowDown * 32))
 							avatar.state.jumpReset = false
 						}
 					}
 
+				// fix columns and rows
+					avatar.state.colLeft  = future.colLeft
+					avatar.state.colRight = future.colRight
+					avatar.state.rowUp    = future.rowUp
+					avatar.state.rowDown  = future.rowDown
+
+				// get tower
+					avatar.state.tower = getTower(request, avatar) || null
+			}
+			catch (error) {main.logError(error)}
+		}
+
+	/* updateHealth */
+		module.exports.updateHealth = updateHealth
+		function updateHealth(request, avatar) {
+			try {
 				// dead ?
-					if (avatar.state.y <= -32) {
-						avatar.state.y = -32
+					if (avatar.state.y <= 0) {
 						avatar.state.health = 0
 					}
+
+				// enemy tower platforms
+					if      (avatar.state.tower &&  avatar.state.health) {
+						if      (avatar.state.tower.platforms[0] && avatar.state.tower.platforms[0].team && avatar.state.tower.platforms[0].team !== avatar.team) {
+							avatar.state.health = Math.max(0, Math.min(255, avatar.state.health - 2))
+						}
+						else if (avatar.state.tower.platforms[1] && avatar.state.tower.platforms[1].team && avatar.state.tower.platforms[1].team !== avatar.team) {
+							avatar.state.health = Math.max(0, Math.min(255, avatar.state.health - 2))
+						}
+					}
+
+				// friendly tower platforms
+					else if (avatar.state.tower && !avatar.state.health) {
+						var lastNote = (avatar.state.keys[avatar.state.keys.length - 1] || "").slice(0,1) || null
+						if      (lastNote && avatar.state.tower.platforms[0] && avatar.state.tower.platforms[0].team == avatar.team && avatar.state.tower.platforms[0].note == lastNote) {
+							avatar.state.health = 255
+						}
+						else if (lastNote && avatar.state.tower.platforms[1] && avatar.state.tower.platforms[1].team == avatar.team && avatar.state.tower.platforms[1].note == lastNote) {
+							avatar.state.health = 255
+						}
+					}
+
+				// attack
+
+				// health-down spell
+
+				// health-up   spell
+
+			}
+			catch (error) {main.logError(error)}
+		}
+
+	/* updateTower */
+		module.exports.updateTower = updateTower
+		function updateTower(request, avatar) {
+			try {
+				if (avatar.state.health) {
+					// get note
+						var lastNote = (avatar.state.keys[avatar.state.keys.length - 1] || "").slice(0,1) || null
+						var changePlatform = false
+
+					// platform control
+						if (avatar.state.tower && lastNote) {
+							var tower = request.game.data.towers.find(function (t) {
+								return t.name == avatar.state.tower.name
+							})
+
+							if      (avatar.state.tower.platforms[0] && avatar.state.tower.platforms[0].team != avatar.team && avatar.state.tower.platforms[0].note == lastNote) {
+								var platform = tower.platforms.find(function (p) {
+									return (p.x == avatar.state.tower.platforms[0].x && p.y == avatar.state.tower.platforms[0].y)
+								})
+								platform.team = avatar.team
+								changePlatform = true
+							}
+							else if (avatar.state.tower.platforms[1] && avatar.state.tower.platforms[1].team != avatar.team && avatar.state.tower.platforms[1].note == lastNote) {
+								var platform = tower.platforms.find(function (p) {
+									return (p.x == avatar.state.tower.platforms[1].x && p.y == avatar.state.tower.platforms[1].y)
+								})
+								platform.team = avatar.team
+								changePlatform = true
+							}
+						}
+
+					// tower control
+						if (changePlatform && tower) {
+							var heroControl  = true
+							var demonControl = true
+
+							for (var p in tower.platforms) {
+								if (tower.platforms[p].team != "heroes") {
+									heroControl = false
+								}
+								if (tower.platforms[p].team != "demons") {
+									demonControl = false
+								}
+							}
+
+							if (heroControl) {
+								tower.team = "heroes"
+							}
+							else if (demonControl) {
+								tower.team = "demons"
+							}
+							else {
+								tower.team = null
+							}
+						}
+				}
 			}
 			catch (error) {main.logError(error)}
 		}
