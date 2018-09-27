@@ -453,15 +453,11 @@
 						}
 				}
 
-			// heroes
-				var heroKeys = Object.keys(data.heroes)
-				for (var key in heroKeys) {
-					drawAvatar(1280 - ((data.heroes[heroKeys[key]].state.x - startX + mapLength + 20) % mapLength - 20) / 1.6, (data.heroes[heroKeys[key]].state.y / 1.6) + 40, 20, 40, data.heroes[heroKeys[key]])
-				}
-
-			// demons
-				for (var d in data.demons) {
-					drawAvatar(1280 - ((data.demons[d].state.x             - startX + mapLength + 20) % mapLength - 20) / 1.6, (data.demons[d].state.y             / 1.6) + 40, 20, 40, data.demons[d])
+			// heroes & demons
+				var keys = Object.keys(data.heroes).concat(Object.keys(data.demons))
+				for (var k in keys) {
+					var avatar = (keys[k] > -1) ? data.demons[keys[k]] : data.heroes[keys[k]]
+					drawAvatar(1280 - ((avatar.state.x - startX + mapLength + 20) % mapLength - 20) / 1.6, (avatar.state.y / 1.6) + 40, 20, 40, avatar)
 				}
 		}
 
@@ -582,15 +578,11 @@
 						}
 				}
 
-			// heroes
-				var heroKeys = Object.keys(data.heroes)
-				for (var key in heroKeys) {
-					drawAvatar((data.heroes[heroKeys[key]].state.x - startX + mapLength + 32) % mapLength - 32, data.heroes[heroKeys[key]].state.y, 32, 64, data.heroes[heroKeys[key]])
-				}
-
-			// demons
-				for (var d in data.demons) {
-					drawAvatar((data.demons[d].state.x             - startX + mapLength + 32) % mapLength - 32, data.demons[d].state.y            , 32, 64, data.demons[d])
+			// heroes & demons
+				var keys = Object.keys(data.heroes).concat(Object.keys(data.demons))
+				for (var k in keys) {
+					var avatar = (keys[k] > -1) ? data.demons[keys[k]] : data.heroes[keys[k]]
+					drawAvatar((avatar.state.x - startX + mapLength + 32) % mapLength - 32, avatar.state.y, 32, 64, avatar)
 				}
 		}
 

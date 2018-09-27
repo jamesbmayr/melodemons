@@ -170,15 +170,11 @@
 								request.game.data.map.push(createColumn(request))
 							}
 
-						// heroes - positions
-							var heroKeys = Object.keys(request.game.data.heroes)
-							for (var key in heroKeys) {
-								setStartingPosition(request, request.game.data.heroes[heroKeys[key]])
-							}
-
-						// demons - positions
-							for (var d in request.game.data.demons) {
-								setStartingPosition(request, request.game.data.demons[d])
+						// heroes & demons - positions
+							var keys = Object.keys(request.game.data.heroes).concat(Object.keys(request.game.data.demons))
+							for (var k in keys) {
+								var avatar = (keys[k] > -1) ? request.game.data.demons[keys[k]] : request.game.data.heroes[keys[k]]
+								setStartingPosition(request, avatar)
 							}
 		
 						// start game
@@ -386,13 +382,13 @@
 				else if (map.length % 64 >= 27 && map.length % 64 < 41) { // middle 12 columns
 					var obstacleX = (map.length % 64)
 					if      ([27,40].includes(obstacleX)) { // space around spaces
-						column[0] = {bottom: 0, top: Math.max(0, Math.min(7, column[0] ? column[0].top : 6))}
+						column[0] = {bottom: 0, top: Math.max(0, Math.min(6, column[0] ? column[0].top : 5))}
 					}
 					else if ([28,39].includes(obstacleX)) { // space around spaces
 						column[0] = {bottom: 0, top: Math.max(0, Math.min(4, column[0] ? column[0].top : 4))}
 					}
 					else if ([29,38].includes(obstacleX)) { // space around edges
-						column[0] = {bottom: 0, top: Math.max(0, Math.min(3, column[0] ? column[0].top : 3))}
+						column[0] = {bottom: 0, top: Math.max(0, Math.min(4, column[0] ? column[0].top : 4))}
 					}
 					else if ([30,37].includes(obstacleX)) { // space around edges
 						column[0] = {bottom: 0, top: Math.max(0, Math.min(3, column[0] ? column[0].top : 3))}
@@ -419,37 +415,47 @@
 
 		}
 
-	/* createAttack */
-		module.exports.createAttack = createAttack
-		function createAttack(request) {
+	/* createarrow */
+		module.exports.createarrow = createarrow
+		function createarrow(request) {
 
 		}
 
 /*** triggers ***/
+	/* getAvatar */
+		module.exports.getAvatar = getAvatar
+		function getAvatar(request) {
+			try {
+				// demons
+					if (request.game.players[request.session.id].admin) {
+						return request.game.data.demons.find(function(d) {
+							return d.state.selected
+						}) || request.game.data.demons[0]
+					}
+
+				// heroes
+					else {
+						return request.game.data.heroes[request.session.id] || null
+					}
+			}
+			catch (error) {main.logError(error)}
+		}
+
 	/* triggerMove */
 		module.exports.triggerMove = triggerMove
 		function triggerMove(request, callback) {
 			try {
-				// get avatar
-					if (request.game.players[request.session.id].admin) { // demons
-						var avatar = request.game.data.demons.find(function(d) {
-							return d.state.selected
-						})
-					}
-					else { // heroes
-						var avatar = request.game.data.heroes[request.session.id]
-					}
+				var avatar = getAvatar(request)
 
-				// update velocity
-					if (!avatar) {
-						callback({success: false, message: "no avatar selected"})
+				if (!avatar) {
+					callback({success: false, message: "no avatar selected"})
+				}
+				else {
+					avatar.state[request.post.key] = request.post.press
+					if (request.post.key == "up" && !request.post.press) {
+						avatar.state.jumpReset = true
 					}
-					else {
-						avatar.state[request.post.key] = request.post.press
-						if (request.post.key == "up" && !request.post.press) {
-							avatar.state.jumpReset = true
-						}
-					}
+				}
 			}
 			catch (error) {main.logError(error)}
 		}
@@ -458,26 +464,17 @@
 		module.exports.triggerNote = triggerNote
 		function triggerNote(request, callback) {
 			try {
-				// get avatar
-					if (request.game.players[request.session.id].admin) { // demons
-						var avatar = request.game.data.demons.find(function(d) {
-							return d.state.selected
-						})
-					}
-					else { // heroes
-						var avatar = request.game.data.heroes[request.session.id]
-					}
+				var avatar = getAvatar(request)
 
-				// update keys
-					if (!avatar) {
-						callback({success: false, message: "no avatar selected"})
-					}
-					else if (request.post.press && !avatar.state.keys.includes(request.post.key)) {
-						avatar.state.keys.push(request.post.key)
-					}
-					else if (!request.post.press && avatar.state.keys.includes(request.post.key)) {
-						avatar.state.keys.splice(avatar.state.keys.indexOf(request.post.press), 1)
-					}
+				if (!avatar) {
+					callback({success: false, message: "no avatar selected"})
+				}
+				else if (request.post.press && !avatar.state.keys.includes(request.post.key)) {
+					avatar.state.keys.push(request.post.key)
+				}
+				else if (!request.post.press && avatar.state.keys.includes(request.post.key)) {
+					avatar.state.keys.splice(avatar.state.keys.indexOf(request.post.press), 1)
+				}
 			}
 			catch (error) {main.logError(error)}
 		}
@@ -486,8 +483,13 @@
 		module.exports.triggerNumber = triggerNumber
 		function triggerNumber(request, callback) {
 			try {
-				if (!request.game.players[request.session.id].admin) {
-					callback({success: false, message: "not demons"})
+				var avatar = getAvatar(request)
+
+				if (!avatar.team == "demons") {
+					callback([request.session.id], {success: false, message: "not demons"})
+				}
+				else if (!request.game.data.demons[request.post.key - 1]) {
+					callback([request.session.id], {success: false, message: "demon not found"})
 				}
 				else {
 					for (var d in request.game.data.demons) {
@@ -501,15 +503,33 @@
 		}
 
 /*** movement ***/
+	/* getAngle */
+		module.exports.getAngle = getAngle
+		function getAngle(x, y) {
+			try {
+				return Math.atan(y / x)
+			}
+			catch (error) {main.logError(error)}
+		}
+
+	/* getScalar */
+		module.exports.getScalar = getScalar
+		function getScalar(x, y) {
+			try {
+				return Math.pow(Math.pow(x, 2) + Math.pow(y, 2), 0.5)
+			}
+			catch (error) {main.logError(error)}
+		}
+
 	/* getCells */
 		module.exports.getCells = getCells
 		function getCells(columnCount, x, y, width, height) {
 			try {
 				return {
-					colLeft:  (Math.floor(x / 32)                           + columnCount) % columnCount,
-					colRight: (Math.floor(x / 32) + Math.floor(width  / 32) + columnCount) % columnCount,
-					rowDown:   Math.floor(y / 32),
-					rowUp:     Math.floor(y / 32) + Math.floor(height / 32) - 1
+					colLeft:  (Math.floor( x           / 32) + columnCount) % columnCount,
+					colRight: (Math.floor((x + width)  / 32) + columnCount) % columnCount,
+					rowDown:   Math.floor( y           / 32),
+					rowUp:     Math.floor((y + height - 1) / 32)
 				}
 			}
 			catch (error) {main.logError(error)}
@@ -569,22 +589,12 @@
 				// heroes
 					if (avatar.team == "heroes") {
 						var tower = request.game.data.towers[0]
-						var keys = Object.keys(request.game.data.heroes)
+						var keys  = Object.keys(request.game.data.heroes)
 
 						do {
 							var platform   = main.chooseRandom(tower.platforms)
 							avatar.state.x =  platform.x      * 32
 							avatar.state.y = (platform.y + 1) * 32 + 16
-							avatar.state.tower = {
-								name: tower.name,
-								platforms: [main.duplicateObject(platform)]
-							}
-							
-							var cells = getCells(request.game.data.map.length, avatar.state.x, avatar.state.y, 32, 64)
-							avatar.state.colLeft  = cells.colLeft
-							avatar.state.colRight = cells.colRight
-							avatar.state.rowUp    = cells.rowUp
-							avatar.state.rowDown  = cells.rowDown
 						}
 						while (keys.find(function(k) {
 							return ((request.game.data.heroes[k].name    != avatar.name)
@@ -596,22 +606,12 @@
 				// demons
 					else {
 						var towerNumber = Math.floor(Object.keys(request.game.players).length / 2) + 1
-						var tower = request.game.data.towers[towerNumber]
+						var tower       = request.game.data.towers[towerNumber]
 
 						do {
 							var platform   = main.chooseRandom(tower.platforms)
 							avatar.state.x = towerNumber * 64 * 32 + platform.x      * 32
 							avatar.state.y =                        (platform.y + 1) * 32 + 16
-							avatar.state.tower = {
-								name: tower.name,
-								platforms: [main.duplicateObject(platform)]
-							}
-
-							var cells = getCells(request.game.data.map.length, avatar.state.x, avatar.state.y, 32, 64)
-							avatar.state.colLeft  = cells.colLeft
-							avatar.state.colRight = cells.colRight
-							avatar.state.rowUp    = cells.rowUp
-							avatar.state.rowDown  = cells.rowDown
 						}
 						while (request.game.data.demons.find(function(d) {
 							return ((d.name    != avatar.name)
@@ -619,6 +619,19 @@
 								 && (d.state.y == avatar.state.y))
 						}))
 					}
+
+				// set tower
+					avatar.state.tower = {
+						name: tower.name,
+						platforms: [main.duplicateObject(platform)]
+					}
+
+				// set cells
+					var cells = getCells(request.game.data.map.length, avatar.state.x, avatar.state.y, 32, 64)
+						avatar.state.colLeft  = cells.colLeft
+						avatar.state.colRight = cells.colRight
+						avatar.state.rowUp    = cells.rowUp
+						avatar.state.rowDown  = cells.rowDown
 			}
 			catch (error) {main.logError(error)}
 		}
@@ -642,21 +655,19 @@
 							var towers  = request.game.data.towers
 							var objects = request.game.data.objects
 
-						// heroes
-							var heroKeys = Object.keys(request.game.data.heroes)
-							for (var key in heroKeys) {
-								var hero = request.game.data.heroes[heroKeys[key]]
-								updatePosition(request, hero)
-								updateHealth(  request, hero)
-								updateTower(   request, hero)
+						// heroes & demons
+							var keys = Object.keys(request.game.data.heroes).concat(Object.keys(request.game.data.demons))
+							for (var k in keys) {
+								var avatar = (keys[k] > -1) ? request.game.data.demons[keys[k]] : request.game.data.heroes[keys[k]]
+								updateVelocity(  request, avatar)
+								updateCollisions(request, avatar)
 							}
 
-						// demons
-							for (var d in request.game.data.demons) {
-								var demon = request.game.data.demons[d]
-								updatePosition(request, demon)
-								updateHealth(  request, demon)
-								updateTower(   request, demon)
+							for (var k in keys) {
+								var avatar = (keys[k] > -1) ? request.game.data.demons[keys[k]] : request.game.data.heroes[keys[k]]
+								updatePosition(  request, avatar)
+								updateHealth(    request, avatar)
+								updateTower(     request, avatar)
 							}
 
 						callback(Object.keys(request.game.players), request.game.data)
@@ -665,13 +676,10 @@
 			catch (error) {main.logError(error)}
 		}
 
-	/* updatePosition */
-		module.exports.updatePosition = updatePosition
-		function updatePosition(request, avatar) {
+	/* updateVelocity */
+		module.exports.updateVelocity = updateVelocity
+		function updateVelocity(request, avatar) {
 			try {
-				// map
-					var map = request.game.data.map
-
 				// adjust vx
 					if (avatar.state.left && avatar.state.right) {
 						avatar.state.vx = Math.max(-10, Math.min(10, avatar.state.vx))
@@ -698,17 +706,25 @@
 						avatar.state.vy = Math.max(-24, Math.min(24, avatar.state.vy - 4))
 						avatar.state.jumpReset = true
 					}
+			}
+			catch (error) {main.logError(error)}
+		}
 
+	/* updatePosition */
+		module.exports.updatePosition = updatePosition
+		function updatePosition(request, avatar) {
+			try {
 				// adjust x & y
+					var map            = request.game.data.map
 					var mapLength      = map.length * 32
 						avatar.state.x = (avatar.state.x + avatar.state.vx + mapLength) % mapLength
 						avatar.state.y = Math.min(576, Math.max(-32, avatar.state.y + avatar.state.vy))
-					var future    = getCells(map.length, avatar.state.x, avatar.state.y, 32, 64)
+					var future         = getCells(map.length, avatar.state.x, avatar.state.y, 32, 64)
 
-				// changing rows
+				// terrain collision - changing rows
 					if (avatar.state.rowDown != future.rowDown || avatar.state.rowUp != future.rowUp) {
 						// collision down
-							if ((avatar.state.vy <= 0) &&
+							if ((avatar.state.vy <= 0)   && !(avatar.state.down && avatar.state.tower) &&
 							   ((map[future.colLeft ][0] && future.rowDown <= map[future.colLeft ][0].top)
 							 || (map[future.colRight][0] && future.rowDown <= map[future.colRight][0].top)
 							 || (map[future.colLeft ][1] && future.rowDown <= map[future.colLeft ][1].top && future.rowUp >= map[future.colLeft ][1].top)
@@ -716,32 +732,35 @@
 							 || (map[future.colLeft ][2] && future.rowDown <= map[future.colLeft ][2].top && future.rowUp >= map[future.colLeft ][2].top)
 							 || (map[future.colRight][2] && future.rowDown <= map[future.colRight][2].top && future.rowUp >= map[future.colRight][2].top))) {
 								future.rowDown    = future.rowDown + 1
-								future.rowUp      = future.rowUp    + 1
+								future.rowUp      = future.rowUp   + 1
 								var collisionDown = true
+							}
+							else {
+								avatar.state.surface = false
 							}
 
 						// collision up
-							else if ((avatar.state.vy > 0) &&
+							if ((avatar.state.vy > 0) &&
 							   ((map[future.colLeft ][1] && !map[future.colLeft ][1].note && future.rowUp >= map[future.colLeft ][1].bottom && future.rowDown <= map[future.colLeft ][1].bottom)
 							 || (map[future.colRight][1] && !map[future.colRight][1].note && future.rowUp >= map[future.colRight][1].bottom && future.rowDown <= map[future.colRight][1].bottom)
 							 || (map[future.colLeft ][2] && !map[future.colLeft ][2].note && future.rowUp >= map[future.colLeft ][2].bottom && future.rowDown <= map[future.colLeft ][2].bottom)
 							 || (map[future.colRight][2] && !map[future.colRight][2].note && future.rowUp >= map[future.colRight][2].bottom && future.rowDown <= map[future.colRight][2].bottom))) {
 								future.rowDown  = future.rowDown - 1
 								future.rowUp    = future.rowUp   - 1
-								avatar.state.y  = Math.min(576, Math.max(-32, avatar.state.y - avatar.state.vy))
+								avatar.state.y  = Math.min(576, Math.max(-32, avatar.state.y - 2))
 								avatar.state.vy = Math.max(-24, Math.min(0, avatar.state.vy))
 							}
 					}
 
-				// changing columns
+				// terrain collision - changing columns
 					if (avatar.state.colLeft != future.colLeft || avatar.state.colRight != future.colRight) {
 						// collision left
-							if      ((map[future.colLeft ][0] &&                                  future.rowUp   >= map[future.colLeft ][0].bottom && future.rowUp   <= map[future.colLeft ][0].top)
-							      || (map[future.colLeft ][0] &&                                  future.rowDown >= map[future.colLeft ][0].bottom && future.rowDown <= map[future.colLeft ][0].top)
-							      || (map[future.colLeft ][1] && !map[future.colLeft ][1].note && future.rowUp   >= map[future.colLeft ][1].bottom && future.rowUp   <= map[future.colLeft ][1].top)
-							      || (map[future.colLeft ][1] && !map[future.colLeft ][1].note && future.rowDown >= map[future.colLeft ][1].bottom && future.rowDown <= map[future.colLeft ][1].top)
-							      || (map[future.colLeft ][2] && !map[future.colLeft ][2].note && future.rowUp   >= map[future.colLeft ][2].bottom && future.rowUp   <= map[future.colLeft ][2].top)
-							      || (map[future.colLeft ][2] && !map[future.colLeft ][2].note && future.rowDown >= map[future.colLeft ][2].bottom && future.rowDown <= map[future.colLeft ][2].top)) {
+							if      ((map[future.colLeft ][0] &&                                                         future.rowUp   >= map[future.colLeft ][0].bottom && future.rowUp   <= map[future.colLeft ][0].top)
+							      || (map[future.colLeft ][0] &&                                                         future.rowDown >= map[future.colLeft ][0].bottom && future.rowDown <= map[future.colLeft ][0].top)
+							      || (map[future.colLeft ][1] && !map[future.colLeft ][1].note && avatar.state.health && future.rowUp   >= map[future.colLeft ][1].bottom && future.rowUp   <= map[future.colLeft ][1].top)
+							      || (map[future.colLeft ][1] && !map[future.colLeft ][1].note && avatar.state.health && future.rowDown >= map[future.colLeft ][1].bottom && future.rowDown <= map[future.colLeft ][1].top)
+							      || (map[future.colLeft ][2] && !map[future.colLeft ][2].note && avatar.state.health && future.rowUp   >= map[future.colLeft ][2].bottom && future.rowUp   <= map[future.colLeft ][2].top)
+							      || (map[future.colLeft ][2] && !map[future.colLeft ][2].note && avatar.state.health && future.rowDown >= map[future.colLeft ][2].bottom && future.rowDown <= map[future.colLeft ][2].top)) {
 								future.colLeft  = (future.colLeft  + 1       + map.length) % map.length
 								future.colRight = (future.colRight + 1       + map.length) % map.length
 								avatar.state.vx = Math.max(0, avatar.state.vx)
@@ -749,42 +768,178 @@
 							}
 
 						// collision right
-							else if ((map[future.colRight][0] &&                                  future.rowUp   >= map[future.colRight][0].bottom && future.rowUp   <= map[future.colRight][0].top)
-							      || (map[future.colRight][0] &&                                  future.rowDown >= map[future.colRight][0].bottom && future.rowDown <= map[future.colRight][0].top)
-							      || (map[future.colRight][1] && !map[future.colRight][1].note && future.rowUp   >= map[future.colRight][1].bottom && future.rowUp   <= map[future.colRight][1].top)
-							      || (map[future.colRight][1] && !map[future.colRight][1].note && future.rowDown >= map[future.colRight][1].bottom && future.rowDown <= map[future.colRight][1].top)
-							      || (map[future.colRight][2] && !map[future.colRight][2].note && future.rowUp   >= map[future.colRight][2].bottom && future.rowUp   <= map[future.colRight][2].top)
-							      || (map[future.colRight][2] && !map[future.colRight][2].note && future.rowDown >= map[future.colRight][2].bottom && future.rowDown <= map[future.colRight][2].top)) {
+							else if ((map[future.colRight][0] &&                                                         future.rowUp   >= map[future.colRight][0].bottom && future.rowUp   <= map[future.colRight][0].top)
+							      || (map[future.colRight][0] &&                                                         future.rowDown >= map[future.colRight][0].bottom && future.rowDown <= map[future.colRight][0].top)
+							      || (map[future.colRight][1] && !map[future.colRight][1].note && avatar.state.health && future.rowUp   >= map[future.colRight][1].bottom && future.rowUp   <= map[future.colRight][1].top)
+							      || (map[future.colRight][1] && !map[future.colRight][1].note && avatar.state.health && future.rowDown >= map[future.colRight][1].bottom && future.rowDown <= map[future.colRight][1].top)
+							      || (map[future.colRight][2] && !map[future.colRight][2].note && avatar.state.health && future.rowUp   >= map[future.colRight][2].bottom && future.rowUp   <= map[future.colRight][2].top)
+							      || (map[future.colRight][2] && !map[future.colRight][2].note && avatar.state.health && future.rowDown >= map[future.colRight][2].bottom && future.rowDown <= map[future.colRight][2].top)) {
 
 								future.colLeft  =  (future.colLeft  - 1       + map.length) % map.length
 								future.colRight =  (future.colRight - 1       + map.length) % map.length
 								avatar.state.vx = Math.min(0, avatar.state.vx)
-								avatar.state.x  = ((future.colRight * 32 - 8) + mapLength ) % mapLength 
+								avatar.state.x  = ((future.colRight * 32 - 8) + mapLength ) % mapLength
 							}
 					}
 
 				// check collisionDown again (to avoid hitting the "surface" inside a wall)
 					if (collisionDown) {
-						if ((map[future.colLeft ][0] && future.rowDown - 1 <= map[future.colLeft ][0].top)
-						 || (map[future.colRight][0] && future.rowDown - 1 <= map[future.colRight][0].top)
-						 || (map[future.colLeft ][1] && future.rowDown - 1 <= map[future.colLeft ][1].top && future.rowDown - 1 >= map[future.colLeft ][1].bottom)
-						 || (map[future.colRight][1] && future.rowDown - 1 <= map[future.colRight][1].top && future.rowDown - 1 >= map[future.colRight][1].bottom)
-						 || (map[future.colLeft ][2] && future.rowDown - 1 <= map[future.colLeft ][2].top && future.rowDown - 1 >= map[future.colLeft ][2].bottom)
-						 || (map[future.colRight][2] && future.rowDown - 1 <= map[future.colRight][2].top && future.rowDown - 1 >= map[future.colRight][2].bottom)) {
-							avatar.state.vy = 0
-							avatar.state.y  = Math.min(576, Math.max(-32, future.rowDown * 32))
-							avatar.state.jumpReset = false
-						}
+						// terrain
+							if      ((map[future.colLeft ][0] && future.rowDown - 1 <= map[future.colLeft ][0].top)
+							      || (map[future.colRight][0] && future.rowDown - 1 <= map[future.colRight][0].top)) {
+								avatar.state.vy = 0
+								avatar.state.y  = Math.min(576, Math.max(-32, future.rowDown * 32))
+								avatar.state.jumpReset = false
+								avatar.state.surface   = true
+							}
+
+						// obstacles
+							else if ((map[future.colLeft ][1] && !map[future.colLeft ][1].note && future.rowDown - 1 <= map[future.colLeft ][1].top && future.rowDown - 1 >= map[future.colLeft ][1].bottom)
+							      || (map[future.colRight][1] && !map[future.colRight][1].note && future.rowDown - 1 <= map[future.colRight][1].top && future.rowDown - 1 >= map[future.colRight][1].bottom)) {
+								avatar.state.vy = 0
+								avatar.state.y  = Math.min(576, Math.max(-32, future.rowDown * 32))
+								avatar.state.jumpReset = false
+								avatar.state.surface   = true
+							}
+
+						// tower platforms
+							else if (map[future.colLeft ][1] && map[future.colLeft ][1].note && avatar.state.y <= (map[future.colLeft ][1].top + 1) * 32 && (avatar.state.y - avatar.state.vy >= (map[future.colLeft ][1].top + 1) * 32)) {
+								avatar.state.vy = 0
+								avatar.state.y  = Math.min(576, Math.max(-32, (map[future.colLeft ][1].top + 1) * 32))
+								avatar.state.jumpReset = false
+								avatar.state.surface   = true
+								future.rowDown = Math.floor( avatar.state.y / 32)
+								future.rowUp   = Math.floor((avatar.state.y + 63) / 32)
+							}
+							else if (map[future.colRight][1] && map[future.colRight][1].note && avatar.state.y <= (map[future.colRight][1].top + 1) * 32 && (avatar.state.y - avatar.state.vy >= (map[future.colRight][1].top + 1) * 32)) {
+								avatar.state.vy = 0
+								avatar.state.y  = Math.min(576, Math.max(-32, (map[future.colRight][1].top + 1) * 32))
+								avatar.state.jumpReset = false
+								avatar.state.surface   = true
+								future.rowDown = Math.floor( avatar.state.y / 32)
+								future.rowUp   = Math.floor((avatar.state.y + 63) / 32)
+							}
+							else if (map[future.colLeft ][2] && map[future.colLeft ][1].note && avatar.state.y <= (map[future.colLeft ][2].top + 1) * 32 && (avatar.state.y - avatar.state.vy >= (map[future.colLeft ][2].top + 1) * 32)) {
+								avatar.state.vy = 0
+								avatar.state.y  = Math.min(576, Math.max(-32, (map[future.colLeft ][2].top + 1) * 32))
+								avatar.state.jumpReset = false
+								avatar.state.surface   = true
+								future.rowDown = Math.floor( avatar.state.y / 32)
+								future.rowUp   = Math.floor((avatar.state.y + 63) / 32)
+							}
+							else if (map[future.colRight][2] && map[future.colRight][1].note && avatar.state.y <= (map[future.colRight][2].top + 1) * 32 && (avatar.state.y - avatar.state.vy >= (map[future.colRight][2].top + 1) * 32)) {
+								avatar.state.vy = 0
+								avatar.state.y  = Math.min(576, Math.max(-32, (map[future.colRight][2].top + 1) * 32))
+								avatar.state.jumpReset = false
+								avatar.state.surface   = true
+								future.rowDown = Math.floor( avatar.state.y / 32)
+								future.rowUp   = Math.floor((avatar.state.y + 63) / 32)
+							}
+
+						// falling
+							else {
+								future.rowDown = future.rowDown - 1
+								future.rowUp   = future.rowUp   - 1
+							}
 					}
 
-				// fix columns and rows
+				// update columns, rows, tower
 					avatar.state.colLeft  = future.colLeft
 					avatar.state.colRight = future.colRight
 					avatar.state.rowUp    = future.rowUp
 					avatar.state.rowDown  = future.rowDown
-
-				// get tower
 					avatar.state.tower = getTower(request, avatar) || null
+			}
+			catch (error) {main.logError(error)}
+		}
+
+	/* updateCollisions */
+		module.exports.updateCollisions = updateCollisions
+		function updateCollisions(request, avatar) {
+			try {
+				// player - player
+					if (avatar.state.health) {
+						var keys = Object.keys(request.game.data.heroes).concat(Object.keys(request.game.data.demons))
+						var mapLength = request.game.data.map.length * 32
+
+						for (var k in keys) {
+							var opponent = (keys[k] > -1) ? request.game.data.demons[keys[k]] : request.game.data.heroes[keys[k]]
+
+							// wrap-around issue
+								var avLeft = (  avatar.state.colLeft == request.game.data.map.length - 1) ? (-1 * request.game.data.map.length) : 0
+								var opLeft = (opponent.state.colLeft == request.game.data.map.length - 1) ? (-1 * request.game.data.map.length) : 0
+							
+							if ((opponent.name !== avatar.name) && (opponent.state.health)
+							 && ((avatar.state.rowUp             >= opponent.state.rowDown          && avatar.state.rowUp             <= opponent.state.rowUp)
+							  || (avatar.state.rowDown           >= opponent.state.rowDown          && avatar.state.rowDown           <= opponent.state.rowUp + 1)) // standing on someone's head
+							 && ((avatar.state.colLeft + avLeft  >= opponent.state.colLeft + opLeft && avatar.state.colLeft + avLeft  <= opponent.state.colRight)
+							  || (avatar.state.colRight          >= opponent.state.colLeft + opLeft && avatar.state.colRight          <= opponent.state.colRight))) { // same cells
+								
+								// same x, moving y
+									if ((opponent.state.x + (opLeft * 32) <= avatar.state.x + (avLeft * 32)      && avatar.state.x + (avLeft * 32)      <= opponent.state.x + (opLeft * 32) + 32)
+									 || (opponent.state.x + (opLeft * 32) <  avatar.state.x + (avLeft * 32) + 32 && avatar.state.x + (avLeft * 32) + 32 <  opponent.state.x + (opLeft * 32) + 32)) {
+										// collision down
+											if ((opponent.state.y + 32 < avatar.state.y && avatar.state.y <= opponent.state.y + 64) && avatar.state.vy < 0) {
+												avatar.state.vy = Math.max(0,   Math.min(16,  avatar.state.vy + 4))
+												avatar.state.y  = Math.max(-32, Math.min(576, avatar.state.y))
+
+												if (!opponent.state.surface || opponent.state.tower) {
+													opponent.state.vy = Math.max(-24, Math.min(0, opponent.state.vy))
+												}
+												else if (opponent.state.surface) {
+													avatar.state.y = opponent.state.y + 64
+													avatar.state.vy = 0
+													avatar.state.surface   = true
+													avatar.state.jumpReset = false
+
+													if (avatar.state.x + (avLeft * 32) > opponent.state.x + (opLeft * 32) + 8) {
+														avatar.state.x = (avatar.state.x + 2 + mapLength) % mapLength
+													}
+													else if (avatar.state.x + (avLeft * 32) < opponent.state.x + (opLeft * 32) - 8) {
+														avatar.state.x = (avatar.state.x - 2 + mapLength) % mapLength
+													}
+												}
+											}
+
+										// collision up
+											else if ((opponent.state.y < avatar.state.y + 64 && avatar.state.y + 64 <= opponent.state.y + 64) && avatar.state.vy > 0) {
+												  avatar.state.vy = Math.max(-24, Math.min(0,     avatar.state.vy))
+												  // avatar.state.y  = Math.max(-32, Math.min(576,   avatar.state.y - 4))
+												  avatar.state.jumpReset = true
+												opponent.state.vy = Math.max(-24, Math.min(16,  opponent.state.vy + 8))
+												opponent.state.surface   = true
+												opponent.state.jumpReset = false
+											}
+									}
+
+								// same y, moving x
+									if ((opponent.state.y <= avatar.state.y && avatar.state.y <= opponent.state.y + 64) || (opponent.state.y < avatar.state.y + 64 & avatar.state.y + 64 < opponent.state.y + 64)) {
+										// collision left
+											if ((opponent.state.x + (opLeft * 32) < avatar.state.x && avatar.state.x < opponent.state.x + (opLeft * 32) + 32) && avatar.state.vx < 0) {
+												  avatar.state.vx = Math.max(-16, Math.min(16,   avatar.state.vx + 4))
+												  avatar.state.x  = ((avatar.state.x + 4) + mapLength) % mapLength
+												opponent.state.vx = Math.max(-16, Math.min(16, opponent.state.vx - 4))
+											}
+
+										// collision right
+											else if ((opponent.state.x + (opLeft * 32) < avatar.state.x + (avLeft * 32) + 32 && avatar.state.x + (avLeft * 32) + 32 < opponent.state.x + (opLeft * 32) + 32) && avatar.state.vx > 0) {
+												  avatar.state.vx = Math.max(-16, Math.min(16,  avatar.state.vx - 4))
+												  avatar.state.x  = ((avatar.state.x - 4) + mapLength) % mapLength
+												opponent.state.vx = Math.max(-16, Math.min(16, opponent.state.vx + 4))
+											}
+									}
+
+								// update cells
+									var cells = getCells(request.game.data.map.length, avatar.state.x, avatar.state.y, 32, 64)
+									avatar.state.rowUp    = cells.rowUp
+									avatar.state.rowDown  = cells.rowDown
+									avatar.state.colLeft  = cells.colLeft
+									avatar.state.colRight = cells.colRight
+							}
+
+						}
+
+					}
 			}
 			catch (error) {main.logError(error)}
 		}
@@ -819,7 +974,7 @@
 						}
 					}
 
-				// attack
+				// arrows
 
 				// health-down spell
 

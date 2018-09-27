@@ -126,6 +126,7 @@
 							colRight:  0,
 							rowUp:     0,
 							rowDown:   0,
+							surface:   false,
 							tower:     null,
 							keys:      [],
 							songs:     [],
