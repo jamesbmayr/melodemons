@@ -89,12 +89,13 @@
 									beat:  0,
 									count: 0
 								},
-								theme:   null,
-								heroes:  {},
-								demons:  [],
-								towers:  [],
-								map:     [],
-								objects: []
+								theme:  null,
+								heroes: {},
+								demons: [],
+								towers: [],
+								map:    [],
+								arrows: [],
+								auras:  []
 							}
 						}
 					break
@@ -112,25 +113,28 @@
 
 					case "state":
 						return {
-							left:      false,
-							right:     false,
-							up:        false,
-							down:      false,
-							jumpReset: false,
-							health:    255,
-							x:         0,
-							y:         0,
-							vx:        0,
-							vy:        0,
-							colLeft:   0,
-							colRight:  0,
-							rowUp:     0,
-							rowDown:   0,
-							surface:   false,
-							tower:     null,
-							keys:      [],
-							songs:     [],
-							points:    0
+							left:     false,
+							right:    false,
+							up:       false,
+							down:     false,
+							x:        0,
+							y:        0,
+							vx:       0,
+							vy:       0,
+							colLeft:  0,
+							colRight: 0,
+							rowUp:    0,
+							rowDown:  0,
+							facing:   ["left","right"][Math.floor(Math.random() * 2)],
+							selected: true,
+							jumpable: false,
+							surface:  false,
+							tower:    null,
+							health:   255,
+							keyable:  true,
+							keys:     [[],[],[],[],[],[],[],[]],
+							songs:    [],
+							points:   0
 						}
 					break
 
@@ -474,6 +478,19 @@
 						]
 					break
 
+					case "arrow":
+						return {
+							name:   null,
+							team:   null,
+							x:      0,
+							y:      0,
+							vx:     0,
+							vy:     0,
+							radius: 16,
+							colors: []
+						}
+					break
+
 					default:
 						return null
 					break
@@ -590,6 +607,31 @@
 			}
 		}
 
+	/* sanitizeString */
+		module.exports.sanitizeString = sanitizeString
+		function sanitizeString(string) {
+			try {
+				return string.replace(/[^a-zA-Z0-9_\s\!\@\#\$\%\^\&\*\(\)\+\=\-\[\]\\\{\}\|\;\'\:\"\,\.\/\<\>\?]/gi, "")
+			}
+			catch (error) {
+				logError(error)
+				return ""
+			}
+		}
+
+	/* duplicateObject */
+		module.exports.duplicateObject = duplicateObject
+		function duplicateObject(object) {
+			try {
+				return JSON.parse(JSON.stringify(object))
+			}
+			catch (error) {
+				logError(error)
+				return null
+			}
+		}
+
+/*** randoms ***/
 	/* generateRandom */
 		module.exports.generateRandom = generateRandom
 		function generateRandom(set, length) {
@@ -651,30 +693,6 @@
 					}
 
 				return output
-			}
-			catch (error) {
-				logError(error)
-				return null
-			}
-		}
-
-	/* sanitizeString */
-		module.exports.sanitizeString = sanitizeString
-		function sanitizeString(string) {
-			try {
-				return string.replace(/[^a-zA-Z0-9_\s\!\@\#\$\%\^\&\*\(\)\+\=\-\[\]\\\{\}\|\;\'\:\"\,\.\/\<\>\?]/gi, "")
-			}
-			catch (error) {
-				logError(error)
-				return ""
-			}
-		}
-
-	/* duplicateObject */
-		module.exports.duplicateObject = duplicateObject
-		function duplicateObject(object) {
-			try {
-				return JSON.parse(JSON.stringify(object))
 			}
 			catch (error) {
 				logError(error)

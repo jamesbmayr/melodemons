@@ -207,33 +207,7 @@
 				}
 		}
 
-/*** helpers ***/
-	/* getCells */
-		function getCells(x, y) {
-			return {
-				left:   Math.floor(x / 32),
-				right:  Math.floor(x / 32) + 1,
-				bottom: Math.floor(y / 32),
-				middle: Math.floor(y / 32) + 1,
-				top:    Math.floor(y / 32) + 2
-			}
-		}
-
-/*** draws ***/
-	/* drawGame */
-		function drawGame() {
-			drawEmpty()
-			drawBackground()
-			drawForeground()
-		}
-
-	/* drawEmpty */
-		function drawEmpty() {
-			context.clearRect(0, 0, canvas.width, canvas.height)
-			drawRectangle(    0, 0, canvas.width, canvas.height, {gradient: {x1: 0, y1: 0, x2: 0, y2: canvas.height, colors: {"0": data.theme.skyBottom, "1": data.theme.skyTop}}})
-			drawRectangle(    0, 0, canvas.width, 40           , {color: data.theme.pitBackground})
-		}
-
+/*** shapes ***/
 	/* drawLine */
 		function drawLine(x1, y1, x2, y2, options) {
 			// parameters
@@ -264,6 +238,26 @@
 
 			// draw
 				context.arc(x, canvas.height - y, radius, 0, 2 * Math.PI, true)
+				context.fill()
+		}
+
+	/* drawTriangle */
+		function drawTriangle(x1, y1, x2, y2, x3, y3, options) {
+			// parameters
+				options = options || {}
+				context.beginPath()
+				context.fillStyle   = options.gradient ? drawGradient(options) : (options.color || neutralColor)
+				context.lineWidth   = options.border || 1
+				context.shadowBlur  = options.shadow ? 10 : 0
+				context.shadowColor = options.shadow ? options.shadow : "transparent"
+				context.globalAlpha = options.opacity || 1
+
+			// draw
+				context.moveTo(x1, canvas.height - y1)
+				context.lineTo(x2, canvas.height - y2)
+				context.lineTo(x3, canvas.height - y3)
+				context.lineTo(x1, canvas.height - y1)
+				context.closePath()
 				context.fill()
 		}
 
@@ -333,8 +327,24 @@
 			return gradient
 		}
 
+/*** draw loop ***/
+	/* drawGame */
+		function drawGame() {
+			drawEmpty()
+			drawBackground()
+			drawForeground()
+		}
+
+	/* drawEmpty */
+		function drawEmpty() {
+			context.clearRect(0, 0, canvas.width, canvas.height)
+			drawRectangle(    0, 0, canvas.width, canvas.height, {gradient: {x1: 0, y1: 0, x2: 0, y2: canvas.height, colors: {"0": data.theme.skyBottom, "1": data.theme.skyTop}}})
+			drawRectangle(    0, 0, canvas.width, 40           , {color: data.theme.pitBackground})
+		}
+
 	/* drawBackground */
 		function drawBackground() {
+			try {
 			// variables
 				var avatar    = data.heroes[window.id] || data.demons.find(function(d) { return d.state.selected }) || {x: 0, y: 0}
 				var mapLength = data.map.length * 32
@@ -459,10 +469,17 @@
 					var avatar = (keys[k] > -1) ? data.demons[keys[k]] : data.heroes[keys[k]]
 					drawAvatar(1280 - ((avatar.state.x - startX + mapLength + 20) % mapLength - 20) / 1.6, (avatar.state.y / 1.6) + 40, 20, 40, avatar)
 				}
+
+			// arrows
+				for (var a in data.arrows) {
+					drawArrow(1280 - ((data.arrows[a].x - startX + mapLength + 20) % mapLength - 20) / 1.6, (data.arrows[a].y / 1.6) + 40, 0.6, data.arrows[a])
+				}
+			} catch (error) {console.log(error)}
 		}
 
 	/* drawForeground */
 		function drawForeground() {
+			try {
 			// variables
 				var towers    = []
 				var avatar    = data.heroes[window.id] || data.demons.find(function(d) { return d.state.selected }) || {x: 0, y: 0}
@@ -584,6 +601,12 @@
 					var avatar = (keys[k] > -1) ? data.demons[keys[k]] : data.heroes[keys[k]]
 					drawAvatar((avatar.state.x - startX + mapLength + 32) % mapLength - 32, avatar.state.y, 32, 64, avatar)
 				}
+
+			// arrows
+				for (var a in data.arrows) {
+					drawArrow((data.arrows[a].x - startX + mapLength + 32) % mapLength - 32, data.arrows[a].y, 1, data.arrows[a])
+				}
+			} catch (error) {console.log(error)}
 		}
 
 	/* drawAvatar */
@@ -606,4 +629,19 @@
 				drawRectangle(x                              , y                                                                ,      width      ,           height /  2 , {opacity: opacity, color: avatar.colors[0], shadow: "#222222", radii: {topLeft: 8, topRight: 8, bottomRight: 4, bottomLeft: 4}}) // body
 				drawRectangle(x -      (width / 16) + xOffset, y + (2.5 * height / 8) + (3 * height / 32) * Math.max(0, yOffset), (5 * width / 16),       (5 * width / 16), {opacity: opacity, color: avatar.colors[1], shadow: eyeColor,  radii: {topLeft: 5, topRight: 5, bottomRight: 2, bottomLeft: 2}}) // left hand
 				drawRectangle(x + (13 * width / 16) + xOffset, y + (2.5 * height / 8) + (3 * height / 32) * Math.max(0, yOffset), (5 * width / 16),       (5 * width / 16), {opacity: opacity, color: avatar.colors[1], shadow: eyeColor,  radii: {topLeft: 5, topRight: 5, bottomRight: 2, bottomLeft: 2}}) // right hand
+		}
+
+	/* drawArrow */
+		function drawArrow(x, y, multiplier, arrow) {
+			try {
+			// variables
+				var radius = arrow.radius * multiplier * Math.sign(arrow.vx)
+				if (multiplier < 1) {
+					radius = radius * -1
+				}
+
+			// draw
+				drawTriangle(x, y + radius, x, y - radius, x - (3 * radius), y, {opacity: 0.5, color: arrow.colors[0], shadow: arrow.colors[1], border: 4})
+				drawCircle(  x, y,                            Math.abs(radius), {opacity:   1, color: arrow.colors[0], shadow: arrow.colors[1], border: 4})
+			} catch (error) {console.log(error)}
 		}
