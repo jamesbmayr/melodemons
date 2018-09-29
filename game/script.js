@@ -545,16 +545,16 @@
 
 			for (var y = 0; y < 16; y++) {
 				if (y >= column[section].bottom && y <= column[section].top) {
-					if (section > 0 && column[section].note) { // tower platforms
+					if (section > 0) { // tower platforms
 						drawRectangle(xPlacement, ((y + 1) * height) - (8 * multiplier) + yOffset, height, 8 * multiplier,
 							{color: platformColor, radii: {topLeft: 5, topRight: 5, bottomRight: 5, bottomLeft: 5}}
 						)
 					}
-					else if (section > 0) { // obstacles
-						drawRectangle(xPlacement, ((y    ) * height)     + yOffset, height, height,
-							{color: platformColor, radii: {topLeft: 8, topRight: 8, bottomRight: 8, bottomLeft: 8}}
-						)
-					}
+					// else if (section > 0) { // obstacles
+					// 	drawRectangle(xPlacement, ((y    ) * height)     + yOffset, height, height,
+					// 		{color: platformColor, radii: {topLeft: 8, topRight: 8, bottomRight: 8, bottomLeft: 8}}
+					// 	)
+					// }
 					else if (y == column[section].top) { // terrain top
 						if (!columnNumber) { // first column
 							tl = (!data.map[data.map.length - 1][0] || data.map[data.map.length - 1][0].top < y) ? 8 : 0
@@ -599,7 +599,7 @@
 			// background
 				if (columnNumber % 64 == 0) {
 					drawRectangle(xPlacement, yOffset, (32 * multiplier), (32 * multiplier) * 13,
-						{color: towerColor, radii: {topLeft: foreground ? (16 * multiplier) : 0, topRight: foreground ? 0 : (16 * multiplier), bottomRight: 0, bottomLeft: 0}}
+						{color: towerColor, radii: {topLeft: foreground ? (32 * multiplier) : 0, topRight: foreground ? 0 : (32 * multiplier), bottomRight: 0, bottomLeft: 0}}
 					)
 				}
 				else if (columnNumber % 64 == 1) {
@@ -614,7 +614,7 @@
 				}
 				else if (columnNumber % 64 == 3) {
 					drawRectangle(xPlacement, yOffset, (32 * multiplier), (32 * multiplier) * 13,
-						{color: towerColor, radii: {topLeft: foreground ? 0 : (16 * multiplier), topRight: foreground ? (16 * multiplier) : 0, bottomRight: 0, bottomLeft: 0}}
+						{color: towerColor, radii: {topLeft: foreground ? 0 : (32 * multiplier), topRight: foreground ? (32 * multiplier) : 0, bottomRight: 0, bottomLeft: 0}}
 					)
 				}
 

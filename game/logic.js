@@ -422,18 +422,18 @@
 
 			// ensure boundaries
 				if (column[0]) {
-					column[0].top = Math.max(0, Math.min(9, column[0].top))
+					column[0].top = Math.max(1, Math.min(9, column[0].top))
 				}
 
 			// tower
 				if ([62,63,4,5].includes(map.length % 64)) { // columns around tower
 					if (column[0]) { 
-						column[0].top = Math.max(0, Math.min(4, column[0].top))
+						column[0].top = Math.max(1, Math.min(4, column[0].top))
 					}
 				}
 				else if ([0,1,2,3].includes(map.length % 64)) { // first 4 columns
 					if (column[0]) { 
-						column[0].top = Math.max(0, Math.min(3, column[0].top))
+						column[0].top = Math.max(1, Math.min(3, column[0].top))
 					}
 
 					var tower = request.game.data.towers[Math.floor(map.length / 64)]
@@ -444,30 +444,23 @@
 				}
 
 			// obstacle
-				else if (map.length % 64 >= 27 && map.length % 64 < 41) { // middle 12 columns
+				else if (map.length % 64 >= 30 && map.length % 64 < 38) { // middle 8 columns
 					var obstacleX = (map.length % 64)
-					if      ([27,40].includes(obstacleX)) { // space around spaces
-						column[0] = {bottom: 0, top: Math.max(0, Math.min(6, column[0] ? column[0].top : 5))}
-					}
-					else if ([28,39].includes(obstacleX)) { // space around spaces
-						column[0] = {bottom: 0, top: Math.max(0, Math.min(4, column[0] ? column[0].top : 4))}
-					}
-					else if ([29,38].includes(obstacleX)) { // space around edges
-						column[0] = {bottom: 0, top: Math.max(0, Math.min(4, column[0] ? column[0].top : 4))}
-					}
-					else if ([30,37].includes(obstacleX)) { // space around edges
-						column[0] = {bottom: 0, top: Math.max(0, Math.min(3, column[0] ? column[0].top : 3))}
+					if      ([30,37].includes(obstacleX)) { // space around edges
+						var level = (column[0] ? column[0].top : lastFullColumn[0].top) + 3
+						column[1] = {bottom: level, top: level}
 					}
 					else if ([31,36].includes(obstacleX)) { // space around edges
-						column[0] = {bottom: 0, top: Math.max(0, Math.min(3, column[0] ? column[0].top : 3))}
+						var level = (column[0] ? column[0].top : lastFullColumn[0].top) + 3 + Math.floor(Math.random() * 2)
+						column[1] = {bottom: level, top: level}
 					}
 					else if ([32,35].includes(obstacleX)) { // obstacle
-						column[0] = {bottom: 0, top: Math.max(2, Math.min(3, column[0] ? column[0].top : 3))}
-						column[1] = {bottom: column[0].top + 5, top: column[0].top + 5}
+						var level = (column[0] ? column[0].top : lastFullColumn[0].top) + 4 + Math.floor(Math.random() * 2)
+						column[1] = {bottom: level, top: level}
 					}
 					else if ([33,34].includes(obstacleX)) { // obstacle
-						column[0] = {bottom: 0, top: Math.max(2, Math.min(3, column[0] ? column[0].top : 3))}
-						column[1] = {bottom: column[0].top + 5, top: column[0].top + 6}
+						var level = (column[0] ? column[0].top : lastFullColumn[0].top) + 5
+						column[1] = {bottom: level, top: level}
 					}
 				}
 
@@ -601,8 +594,8 @@
 				var avatar = getAvatar(request)
 
 				if (avatar.team !== "demons") {
-					// request.game.data.theme = main.getAsset("themes")[request.post.key - 1] || {}
-					callback([request.session.id], {success: false, message: "not demons"})
+					request.game.data.theme = main.getAsset("themes")[request.post.key - 1] || {}
+					// callback([request.session.id], {success: false, message: "not demons"})
 				}
 				else if (!request.game.data.demons[request.post.key - 1]) {
 					callback([request.session.id], {success: false, message: "demon not found"})
@@ -811,11 +804,18 @@
 
 				// terrain collision - changing rows
 					if (avatar.state.rowDown != future.rowDown || avatar.state.rowUp != future.rowUp) {
-						// collision down
-							if ((avatar.state.vy <= 0)   && !(avatar.state.down && avatar.state.selected && avatar.state.tower) &&
+						// collision down - terrain
+							if ((avatar.state.vy <= 0)   &&
 							   ((map[future.colLeft ][0] && future.rowDown <= map[future.colLeft ][0].top)
-							 || (map[future.colRight][0] && future.rowDown <= map[future.colRight][0].top)
-							 || (map[future.colLeft ][1] && future.rowDown <= map[future.colLeft ][1].top && future.rowUp >= map[future.colLeft ][1].top)
+							 || (map[future.colRight][0] && future.rowDown <= map[future.colRight][0].top))) {
+								future.rowDown    = future.rowDown + 1
+								future.rowUp      = future.rowUp   + 1
+								var collisionDown = true
+							}
+
+						// collision down - platform
+							else if ((avatar.state.vy <= 0) && !(avatar.state.down && avatar.state.selected) &&
+							   ((map[future.colLeft ][1] && future.rowDown <= map[future.colLeft ][1].top && future.rowUp >= map[future.colLeft ][1].top)
 							 || (map[future.colRight][1] && future.rowDown <= map[future.colRight][1].top && future.rowUp >= map[future.colRight][1].top)
 							 || (map[future.colLeft ][2] && future.rowDown <= map[future.colLeft ][2].top && future.rowUp >= map[future.colLeft ][2].top)
 							 || (map[future.colRight][2] && future.rowDown <= map[future.colRight][2].top && future.rowUp >= map[future.colRight][2].top))) {
@@ -824,28 +824,17 @@
 								var collisionDown = true
 							}
 
-						// collision up
-							if ((avatar.state.vy > 0) && avatar.state.health && 
-							   ((map[future.colLeft ][1] && !map[future.colLeft ][1].note && future.rowUp >= map[future.colLeft ][1].bottom && future.rowDown <= map[future.colLeft ][1].bottom)
-							 || (map[future.colRight][1] && !map[future.colRight][1].note && future.rowUp >= map[future.colRight][1].bottom && future.rowDown <= map[future.colRight][1].bottom)
-							 || (map[future.colLeft ][2] && !map[future.colLeft ][2].note && future.rowUp >= map[future.colLeft ][2].bottom && future.rowDown <= map[future.colLeft ][2].bottom)
-							 || (map[future.colRight][2] && !map[future.colRight][2].note && future.rowUp >= map[future.colRight][2].bottom && future.rowDown <= map[future.colRight][2].bottom))) {
-								future.rowDown  = future.rowDown - 1
-								future.rowUp    = future.rowUp   - 1
-								avatar.state.y  = Math.min(576, Math.max(-32, (future.rowDown * 32) + 32))
-								avatar.state.vy = Math.max(-24, Math.min(0, avatar.state.vy))
+						// no collision
+							else {
+								var collisionDown = false
 							}
 					}
 
 				// terrain collision - changing columns
 					if (avatar.state.colLeft != future.colLeft || avatar.state.colRight != future.colRight) {
 						// collision left
-							if      ((map[future.colLeft ][0] &&                                                         future.rowUp   >= map[future.colLeft ][0].bottom && future.rowUp   <= map[future.colLeft ][0].top)
-							      || (map[future.colLeft ][0] &&                                                         future.rowDown >= map[future.colLeft ][0].bottom && future.rowDown <= map[future.colLeft ][0].top)
-							      || (map[future.colLeft ][1] && !map[future.colLeft ][1].note && avatar.state.health && future.rowUp   >= map[future.colLeft ][1].bottom && future.rowUp   <= map[future.colLeft ][1].top)
-							      || (map[future.colLeft ][1] && !map[future.colLeft ][1].note && avatar.state.health && future.rowDown >= map[future.colLeft ][1].bottom && future.rowDown <= map[future.colLeft ][1].top)
-							      || (map[future.colLeft ][2] && !map[future.colLeft ][2].note && avatar.state.health && future.rowUp   >= map[future.colLeft ][2].bottom && future.rowUp   <= map[future.colLeft ][2].top)
-							      || (map[future.colLeft ][2] && !map[future.colLeft ][2].note && avatar.state.health && future.rowDown >= map[future.colLeft ][2].bottom && future.rowDown <= map[future.colLeft ][2].top)) {
+							if      ((map[future.colLeft ][0] && future.rowUp   >= map[future.colLeft ][0].bottom && future.rowUp   <= map[future.colLeft ][0].top)
+							      || (map[future.colLeft ][0] && future.rowDown >= map[future.colLeft ][0].bottom && future.rowDown <= map[future.colLeft ][0].top)) {
 								future.colLeft  = (future.colLeft  + 1       + map.length) % map.length
 								future.colRight = (future.colRight + 1       + map.length) % map.length
 								avatar.state.x  = ((future.colLeft * 32 + 8) + mapLength ) % mapLength
@@ -853,12 +842,8 @@
 							}
 
 						// collision right
-							else if ((map[future.colRight][0] &&                                                         future.rowUp   >= map[future.colRight][0].bottom && future.rowUp   <= map[future.colRight][0].top)
-							      || (map[future.colRight][0] &&                                                         future.rowDown >= map[future.colRight][0].bottom && future.rowDown <= map[future.colRight][0].top)
-							      || (map[future.colRight][1] && !map[future.colRight][1].note && avatar.state.health && future.rowUp   >= map[future.colRight][1].bottom && future.rowUp   <= map[future.colRight][1].top)
-							      || (map[future.colRight][1] && !map[future.colRight][1].note && avatar.state.health && future.rowDown >= map[future.colRight][1].bottom && future.rowDown <= map[future.colRight][1].top)
-							      || (map[future.colRight][2] && !map[future.colRight][2].note && avatar.state.health && future.rowUp   >= map[future.colRight][2].bottom && future.rowUp   <= map[future.colRight][2].top)
-							      || (map[future.colRight][2] && !map[future.colRight][2].note && avatar.state.health && future.rowDown >= map[future.colRight][2].bottom && future.rowDown <= map[future.colRight][2].top)) {
+							else if ((map[future.colRight][0] && future.rowUp   >= map[future.colRight][0].bottom && future.rowUp   <= map[future.colRight][0].top)
+							      || (map[future.colRight][0] && future.rowDown >= map[future.colRight][0].bottom && future.rowDown <= map[future.colRight][0].top)) {
 								future.colLeft  =  (future.colLeft  - 1       + map.length) % map.length
 								future.colRight =  (future.colRight - 1       + map.length) % map.length
 								avatar.state.x  = ((future.colRight * 32 - 8) + mapLength ) % mapLength
@@ -877,17 +862,8 @@
 								avatar.state.surface  = true
 							}
 
-						// obstacles
-							else if ((map[future.colLeft ][1] && !map[future.colLeft ][1].note && future.rowDown - 1 <= map[future.colLeft ][1].top && future.rowDown - 1 >= map[future.colLeft ][1].bottom)
-							      || (map[future.colRight][1] && !map[future.colRight][1].note && future.rowDown - 1 <= map[future.colRight][1].top && future.rowDown - 1 >= map[future.colRight][1].bottom)) {
-								avatar.state.vy = 0
-								avatar.state.y  = Math.min(576, Math.max(-32, future.rowDown * 32))
-								avatar.state.jumpable = true
-								avatar.state.surface  = true
-							}
-
-						// tower platforms
-							else if (map[future.colLeft ][1] && map[future.colLeft ][1].note && avatar.state.y <= (map[future.colLeft ][1].top + 1) * 32 && (avatar.state.y - avatar.state.vy >= (map[future.colLeft ][1].top + 1) * 32)) {
+						// obstacles & tower platforms
+							else if (map[future.colLeft ][1] && avatar.state.y <= (map[future.colLeft ][1].top + 1) * 32 && (avatar.state.y - avatar.state.vy >= (map[future.colLeft ][1].top + 1) * 32)) {
 								avatar.state.vy = 0
 								avatar.state.y  = Math.min(576, Math.max(-32, (map[future.colLeft ][1].top + 1) * 32))
 								avatar.state.jumpable = true
@@ -895,7 +871,7 @@
 								future.rowDown = Math.floor( avatar.state.y / 32)
 								future.rowUp   = Math.floor((avatar.state.y + 63) / 32)
 							}
-							else if (map[future.colRight][1] && map[future.colRight][1].note && avatar.state.y <= (map[future.colRight][1].top + 1) * 32 && (avatar.state.y - avatar.state.vy >= (map[future.colRight][1].top + 1) * 32)) {
+							else if (map[future.colRight][1] && avatar.state.y <= (map[future.colRight][1].top + 1) * 32 && (avatar.state.y - avatar.state.vy >= (map[future.colRight][1].top + 1) * 32)) {
 								avatar.state.vy = 0
 								avatar.state.y  = Math.min(576, Math.max(-32, (map[future.colRight][1].top + 1) * 32))
 								avatar.state.jumpable = true
@@ -903,7 +879,7 @@
 								future.rowDown = Math.floor( avatar.state.y / 32)
 								future.rowUp   = Math.floor((avatar.state.y + 63) / 32)
 							}
-							else if (map[future.colLeft ][2] && map[future.colLeft ][1].note && avatar.state.y <= (map[future.colLeft ][2].top + 1) * 32 && (avatar.state.y - avatar.state.vy >= (map[future.colLeft ][2].top + 1) * 32)) {
+							else if (map[future.colLeft ][2] && avatar.state.y <= (map[future.colLeft ][2].top + 1) * 32 && (avatar.state.y - avatar.state.vy >= (map[future.colLeft ][2].top + 1) * 32)) {
 								avatar.state.vy = 0
 								avatar.state.y  = Math.min(576, Math.max(-32, (map[future.colLeft ][2].top + 1) * 32))
 								avatar.state.jumpable = true
@@ -911,7 +887,7 @@
 								future.rowDown = Math.floor( avatar.state.y / 32)
 								future.rowUp   = Math.floor((avatar.state.y + 63) / 32)
 							}
-							else if (map[future.colRight][2] && map[future.colRight][1].note && avatar.state.y <= (map[future.colRight][2].top + 1) * 32 && (avatar.state.y - avatar.state.vy >= (map[future.colRight][2].top + 1) * 32)) {
+							else if (map[future.colRight][2] && avatar.state.y <= (map[future.colRight][2].top + 1) * 32 && (avatar.state.y - avatar.state.vy >= (map[future.colRight][2].top + 1) * 32)) {
 								avatar.state.vy = 0
 								avatar.state.y  = Math.min(576, Math.max(-32, (map[future.colRight][2].top + 1) * 32))
 								avatar.state.jumpable = true
@@ -1164,11 +1140,11 @@
 					var avatar = (keys[k] > -1) ? request.game.data.demons[keys[k]] : request.game.data.heroes[keys[k]]
 
 					if (avatar.team == tower.team) {
-						avatar.state.songs.push(tower.song)
+						avatar.state.songs.push(tower.name)
 					}
 					else {
 						avatar.state.songs = avatar.state.songs.filter(function(s) {
-							return s !== tower.song
+							return s !== tower.name
 						})
 					}
 				}
@@ -1214,19 +1190,15 @@
 									var future = getCells(request.game.data.map.length, arrow.x, arrow.y, arrow.radius * 2, arrow.radius * 2)
 
 									// collision left
-										if      ((map[future.colLeft ][0] &&                                  future.rowUp   >= map[future.colLeft ][0].bottom && future.rowUp   <= map[future.colLeft ][0].top)
-										      || (map[future.colLeft ][0] &&                                  future.rowDown >= map[future.colLeft ][0].bottom && future.rowDown <= map[future.colLeft ][0].top)
-										      || (map[future.colLeft ][1] && !map[future.colLeft ][1].note && future.rowUp   >= map[future.colLeft ][1].bottom && future.rowUp   <= map[future.colLeft ][1].top)
-										      || (map[future.colLeft ][1] && !map[future.colLeft ][1].note && future.rowDown >= map[future.colLeft ][1].bottom && future.rowDown <= map[future.colLeft ][1].top)) {
+										if      ((map[future.colLeft ][0] && future.rowUp   >= map[future.colLeft ][0].bottom && future.rowUp   <= map[future.colLeft ][0].top)
+										      || (map[future.colLeft ][0] && future.rowDown >= map[future.colLeft ][0].bottom && future.rowDown <= map[future.colLeft ][0].top)) {
 											request.game.data.arrows.splice(a,1)
 											a--
 										}
 
 									// collision right
-										else if ((map[future.colRight][0] &&                                  future.rowUp   >= map[future.colRight][0].bottom && future.rowUp   <= map[future.colRight][0].top)
-										      || (map[future.colRight][0] &&                                  future.rowDown >= map[future.colRight][0].bottom && future.rowDown <= map[future.colRight][0].top)
-										      || (map[future.colRight][1] && !map[future.colRight][1].note && future.rowUp   >= map[future.colRight][1].bottom && future.rowUp   <= map[future.colRight][1].top)
-										      || (map[future.colRight][1] && !map[future.colRight][1].note && future.rowDown >= map[future.colRight][1].bottom && future.rowDown <= map[future.colRight][1].top)) {
+										else if ((map[future.colRight][0] && future.rowUp   >= map[future.colRight][0].bottom && future.rowUp   <= map[future.colRight][0].top)
+										      || (map[future.colRight][0] && future.rowDown >= map[future.colRight][0].bottom && future.rowDown <= map[future.colRight][0].top)) {
 											request.game.data.arrows.splice(a,1)
 											a--
 										}

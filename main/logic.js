@@ -140,62 +140,63 @@
 
 					case "heroes":
 						var colors = getAsset("colors")
+						var songs  = getAsset("songs")
 
 						return [
 							{
 								name: "Grace",
 								team: "heroes",
 								instrument: "honeyharp",
-								colors: [colors.green[2], colors.green[0], colors.blue[2]],
+								colors: [songs.healing.colors[0], songs.healing.colors[1], colors.blue[2]],
 								song: "healing"
 							},
 							{
 								name: "Arthur",
 								team: "heroes",
 								instrument: "chordstrum",
-								colors: [colors.yellow[2], colors.yellow[0], colors.blue[2]],
+								colors: [songs.protection.colors[0], songs.protection.colors[1], colors.blue[2]],
 								song: "protection"
 							},
 							{
 								name: "Emily",
 								team: "heroes",
 								instrument: "lazerz",
-								colors: [colors.orange[2], colors.orange[0], colors.blue[2]],
+								colors: [songs.strength.colors[0], songs.strength.colors[1], colors.blue[2]],
 								song: "strength"
 							},
 							{
 								name: "Clark",
 								team: "heroes",
 								instrument: "jangle",
-								colors: [colors.cerulean[2], colors.cerulean[0], colors.blue[2]],
+								colors: [songs.flight.colors[0], songs.flight.colors[1], colors.blue[2]],
 								song: "flight"
 							},
 							{
 								name: "Abigail",
 								team: "heroes",
 								instrument: "swello",
-								colors: [colors.browngray[2], colors.browngray[0], colors.blue[2]],
+								colors: [songs.paralysis.colors[0], songs.paralysis.colors[1], colors.blue[2]],
 								song: "paralysis"
 							},
 							{
 								name: "Geoffrey",
 								team: "heroes",
 								instrument: "buzzorgan",
-								colors: [colors.purple[2], colors.purple[0], colors.blue[2]],
+								colors: [songs.confusion.colors[0], songs.confusion.colors[1], colors.blue[2]],
 								song: "confusion"
 							},
 							{
 								name: "Charlotte",
 								team: "heroes",
 								instrument: "glassical",
-								colors: [colors.cyan[2], colors.cyan[0], colors.blue[2]],
+								colors: [songs.immunity.colors[0], songs.immunity.colors[1], colors.blue[2]],
 								song: "immunity"
 							},
 							{
 								name: "Dorian",
 								team: "heroes",
 								instrument: "shimmer",
-								colors: [colors.red[2], colors.red[0], colors.blue[2]],
+								colors: [songs.pain.colors[0], songs.pain.colors[1], colors.blue[2]],
 								song: "pain"
 							}
 						]
@@ -203,62 +204,63 @@
 
 					case "demons":
 						var colors = getAsset("colors")
+						var songs  = getAsset("songs")
 
 						return [
 							{
 								name: "Armistopheles",
 								team: "demons",
 								instrument: "square",
-								colors: [colors.green[2], colors.green[0], colors.red[2]],
+								colors: [songs.healing.colors[0], songs.healing.colors[1], colors.red[2]],
 								song: "healing"
 							},
 							{
 								name: "Ebborthrosh",
 								team: "demons",
 								instrument: "sine",
-								colors: [colors.yellow[2], colors.yellow[0], colors.red[2]],
+								colors: [songs.protection.colors[0], songs.protection.colors[1], colors.red[2]],
 								song: "protection"
 							},
 							{
 								name: "Dumrog",
 								team: "demons",
 								instrument: "sawtooth",
-								colors: [colors.orange[2], colors.orange[0], colors.red[2]],
+								colors: [songs.strength.colors[0], songs.strength.colors[1], colors.red[2]],
 								song: "strength"
 							},
 							{
 								name: "Gifflegorn",
 								team: "demons",
 								instrument: "triangle",
-								colors: [colors.cerulean[2], colors.cerulean[0], colors.red[2]],
+								colors: [songs.flight.colors[0], songs.flight.colors[1], colors.red[2]],
 								song: "flight"
 							},
 							{
 								name: "Chrynthos",
 								team: "demons",
 								instrument: "clarinaut",
-								colors: [colors.browngray[2], colors.browngray[0], colors.red[2]],
+								colors: [songs.paralysis.colors[0], songs.paralysis.colors[1], colors.red[2]],
 								song: "paralysis"
 							},
 							{
 								name: "Archnus",
 								team: "demons",
 								instrument: "reedles",
-								colors: [colors.purple[2], colors.purple[0], colors.red[2]],
+								colors: [songs.confusion.colors[0], songs.confusion.colors[1], colors.red[2]],
 								song: "confusion"
 							},
 							{
 								name: "Golardios",
 								team: "demons",
 								instrument: "qube",
-								colors: [colors.cyan[2], colors.cyan[0], colors.red[2]],
+								colors: [songs.immunity.colors[0], songs.immunity.colors[1], colors.red[2]],
 								song: "immunity"
 							},
 							{
 								name: "Draphost",
 								team: "demons",
 								instrument: "accordienne",
-								colors: [colors.red[2], colors.red[0], colors.red[2]],
+								colors: [songs.pain.colors[0], songs.pain.colors[1], colors.red[2]],
 								song: "pain"
 							}
 						]
@@ -275,7 +277,7 @@
 								melody: "CDEG",
 								range: 4,
 								cells: shapes.circle,
-								colors: [colors.green[2], colors.green[0]]
+								colors: [colors.green[3], colors.green[1]]
 							},
 							"protection": {
 								name: "protection",
@@ -283,7 +285,7 @@
 								melody: "CGAG",
 								range: 5,
 								cells: shapes.square,
-								colors: [colors.yellow[2], colors.yellow[0]]
+								colors: [colors.yellow[3], colors.yellow[1]]
 							},
 							"strength": {
 								name: "strength",
@@ -291,7 +293,7 @@
 								melody: "EDCG",
 								range: 6,
 								cells: shapes.octagon,
-								colors: [colors.orange[2], colors.orange[0]]
+								colors: [colors.orange[3], colors.orange[1]]
 							},
 							"flight": {
 								name: "jump-up",
@@ -299,7 +301,7 @@
 								melody: "CGEG",
 								range: 7,
 								cells: shapes.diamond,
-								colors: [colors.cerulean[2], colors.cerulean[0]]
+								colors: [colors.cerulean[3], colors.cerulean[1]]
 							},
 							"paralysis": {
 								name: "paralysis",
@@ -307,7 +309,7 @@
 								melody: "GDEA",
 								range: 7,
 								cells: shapes.diamond,
-								colors: [colors.browngray[2], colors.browngray[0]]
+								colors: [colors.browngray[3], colors.browngray[1]]
 							},
 							"confusion": {
 								name: "confusion",
@@ -315,7 +317,7 @@
 								melody: "ACAG",
 								range: 6,
 								cells: shapes.octagon,
-								colors: [colors.purple[2], colors.purple[0]]
+								colors: [colors.purple[3], colors.purple[1]]
 							},
 							"immunity": {
 								name: "immunity",
@@ -323,7 +325,7 @@
 								melody: "ECDG",
 								range: 5,
 								cells: shapes.square,
-								colors: [colors.cyan[2], colors.cyan[0]]
+								colors: [colors.cyan[3], colors.cyan[1]]
 							},
 							"pain": {
 								name: "pain",
@@ -331,7 +333,7 @@
 								melody: "ADCE",
 								range: 4,
 								cells: shapes.circle,
-								colors: [colors.red[2], colors.red[0]]
+								colors: [colors.magenta[3], colors.magenta[1]]
 							}
 						}
 					break
@@ -387,51 +389,43 @@
 						return [
 							{
 								name: "healing",
-								colors: [colors.green[2], colors.green[0], colors.black[2]],
-								song: "healing",
+								colors: [songs.healing.colors[0], songs.healing.colors[1], colors.black[2]],
 								platforms: [{x: 0, y: 11, color: colors.black[2], note: songs.healing.melody[0]}, {x: 1, y: 11, color: colors.black[2], note: songs.healing.melody[1]}, {x: 2, y: 11, color: colors.black[2], note: songs.healing.melody[2]}, {x: 3, y: 8, color: colors.black[2], note: songs.healing.melody[3]}, {x: 0, y: 7, color: colors.black[2], note: songs.healing.melody[0]}, {x: 1, y: 7, color: colors.black[2], note: songs.healing.melody[1]}, {x: 2, y: 7, color: colors.black[2], note: songs.healing.melody[2]}, {x: 3, y: 4, color: colors.black[2], note: songs.healing.melody[3]}]
 							},
 							{
 								name: "protection",
-								colors: [colors.yellow[2], colors.yellow[0], colors.black[2]],
-								song: "protection",
+								colors: [songs.protection.colors[0], songs.protection.colors[1], colors.black[2]],
 								platforms: [{x: 0, y: 11, color: colors.black[2], note: songs.protection.melody[0]}, {x: 1, y: 11, color: colors.black[2], note: songs.protection.melody[1]}, {x: 2, y: 10, color: colors.black[2], note: songs.protection.melody[2]}, {x: 3, y: 8, color: colors.black[2], note: songs.protection.melody[3]}, {x: 0, y: 7, color: colors.black[2], note: songs.protection.melody[0]}, {x: 1, y: 7, color: colors.black[2], note: songs.protection.melody[1]}, {x: 2, y: 6, color: colors.black[2], note: songs.protection.melody[2]}, {x: 3, y: 4, color: colors.black[2], note: songs.protection.melody[3]}]
 							},
 							{
 								name: "strength",
-								colors: [colors.orange[2], colors.orange[0], colors.black[2]],
-								song: "strength",
-								platforms: [{x: 0, y: 11, color: colors.black[2], note: songs.healing.melody[0]}, {x: 1, y: 11, color: colors.black[2], note: songs.healing.melody[1]}, {x: 2, y: 9, color: colors.black[2], note: songs.healing.melody[2]}, {x: 3, y: 8, color: colors.black[2], note: songs.healing.melody[3]}, {x: 0, y: 7, color: colors.black[2], note: songs.healing.melody[0]}, {x: 1, y: 7, color: colors.black[2], note: songs.healing.melody[1]}, {x: 2, y: 5, color: colors.black[2], note: songs.healing.melody[2]}, {x: 3, y: 4, color: colors.black[2], note: songs.healing.melody[3]}]
+								colors: [songs.strength.colors[0], songs.strength.colors[1], colors.black[2]],
+								platforms: [{x: 0, y: 11, color: colors.black[2], note: songs.strength.melody[0]}, {x: 1, y: 11, color: colors.black[2], note: songs.strength.melody[1]}, {x: 2, y: 9, color: colors.black[2], note: songs.strength.melody[2]}, {x: 3, y: 8, color: colors.black[2], note: songs.strength.melody[3]}, {x: 0, y: 7, color: colors.black[2], note: songs.strength.melody[0]}, {x: 1, y: 7, color: colors.black[2], note: songs.strength.melody[1]}, {x: 2, y: 5, color: colors.black[2], note: songs.strength.melody[2]}, {x: 3, y: 4, color: colors.black[2], note: songs.strength.melody[3]}]
 							},
 							{
 								name: "flight",
-								colors: [colors.cerulean[2], colors.cerulean[0], colors.black[2]],
-								song: "flight",
+								colors: [songs.flight.colors[0], songs.flight.colors[1], colors.black[2]],
 								platforms: [{x: 0, y: 11, color: colors.black[2], note: songs.flight.melody[0]}, {x: 1, y: 10, color: colors.black[2], note: songs.flight.melody[1]}, {x: 2, y: 10, color: colors.black[2], note: songs.flight.melody[2]}, {x: 3, y: 8, color: colors.black[2], note: songs.flight.melody[3]}, {x: 0, y: 7, color: colors.black[2], note: songs.flight.melody[0]}, {x: 1, y: 6, color: colors.black[2], note: songs.flight.melody[1]}, {x: 2, y: 6, color: colors.black[2], note: songs.flight.melody[2]}, {x: 3, y: 4, color: colors.black[2], note: songs.flight.melody[3]}]
 							},
 							{
 								name: "paralysis",
-								colors: [colors.browngray[2], colors.browngray[0], colors.black[2]],
-								song: "paralysis",
+								colors: [songs.paralysis.colors[0], songs.paralysis.colors[1], colors.black[2]],
 								platforms: [{x: 0, y: 11, color: colors.black[2], note: songs.paralysis.melody[0]}, {x: 1, y: 10, color: colors.black[2], note: songs.paralysis.melody[1]}, {x: 2, y: 9, color: colors.black[2], note: songs.paralysis.melody[2]}, {x: 3, y: 8, color: colors.black[2], note: songs.paralysis.melody[3]}, {x: 0, y: 7, color: colors.black[2], note: songs.paralysis.melody[0]}, {x: 1, y: 6, color: colors.black[2], note: songs.paralysis.melody[1]}, {x: 2, y: 5, color: colors.black[2], note: songs.paralysis.melody[2]}, {x: 3, y: 4, color: colors.black[2], note: songs.paralysis.melody[3]}]
 							},
 							{
 								name: "confusion",
-								colors: [colors.purple[2], colors.purple[0], colors.black[2]],
-								song: "confusion",
+								colors: [songs.confusion.colors[0], songs.confusion.colors[1], colors.black[2]],
 								platforms: [{x: 0, y: 11, color: colors.black[2], note: songs.confusion.melody[0]}, {x: 1, y: 10, color: colors.black[2], note: songs.confusion.melody[1]}, {x: 2, y: 8, color: colors.black[2], note: songs.confusion.melody[2]}, {x: 3, y: 8, color: colors.black[2], note: songs.confusion.melody[3]}, {x: 0, y: 7, color: colors.black[2], note: songs.confusion.melody[0]}, {x: 1, y: 6, color: colors.black[2], note: songs.confusion.melody[1]}, {x: 2, y: 4, color: colors.black[2], note: songs.confusion.melody[2]}, {x: 3, y: 4, color: colors.black[2], note: songs.confusion.melody[3]}]
 							},
 							{
 								name: "immunity",
-								colors: [colors.cyan[2], colors.cyan[0], colors.black[2]],
-								song: "immunity",
+								colors: [songs.immunity.colors[0], songs.immunity.colors[1], colors.black[2]],
 								platforms: [{x: 0, y: 11, color: colors.black[2], note: songs.immunity.melody[0]}, {x: 1, y: 9, color: colors.black[2], note: songs.immunity.melody[1]}, {x: 2, y: 9, color: colors.black[2], note: songs.immunity.melody[2]}, {x: 3, y: 8, color: colors.black[2], note: songs.immunity.melody[3]}, {x: 0, y: 7, color: colors.black[2], note: songs.immunity.melody[0]}, {x: 1, y: 5, color: colors.black[2], note: songs.immunity.melody[1]}, {x: 2, y: 5, color: colors.black[2], note: songs.immunity.melody[2]}, {x: 3, y: 4, color: colors.black[2], note: songs.immunity.melody[3]}]
 							},
 							{
 								name: "pain",
-								colors: [colors.red[2], colors.red[0], colors.black[2]],
-								song: "pain",
-								platforms: [{x: 0, y: 11, color: colors.black[2], note: songs.healing.melody[0]}, {x: 1, y: 9, color: colors.black[2], note: songs.healing.melody[1]}, {x: 2, y: 8, color: colors.black[2], note: songs.healing.melody[2]}, {x: 3, y: 8, color: colors.black[2], note: songs.healing.melody[3]}, {x: 0, y: 7, color: colors.black[2], note: songs.healing.melody[0]}, {x: 1, y: 5, color: colors.black[2], note: songs.healing.melody[1]}, {x: 2, y: 4, color: colors.black[2], note: songs.healing.melody[2]}, {x: 3, y: 4, color: colors.black[2], note: songs.healing.melody[3]}]
+								colors: [songs.pain.colors[0], songs.pain.colors[1], colors.black[2]],
+								platforms: [{x: 0, y: 11, color: colors.black[2], note: songs.pain.melody[0]}, {x: 1, y: 9, color: colors.black[2], note: songs.pain.melody[1]}, {x: 2, y: 8, color: colors.black[2], note: songs.pain.melody[2]}, {x: 3, y: 8, color: colors.black[2], note: songs.pain.melody[3]}, {x: 0, y: 7, color: colors.black[2], note: songs.pain.melody[0]}, {x: 1, y: 5, color: colors.black[2], note: songs.pain.melody[1]}, {x: 2, y: 4, color: colors.black[2], note: songs.pain.melody[2]}, {x: 3, y: 4, color: colors.black[2], note: songs.pain.melody[3]}]
 							}
 						]
 					break									
