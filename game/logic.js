@@ -317,26 +317,33 @@
 						})
 
 				// create tower
-					var tower = main.chooseRandom(allTowers)
+					var tower  = main.chooseRandom(allTowers)
+					var colors = main.getAsset("colors")
 
 				// set team
 					var players = Object.keys(request.game.players)
 					if (currentTowers.length == 0) {
 						tower.team = "heroes"
+						tower.colors[2] = colors.blue[2]
 						tower.platforms.forEach(function(p) {
-							p.team = "heroes"
+							p.team  = "heroes"
+							p.color = colors.blue[2]
 						})
 					}
 					else if (currentTowers.length == Math.floor(players.length / 2) + 1) {
 						tower.team = "demons"
+						tower.colors[2] = colors.red[2]
 						tower.platforms.forEach(function(p) {
 							p.team = "demons"
+							p.color = colors.red[2]
 						})
 					}
 					else {
 						tower.team = null
+						tower.colors[2] = colors.black[2]
 						tower.platforms.forEach(function(p) {
 							p.team = null
+							p.color = colors.black[2]
 						})
 					}
 
@@ -593,7 +600,8 @@
 			try {
 				var avatar = getAvatar(request)
 
-				if (!avatar.team == "demons") {
+				if (avatar.team !== "demons") {
+					// request.game.data.theme = main.getAsset("themes")[request.post.key - 1] || {}
 					callback([request.session.id], {success: false, message: "not demons"})
 				}
 				else if (!request.game.data.demons[request.post.key - 1]) {
@@ -815,19 +823,16 @@
 								future.rowUp      = future.rowUp   + 1
 								var collisionDown = true
 							}
-							else {
-								avatar.state.surface = false
-							}
 
 						// collision up
-							if ((avatar.state.vy > 0) &&
+							if ((avatar.state.vy > 0) && avatar.state.health && 
 							   ((map[future.colLeft ][1] && !map[future.colLeft ][1].note && future.rowUp >= map[future.colLeft ][1].bottom && future.rowDown <= map[future.colLeft ][1].bottom)
 							 || (map[future.colRight][1] && !map[future.colRight][1].note && future.rowUp >= map[future.colRight][1].bottom && future.rowDown <= map[future.colRight][1].bottom)
 							 || (map[future.colLeft ][2] && !map[future.colLeft ][2].note && future.rowUp >= map[future.colLeft ][2].bottom && future.rowDown <= map[future.colLeft ][2].bottom)
 							 || (map[future.colRight][2] && !map[future.colRight][2].note && future.rowUp >= map[future.colRight][2].bottom && future.rowDown <= map[future.colRight][2].bottom))) {
 								future.rowDown  = future.rowDown - 1
 								future.rowUp    = future.rowUp   - 1
-								avatar.state.y  = Math.min(576, Math.max(-32, avatar.state.y - 2))
+								avatar.state.y  = Math.min(576, Math.max(-32, (future.rowDown * 32) + 32))
 								avatar.state.vy = Math.max(-24, Math.min(0, avatar.state.vy))
 							}
 					}
@@ -919,6 +924,7 @@
 							else {
 								future.rowDown = future.rowDown - 1
 								future.rowUp   = future.rowUp   - 1
+								avatar.state.surface = false
 							}
 					}
 
@@ -962,29 +968,29 @@
 												avatar.state.vy = Math.max(0,   Math.min(16,  avatar.state.vy + 4))
 												avatar.state.y  = Math.max(-32, Math.min(576, avatar.state.y))
 
-												if (!opponent.state.surface || opponent.state.tower) {
-													opponent.state.vy = Math.max(-24, Math.min(0, opponent.state.vy))
-												}
-												else if (opponent.state.surface) {
+												if (opponent.state.surface) {
 													avatar.state.y = opponent.state.y + 64
 													avatar.state.vy = 0
 													avatar.state.surface  = true
 													avatar.state.jumpable = true
 
 													if      (avatar.state.x + (avLeft * 32) > opponent.state.x + (opLeft * 32) + 8) {
-														avatar.state.x = (avatar.state.x + 2 + mapLength) % mapLength
+														avatar.state.vx = Math.max(-16, Math.min(16, avatar.state.vx + 2))
 													}
 													else if (avatar.state.x + (avLeft * 32) < opponent.state.x + (opLeft * 32) - 8) {
-														avatar.state.x = (avatar.state.x - 2 + mapLength) % mapLength
+														avatar.state.vx = Math.max(-16, Math.min(16, avatar.state.vx - 2))
 													}
+												}
+												else {
+													opponent.state.vy = Math.max(-24, Math.min(0, opponent.state.vy))
 												}
 											}
 
 										// collision up
 											else if ((opponent.state.y < avatar.state.y + 64 && avatar.state.y + 64 <= opponent.state.y + 64) && avatar.state.vy > 0) {
-												  avatar.state.vy = Math.max(-24, Math.min(0,     avatar.state.vy))
-												  avatar.state.jumpable = true
-												opponent.state.vy = Math.max(-24, Math.min(16,  opponent.state.vy + 8))
+												  avatar.state.vy = Math.max(-24, Math.min(0,    avatar.state.vy))
+												  avatar.state.jumpable = false
+												opponent.state.vy = Math.max(-24, Math.min(16, opponent.state.vy + 8))
 												opponent.state.surface  = true
 												opponent.state.jumpable = true
 											}
@@ -1102,6 +1108,7 @@
 									return (p.x == avatar.state.tower.platforms[0].x && p.y == avatar.state.tower.platforms[0].y)
 								})
 								platform.team = avatar.team
+								platform.color = avatar.colors[2]
 								changePlatform = true
 								avatar.state.keyable = false
 							}
@@ -1110,6 +1117,7 @@
 									return (p.x == avatar.state.tower.platforms[1].x && p.y == avatar.state.tower.platforms[1].y)
 								})
 								platform.team = avatar.team
+								platform.color = avatar.colors[2]
 								changePlatform = true
 								avatar.state.keyable = false
 							}
@@ -1132,6 +1140,13 @@
 
 							tower.team = heroControl ? "heroes" : demonControl ? "demons" : null
 							if (tower.team !== previousTeam) { // change?
+								if (tower.team == avatar.team) {
+									tower.colors[2] = avatar.colors[2]
+								}
+								else {
+									tower.colors[2] = main.getAsset("colors").black[2]
+								}
+
 								updateSongs(request, tower)
 							}
 						}

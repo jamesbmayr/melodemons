@@ -139,186 +139,199 @@
 					break
 
 					case "heroes":
+						var colors = getAsset("colors")
+
 						return [
 							{
 								name: "Grace",
 								team: "heroes",
 								instrument: "honeyharp",
-								colors: ["green","yellow"],
-								song: "health-up"
+								colors: [colors.green[2], colors.green[0], colors.blue[2]],
+								song: "healing"
 							},
 							{
 								name: "Arthur",
 								team: "heroes",
 								instrument: "chordstrum",
-								colors: ["blue","purple"],
-								song: "object-shield"
+								colors: [colors.yellow[2], colors.yellow[0], colors.blue[2]],
+								song: "protection"
 							},
 							{
 								name: "Emily",
 								team: "heroes",
 								instrument: "lazerz",
-								colors: ["red","orange"],
-								song: "double-attack-damage"
+								colors: [colors.orange[2], colors.orange[0], colors.blue[2]],
+								song: "strength"
 							},
 							{
 								name: "Clark",
 								team: "heroes",
 								instrument: "jangle",
-								colors: ["blue","green"],
-								song: "double-jump-height"
+								colors: [colors.cerulean[2], colors.cerulean[0], colors.blue[2]],
+								song: "flight"
 							},
 							{
 								name: "Abigail",
 								team: "heroes",
 								instrument: "swello",
-								colors: ["purple","black"],
-								song: "half-move-speed"
+								colors: [colors.browngray[2], colors.browngray[0], colors.blue[2]],
+								song: "paralysis"
 							},
 							{
 								name: "Geoffrey",
 								team: "heroes",
 								instrument: "buzzorgan",
-								colors: ["magenta","yellow"],
-								song: "half-attack-speed"
+								colors: [colors.purple[2], colors.purple[0], colors.blue[2]],
+								song: "confusion"
 							},
 							{
 								name: "Charlotte",
 								team: "heroes",
 								instrument: "glassical",
-								colors: ["orange","blue"],
-								song: "silence-magic"
+								colors: [colors.cyan[2], colors.cyan[0], colors.blue[2]],
+								song: "immunity"
 							},
 							{
 								name: "Dorian",
 								team: "heroes",
 								instrument: "shimmer",
-								colors: ["red","green"],
-								song: "health-down"
+								colors: [colors.red[2], colors.red[0], colors.blue[2]],
+								song: "pain"
 							}
 						]
 					break
 
 					case "demons":
+						var colors = getAsset("colors")
+
 						return [
 							{
 								name: "Armistopheles",
 								team: "demons",
 								instrument: "square",
-								colors: ["green","yellow"],
-								song: "health-up"
+								colors: [colors.green[2], colors.green[0], colors.red[2]],
+								song: "healing"
 							},
 							{
 								name: "Ebborthrosh",
 								team: "demons",
 								instrument: "sine",
-								colors: ["blue","purple"],
-								song: "object-shield"
+								colors: [colors.yellow[2], colors.yellow[0], colors.red[2]],
+								song: "protection"
 							},
 							{
 								name: "Dumrog",
 								team: "demons",
 								instrument: "sawtooth",
-								colors: ["red","orange"],
-								song: "double-attack-damage"
+								colors: [colors.orange[2], colors.orange[0], colors.red[2]],
+								song: "strength"
 							},
 							{
 								name: "Gifflegorn",
 								team: "demons",
 								instrument: "triangle",
-								colors: ["blue","green"],
-								song: "double-jump-height"
+								colors: [colors.cerulean[2], colors.cerulean[0], colors.red[2]],
+								song: "flight"
 							},
 							{
 								name: "Chrynthos",
 								team: "demons",
 								instrument: "clarinaut",
-								colors: ["purple","black"],
-								song: "half-move-speed"
+								colors: [colors.browngray[2], colors.browngray[0], colors.red[2]],
+								song: "paralysis"
 							},
 							{
 								name: "Archnus",
 								team: "demons",
 								instrument: "reedles",
-								colors: ["magenta","yellow"],
-								song: "half-attack-speed"
+								colors: [colors.purple[2], colors.purple[0], colors.red[2]],
+								song: "confusion"
 							},
 							{
 								name: "Golardios",
 								team: "demons",
 								instrument: "qube",
-								colors: ["orange","blue"],
-								song: "silence-magic"
+								colors: [colors.cyan[2], colors.cyan[0], colors.red[2]],
+								song: "immunity"
 							},
 							{
 								name: "Draphost",
 								team: "demons",
 								instrument: "accordienne",
-								colors: ["red","green"],
-								song: "health-down"
+								colors: [colors.red[2], colors.red[0], colors.red[2]],
+								song: "pain"
 							}
 						]
 					break
 
 					case "songs":
 						var shapes = getAsset("shapes")
+						var colors = getAsset("colors")
 
 						return {
-							"health-up": {
-								name: "health-up",
-								description: "heroes and demons within regenerate health",
-								melody: "CDEGAGED",
+							"healing": {
+								name: "healing",
+								description: "other heroes and demons within the aura regenerate health",
+								melody: "CDEG",
+								range: 4,
 								cells: shapes.circle,
-								colors: ["green","yellow"]
+								colors: [colors.green[2], colors.green[0]]
 							},
-							"object-shield": {
-								name: "object-shield",
-								description: "attacks collide with shield walls",
-								melody: "CGAGCGAG",
+							"protection": {
+								name: "protection",
+								description: "attacks from outside the aura dissipate on collision",
+								melody: "CGAG",
+								range: 5,
 								cells: shapes.square,
-								colors: ["blue","purple"]
+								colors: [colors.yellow[2], colors.yellow[0]]
 							},
-							"double-attack-damage": {
-								name: "double-attack-damage",
-								description: "attacks fired from within deal double damage",
-								melody: "CDCAGACA",
+							"strength": {
+								name: "strength",
+								description: "attacks fired from within the aura are twice as powerful",
+								melody: "EDCG",
+								range: 6,
 								cells: shapes.octagon,
-								colors: ["red","orange"]
+								colors: [colors.orange[2], colors.orange[0]]
 							},
-							"double-jump-height": {
+							"flight": {
 								name: "jump-up",
-								description: "heroes and demons within jump twice as high",
-								melody: "CGEGCGEG",
+								description: "other heroes and demons within the aura can fly without landing",
+								melody: "CGEG",
+								range: 7,
 								cells: shapes.diamond,
-								colors: ["blue","green"]
+								colors: [colors.cerulean[2], colors.cerulean[0]]
 							},
-							"half-move-speed": {
-								name: "half-move-speed",
-								description: "heroes and demons within move half as fast",
-								melody: "ACDEDCDE",
+							"paralysis": {
+								name: "paralysis",
+								description: "other heroes and demons within the aura are nearly unable to move",
+								melody: "GDEA",
+								range: 7,
 								cells: shapes.diamond,
-								colors: ["purple","black"]
+								colors: [colors.browngray[2], colors.browngray[0]]
 							},
-							"half-attack-speed": {
-								name: "half-attack-speed",
-								description: "attacks fired from within move half as fast",
-								melody: "ACAGACAG",
+							"confusion": {
+								name: "confusion",
+								description: "left and right controls are reversed within the aura",
+								melody: "ACAG",
+								range: 6,
 								cells: shapes.octagon,
-								colors: ["magenta","yellow"]
+								colors: [colors.purple[2], colors.purple[0]]
 							},
-							"silence-magic": {
-								name: "silence-magic",
-								description: "other songs collide with shield walls",
-								melody: "AEGEDEGE",
+							"immunity": {
+								name: "immunity",
+								description: "other auras are nullified within this aura",
+								melody: "ECDG",
+								range: 5,
 								cells: shapes.square,
-								colors: ["orange","blue"]
+								colors: [colors.cyan[2], colors.cyan[0]]
 							},
-							"health-down": {
-								name: "health-down",
-								description: "heroes and demons within lose health",
-								melody: "AEDCGEDC",
+							"pain": {
+								name: "pain",
+								description: "other heroes and demons within the aura lose health",
+								melody: "ADCE",
+								range: 4,
 								cells: shapes.circle,
-								colors: ["red","green"]
+								colors: [colors.red[2], colors.red[0]]
 							}
 						}
 					break
@@ -368,112 +381,168 @@
 					break
 
 					case "towers":
+						var colors = getAsset("colors")
+						var songs  = getAsset("songs")
+
 						return [
 							{
 								name: "healing",
-								colors: ["green","yellow"],
-								song: "health-up",
-								platforms: [{x: 0, y: 11, note: "C"}, {x: 1, y: 11, note: "D"}, {x: 2, y: 11, note: "E"}, {x: 3, y: 8, note: "G"}, {x: 0, y: 7, note: "A"}, {x: 1, y: 7, note: "G"}, {x: 2, y: 7, note: "E"}, {x: 3, y: 4, note: "D"}]
+								colors: [colors.green[2], colors.green[0], colors.black[2]],
+								song: "healing",
+								platforms: [{x: 0, y: 11, color: colors.black[2], note: songs.healing.melody[0]}, {x: 1, y: 11, color: colors.black[2], note: songs.healing.melody[1]}, {x: 2, y: 11, color: colors.black[2], note: songs.healing.melody[2]}, {x: 3, y: 8, color: colors.black[2], note: songs.healing.melody[3]}, {x: 0, y: 7, color: colors.black[2], note: songs.healing.melody[0]}, {x: 1, y: 7, color: colors.black[2], note: songs.healing.melody[1]}, {x: 2, y: 7, color: colors.black[2], note: songs.healing.melody[2]}, {x: 3, y: 4, color: colors.black[2], note: songs.healing.melody[3]}]
 							},
 							{
 								name: "protection",
-								colors: ["blue","purple"],
-								song: "object-shield",
-								platforms: [{x: 0, y: 11, note: "C"}, {x: 1, y: 11, note: "G"}, {x: 2, y: 10, note: "A"}, {x: 3, y: 8, note: "G"}, {x: 0, y: 7, note: "C"}, {x: 1, y: 7, note: "G"}, {x: 2, y: 6, note: "A"}, {x: 3, y: 4, note: "G"}]
+								colors: [colors.yellow[2], colors.yellow[0], colors.black[2]],
+								song: "protection",
+								platforms: [{x: 0, y: 11, color: colors.black[2], note: songs.protection.melody[0]}, {x: 1, y: 11, color: colors.black[2], note: songs.protection.melody[1]}, {x: 2, y: 10, color: colors.black[2], note: songs.protection.melody[2]}, {x: 3, y: 8, color: colors.black[2], note: songs.protection.melody[3]}, {x: 0, y: 7, color: colors.black[2], note: songs.protection.melody[0]}, {x: 1, y: 7, color: colors.black[2], note: songs.protection.melody[1]}, {x: 2, y: 6, color: colors.black[2], note: songs.protection.melody[2]}, {x: 3, y: 4, color: colors.black[2], note: songs.protection.melody[3]}]
 							},
 							{
 								name: "strength",
-								colors: ["red","orange"],
-								song: "double-attack-damage",
-								platforms: [{x: 0, y: 11, note: "C"}, {x: 1, y: 11, note: "D"}, {x: 2, y: 9, note: "C"}, {x: 3, y: 8, note: "A"}, {x: 0, y: 7, note: "G"}, {x: 1, y: 7, note: "A"}, {x: 2, y: 5, note: "C"}, {x: 3, y: 4, note: "A"}]
+								colors: [colors.orange[2], colors.orange[0], colors.black[2]],
+								song: "strength",
+								platforms: [{x: 0, y: 11, color: colors.black[2], note: songs.healing.melody[0]}, {x: 1, y: 11, color: colors.black[2], note: songs.healing.melody[1]}, {x: 2, y: 9, color: colors.black[2], note: songs.healing.melody[2]}, {x: 3, y: 8, color: colors.black[2], note: songs.healing.melody[3]}, {x: 0, y: 7, color: colors.black[2], note: songs.healing.melody[0]}, {x: 1, y: 7, color: colors.black[2], note: songs.healing.melody[1]}, {x: 2, y: 5, color: colors.black[2], note: songs.healing.melody[2]}, {x: 3, y: 4, color: colors.black[2], note: songs.healing.melody[3]}]
 							},
 							{
 								name: "flight",
-								colors: ["blue","green"],
-								song: "double-jump-height",
-								platforms: [{x: 0, y: 11, note: "C"}, {x: 1, y: 10, note: "G"}, {x: 2, y: 10, note: "E"}, {x: 3, y: 8, note: "G"}, {x: 0, y: 7, note: "C"}, {x: 1, y: 6, note: "G"}, {x: 2, y: 6, note: "E"}, {x: 3, y: 4, note: "G"}]
+								colors: [colors.cerulean[2], colors.cerulean[0], colors.black[2]],
+								song: "flight",
+								platforms: [{x: 0, y: 11, color: colors.black[2], note: songs.flight.melody[0]}, {x: 1, y: 10, color: colors.black[2], note: songs.flight.melody[1]}, {x: 2, y: 10, color: colors.black[2], note: songs.flight.melody[2]}, {x: 3, y: 8, color: colors.black[2], note: songs.flight.melody[3]}, {x: 0, y: 7, color: colors.black[2], note: songs.flight.melody[0]}, {x: 1, y: 6, color: colors.black[2], note: songs.flight.melody[1]}, {x: 2, y: 6, color: colors.black[2], note: songs.flight.melody[2]}, {x: 3, y: 4, color: colors.black[2], note: songs.flight.melody[3]}]
 							},
 							{
-								name: "immobility",
-								colors: ["purple","black"],
-								song: "half-move-speed",
-								platforms: [{x: 0, y: 11, note: "A"}, {x: 1, y: 10, note: "C"}, {x: 2, y: 9, note: "D"}, {x: 3, y: 8, note: "E"}, {x: 0, y: 7, note: "D"}, {x: 1, y: 6, note: "C"}, {x: 2, y: 5, note: "D"}, {x: 3, y: 4, note: "E"}]
+								name: "paralysis",
+								colors: [colors.browngray[2], colors.browngray[0], colors.black[2]],
+								song: "paralysis",
+								platforms: [{x: 0, y: 11, color: colors.black[2], note: songs.paralysis.melody[0]}, {x: 1, y: 10, color: colors.black[2], note: songs.paralysis.melody[1]}, {x: 2, y: 9, color: colors.black[2], note: songs.paralysis.melody[2]}, {x: 3, y: 8, color: colors.black[2], note: songs.paralysis.melody[3]}, {x: 0, y: 7, color: colors.black[2], note: songs.paralysis.melody[0]}, {x: 1, y: 6, color: colors.black[2], note: songs.paralysis.melody[1]}, {x: 2, y: 5, color: colors.black[2], note: songs.paralysis.melody[2]}, {x: 3, y: 4, color: colors.black[2], note: songs.paralysis.melody[3]}]
 							},
 							{
-								name: "evasion",
-								colors: ["magenta","yellow"],
-								song: "half-attack-speed",
-								platforms: [{x: 0, y: 11, note: "A"}, {x: 1, y: 10, note: "C"}, {x: 2, y: 8, note: "A"}, {x: 3, y: 8, note: "G"}, {x: 0, y: 7, note: "A"}, {x: 1, y: 6, note: "C"}, {x: 2, y: 4, note: "A"}, {x: 3, y: 4, note: "G"}]
+								name: "confusion",
+								colors: [colors.purple[2], colors.purple[0], colors.black[2]],
+								song: "confusion",
+								platforms: [{x: 0, y: 11, color: colors.black[2], note: songs.confusion.melody[0]}, {x: 1, y: 10, color: colors.black[2], note: songs.confusion.melody[1]}, {x: 2, y: 8, color: colors.black[2], note: songs.confusion.melody[2]}, {x: 3, y: 8, color: colors.black[2], note: songs.confusion.melody[3]}, {x: 0, y: 7, color: colors.black[2], note: songs.confusion.melody[0]}, {x: 1, y: 6, color: colors.black[2], note: songs.confusion.melody[1]}, {x: 2, y: 4, color: colors.black[2], note: songs.confusion.melody[2]}, {x: 3, y: 4, color: colors.black[2], note: songs.confusion.melody[3]}]
 							},
 							{
-								name: "silence",
-								colors: ["orange","blue"],
-								song: "silence-magic",
-								platforms: [{x: 0, y: 11, note: "A"}, {x: 1, y: 9, note: "E"}, {x: 2, y: 9, note: "G"}, {x: 3, y: 8, note: "E"}, {x: 0, y: 7, note: "D"}, {x: 1, y: 5, note: "E"}, {x: 2, y: 5, note: "G"}, {x: 3, y: 4, note: "E"}]
+								name: "immunity",
+								colors: [colors.cyan[2], colors.cyan[0], colors.black[2]],
+								song: "immunity",
+								platforms: [{x: 0, y: 11, color: colors.black[2], note: songs.immunity.melody[0]}, {x: 1, y: 9, color: colors.black[2], note: songs.immunity.melody[1]}, {x: 2, y: 9, color: colors.black[2], note: songs.immunity.melody[2]}, {x: 3, y: 8, color: colors.black[2], note: songs.immunity.melody[3]}, {x: 0, y: 7, color: colors.black[2], note: songs.immunity.melody[0]}, {x: 1, y: 5, color: colors.black[2], note: songs.immunity.melody[1]}, {x: 2, y: 5, color: colors.black[2], note: songs.immunity.melody[2]}, {x: 3, y: 4, color: colors.black[2], note: songs.immunity.melody[3]}]
 							},
 							{
 								name: "pain",
-								colors: ["red","green"],
-								song: "health-down",
-								platforms: [{x: 0, y: 11, note: "A"}, {x: 1, y: 9, note: "E"}, {x: 2, y: 8, note: "D"}, {x: 3, y: 8, note: "C"}, {x: 0, y: 7, note: "G"}, {x: 1, y: 5, note: "E"}, {x: 2, y: 4, note: "D"}, {x: 3, y: 4, note: "C"}]
+								colors: [colors.red[2], colors.red[0], colors.black[2]],
+								song: "pain",
+								platforms: [{x: 0, y: 11, color: colors.black[2], note: songs.healing.melody[0]}, {x: 1, y: 9, color: colors.black[2], note: songs.healing.melody[1]}, {x: 2, y: 8, color: colors.black[2], note: songs.healing.melody[2]}, {x: 3, y: 8, color: colors.black[2], note: songs.healing.melody[3]}, {x: 0, y: 7, color: colors.black[2], note: songs.healing.melody[0]}, {x: 1, y: 5, color: colors.black[2], note: songs.healing.melody[1]}, {x: 2, y: 4, color: colors.black[2], note: songs.healing.melody[2]}, {x: 3, y: 4, color: colors.black[2], note: songs.healing.melody[3]}]
 							}
 						]
 					break									
 
 					case "themes":
+						var colors = getAsset("colors")
+
 						return [
 							{
-								name: "coastal",
-								terrain: "#91773f",
-								terrainBackground: "#d8cbad",
-								platform: "#513802",
-								platformBackground: "#827761",
-								pit: "#2b5572",
-								pitBackground: "#617787",
-								tower: "#dbd590",
-								towerBackground: "#f2eebf",
-								skyTop: "#d3ffff",
-								skyBottom: "#a8e0e0"
-								
+								name: "beach",
+								terrainForeground:  colors.beige[4],
+								terrainBackground:  colors.beige[2],
+								platformForeground: colors.brown[3],
+								platformBackground: colors.brown[1],
+								pitForeground:      colors.cerulean[3],
+								pitBackground:      colors.cerulean[2],
+								towerForeground:    colors.yellow[1],
+								towerBackground:    colors.yellow[0],
+								skyTop:             colors.cyan[0],
+								skyBottom:          colors.cyan[1]	
 							},
 							{
 								name: "mountain",
-								terrain: "#232526",
-								terrainBackground: "#afbabf",
-								platform: "#4b5256",
-								platformBackground: "#b8c1c6",
-								pit: "#151819",
-								pitBackground: "#919191",
-								tower: "#afa389",
-								towerBackground: "#cec8b9",
-								skyTop: "#daeaf2",
-								skyBottom: "#aebdc4"
+								terrainForeground:  colors.black[4],
+								terrainBackground:  colors.black[2],
+								platformForeground: colors.black[3],
+								platformBackground: colors.black[1],
+								pitForeground:      colors.bluegray[3],
+								pitBackground:      colors.bluegray[2],
+								towerForeground:    colors.beige[1],
+								towerBackground:    colors.beige[0],
+								skyTop:             colors.cerulean[0],
+								skyBottom:          colors.cerulean[1]
 							},
 							{
 								name: "forest",
-								terrain: "#053007",
-								terrainBackground: "#6a8c6c",
-								platform: "#442103",
-								platformBackground: "#937b66",
-								pit: "#180c26",
-								pitBackground: "#786e84",
-								tower: "#4f4037",
-								towerBackground: "#a5958b",
-								skyTop: "#dbffe4",
-								skyBottom: "#beeaca"
+								terrainForeground:  colors.green[4],
+								terrainBackground:  colors.green[2],
+								platformForeground: colors.orange[3],
+								platformBackground: colors.orange[1],
+								pitForeground:      colors.purple[3],
+								pitBackground:      colors.purple[2],
+								towerForeground:    colors.brown[1],
+								towerBackground:    colors.brown[0],
+								skyTop:             colors.greengray[0],
+								skyBottom:          colors.greengray[1]
 							},
 							{
 								name: "volcano",
-								terrain: "#232222",
-								terrainBackground: "#919191",
-								platform: "#474545",
-								platformBackground: "#a5a2a2",
-								pit: "#7c0808",
-								pitBackground: "#c17474",
-								tower: "#473d5e",
-								towerBackground: "#a397bf",
-								skyTop: "#ffeaea",
-								skyBottom: "#dbbebe"
+								terrainForeground:  colors.browngray[4],
+								terrainBackground:  colors.browngray[2],
+								platformForeground: colors.browngray[3],
+								platformBackground: colors.browngray[1],
+								pitForeground:      colors.red[3],
+								pitBackground:      colors.red[2],
+								towerForeground:    colors.black[1],
+								towerBackground:    colors.black[0],
+								skyTop:             colors.red[0],
+								skyBottom:          colors.red[1]
+							},
+							{
+								name: "snowscape",
+								terrainForeground:  colors.white[4],
+								terrainBackground:  colors.white[2],
+								platformForeground: colors.bluegray[3],
+								platformBackground: colors.bluegray[1],
+								pitForeground:      colors.cyan[3],
+								pitBackground:      colors.cyan[2],
+								towerForeground:    colors.bluegray[1],
+								towerBackground:    colors.bluegray[0],
+								skyTop:             colors.cyan[0],
+								skyBottom:          colors.cyan[1]	
+							},
+							{
+								name: "lagoon",
+								terrainForeground:  colors.blue[4],
+								terrainBackground:  colors.blue[2],
+								platformForeground: colors.blue[3],
+								platformBackground: colors.blue[1],
+								pitForeground:      colors.bluegray[3],
+								pitBackground:      colors.bluegray[2],
+								towerForeground:    colors.purple[1],
+								towerBackground:    colors.purple[0],
+								skyTop:             colors.blue[0],
+								skyBottom:          colors.blue[1]
+							},
+							{
+								name: "swamp",
+								terrainForeground:  colors.greengray[4],
+								terrainBackground:  colors.greengray[2],
+								platformForeground: colors.greengray[3],
+								platformBackground: colors.greengray[1],
+								pitForeground:      colors.browngray[3],
+								pitBackground:      colors.browngray[2],
+								towerForeground:    colors.brown[1],
+								towerBackground:    colors.brown[0],
+								skyTop:             colors.cerulean[0],
+								skyBottom:          colors.cerulean[1]
+							},
+							{
+								name: "wasteland",
+								terrainForeground:  colors.orange[4],
+								terrainBackground:  colors.orange[2],
+								platformForeground: colors.orange[3],
+								platformBackground: colors.orange[1],
+								pitForeground:      colors.yellow[3],
+								pitBackground:      colors.yellow[2],
+								towerForeground:    colors.black[1],
+								towerBackground:    colors.black[0],
+								skyTop:             colors.beige[0],
+								skyBottom:          colors.beige[1]
 							}
 						]
 					break
@@ -488,6 +557,27 @@
 							vy:     0,
 							radius: 16,
 							colors: []
+						}
+					break
+
+					case "colors":
+						return {
+							magenta:    ["#ffcce6","#ff66b3","#e60073","#99004d","#33001a"],
+							red:        ["#fab7b7","#f66f6f","#d80e0e","#7c0808","#300303"],
+							brown:      ["#e09b06","#ae7804","#7c5603","#513802","#191101"],
+							browngray:  ["#d5cac3","#b6a196","#a18778","#786154","#4f4037"],
+							orange:     ["#fde4ce","#f9ae6c","#f68523","#ab5407","#442103"],
+							beige:      ["#f7f4ed","#e0d3b8","#c1a871","#91773f","#6a572f"],
+							yellow:     ["#f6f4d5","#e5dd80","#d8cb41","#beb227","#7f771a"],
+							green:      ["#a9d3ab","#539e57","#1a661e","#074f0b","#053007"],
+							greengray:  ["#d3ded4","#99b29b","#6a8c6c","#4d664e","#374938"],
+							cyan:       ["#e6ffff","#b3ffff","#33ffff","#00cccc","#008080"],
+							cerulean:   ["#dae7f1","#90b8d5","#4689b9","#2b5572","#1c374a"],
+							bluegray:   ["#dee9ed","#adc8d2","#7ba7b7","#487484","#2d4852"],
+							blue:       ["#d0e0fb","#d0e0fb","#2b76ef","#0b3d8e","#04142f"],
+							purple:     ["#dac0f7","#b08bda","#7b3dc2","#4a2574","#180c26"],
+							black:      ["#e4e6e7","#a2a7a9","#6e7477","#3d4142","#232526"],
+							white:      ["#c0dee5","#cee2e8","#dcf1f7","#e3f5f9","#f9fdff"]
 						}
 					break
 
