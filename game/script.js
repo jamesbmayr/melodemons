@@ -3,7 +3,6 @@
 		var canvas     = document.getElementById("canvas")
 		var context    = canvas.getContext("2d")
 		window.data    = data = {}
-		var menu       = {}
 		var sounds     = {}
 		var eraseTimer = null
 
@@ -27,214 +26,210 @@
 		document.addEventListener("keydown", submitKey)
 		document.addEventListener("keyup",   submitKey)
 		function submitKey(event) {
-			// variables
-				var key   = null
-				var type  = null
-				var press = (event.type == "keydown") ? true : false
+			if (data.clicked) {
+				// variables
+					var key   = null
+					var type  = null
+					var press = (event.type == "keydown") ? true : false
 
-			// get key & type
-				switch (event.code) {
-					// arrows
-						case "ArrowUp":
-							key = "up"
-						break
-						case "ArrowRight":
-							key = "right"
-						break
-						case "ArrowDown":
-							key = "down"
-						break
-						case "ArrowLeft":
-							key = "left"
-						break
-
-					// music
-						// row 1
-							case "KeyQ":
-								key = "C4"
+				// get key & type
+					switch (event.code) {
+						// arrows
+							case "ArrowUp":
+								key = "up"
 							break
-							case "KeyW":
-								key = "D4"
+							case "ArrowRight":
+								key = "right"
 							break
-							case "KeyE":
-								key = "E4"
+							case "ArrowDown":
+								key = "down"
 							break
-							case "KeyR":
-							//	key = "F4"
-							break
-							case "KeyT":
-								key = "G4"
-							break
-							case "KeyY":
-								key = "A5"
-							break
-							case "KeyU":
-							//	key = "B5"
-							break
-							case "KeyI":
-								key = "C5"
-							break
-							case "KeyO":
-								key = "D5"
-							break
-							case "KeyP":
-								key = "E5"
-							break
-							case "BracketLeft":
-							//	key = "F5"
-							break
-							case "BracketRight":
-								key = "G5"
-							break
-							case "Backslash":
-								key = "A6"
+							case "ArrowLeft":
+								key = "left"
 							break
 
-						// row 2
-							case "KeyA":
-								key = "C3"
-							break
-							case "KeyS":
-								key = "D3"
-							break
-							case "KeyD":
-								key = "E3"
-							break
-							case "KeyF":
-							//	key = "F3"
-							break
-							case "KeyG":
-								key = "G3"
-							break
-							case "KeyH":
-								key = "A4"
-							break
-							case "KeyJ":
-							//	key = "B4"
-							break
-							case "KeyK":
-								key = "C4"
-							break
-							case "KeyL":
-								key = "D4"
-							break
-							case "Semicolon":
-								key = "E4"
-							break
-							case "Quote":
-							//	key = "F4"
-							break
+						// music
+							// row 1
+								case "KeyQ":
+									key = "C4"
+								break
+								case "KeyW":
+									key = "D4"
+								break
+								case "KeyE":
+									key = "E4"
+								break
+								case "KeyR":
+								//	key = "F4"
+								break
+								case "KeyT":
+									key = "G4"
+								break
+								case "KeyY":
+									key = "A5"
+								break
+								case "KeyU":
+								//	key = "B5"
+								break
+								case "KeyI":
+									key = "C5"
+								break
+								case "KeyO":
+									key = "D5"
+								break
+								case "KeyP":
+									key = "E5"
+								break
+								case "BracketLeft":
+								//	key = "F5"
+								break
+								case "BracketRight":
+									key = "G5"
+								break
+								case "Backslash":
+									key = "A6"
+								break
+
+							// row 2
+								case "KeyA":
+									key = "C3"
+								break
+								case "KeyS":
+									key = "D3"
+								break
+								case "KeyD":
+									key = "E3"
+								break
+								case "KeyF":
+								//	key = "F3"
+								break
+								case "KeyG":
+									key = "G3"
+								break
+								case "KeyH":
+									key = "A4"
+								break
+								case "KeyJ":
+								//	key = "B4"
+								break
+								case "KeyK":
+									key = "C4"
+								break
+								case "KeyL":
+									key = "D4"
+								break
+								case "Semicolon":
+									key = "E4"
+								break
+								case "Quote":
+								//	key = "F4"
+								break
+							
+							// row 3
+								case "KeyZ":
+									key = "C2"
+								break
+								case "KeyX":
+									key = "D2"
+								break
+								case "KeyC":
+									key = "E2"
+								break
+								case "KeyV":
+								//	key = "F2"
+								break
+								case "KeyB":
+									key = "G2"
+								break
+								case "KeyN":
+									key = "A3"
+								break
+								case "KeyM":
+								//	key = "B3"
+								break
+								case "Comma":
+									key = "C3"
+								break
+								case "Period":
+									key = "D3"
+								break
+								case "Slash":
+									key = "E3"
+								break
 						
-						// row 3
-							case "KeyZ":
-								key = "C2"
+						// numbers
+							case "Digit1":
+								key = 1
 							break
-							case "KeyX":
-								key = "D2"
+							case "Digit2":
+								key = 2
 							break
-							case "KeyC":
-								key = "E2"
+							case "Digit3":
+								key = 3
 							break
-							case "KeyV":
-							//	key = "F2"
+							case "Digit4":
+								key = 4
 							break
-							case "KeyB":
-								key = "G2"
+							case "Digit5":
+								key = 5
 							break
-							case "KeyN":
-								key = "A3"
+							case "Digit6":
+								key = 6
 							break
-							case "KeyM":
-							//	key = "B3"
+							case "Digit7":
+								key = 7
 							break
-							case "Comma":
-								key = "C3"
+							case "Digit8":
+								key = 8
 							break
-							case "Period":
-								key = "D3"
+							case "Digit9":
+								key = 9
 							break
-							case "Slash":
-								key = "E3"
+							case "Digit0":
+								key = 10
 							break
-					
-					// numbers
-						case "Digit1":
-							key = 1
-						break
-						case "Digit2":
-							key = 2
-						break
-						case "Digit3":
-							key = 3
-						break
-						case "Digit4":
-							key = 4
-						break
-						case "Digit5":
-							key = 5
-						break
-						case "Digit6":
-							key = 6
-						break
-						case "Digit7":
-							key = 7
-						break
-						case "Digit8":
-							key = 8
-						break
-						case "Digit9":
-							key = 9
-						break
-						case "Digit0":
-							key = 10
-						break
-						case "Minus":
-							key = 11
-						break
-						case "Equal":
-							key = 12
-						break
-				}
+							case "Minus":
+								key = 11
+							break
+							case "Equal":
+								key = 12
+							break
+					}
 
-				if ([1,2,3,4,5,6,7,8,9,10,11,12].includes(key)) {
-					type = "Number"
-				}
-				else if (["up","right","down","left"].includes(key)) {
-					type = "Arrow"
-				}
-				else {
-					type = "Note"
-				}
+					if ([1,2,3,4,5,6,7,8,9,10,11,12].includes(key)) {
+						type = "Number"
+					}
+					else if (["up","right","down","left"].includes(key)) {
+						type = "Arrow"
+					}
+					else {
+						type = "Note"
+					}
 
-			// submit data
-				if (key !== null && socket) {
-					socket.send(JSON.stringify({
-						action: "submit" + type,
-						key:    key,
-						press:  press
-					}))
-				}
+				// submit data
+					if (key !== null && socket) {
+						socket.send(JSON.stringify({
+							action: "submit" + type,
+							key:    key,
+							press:  press
+						}))
+					}
+			}
 		}
 
 	/* submitClick */
 		document.addEventListener("click", submitClick)
 		function submitClick(event) {
-			// game start / end
-				if (data.clicked) {
-					return false
-				}
-
-			// menu
-				else {
-					data.clicked = true
-					socket.send(JSON.stringify({
-						action: "submitArrow",
-						key:    "up",
-						press:  true
-					}))
-
-					// window.audio = window.buildAudio()
-				}
+			if (!data.clicked) {
+				data.clicked = true
+				document.getElementById("overlay").remove()
+				socket.send(JSON.stringify({
+					action: "submitArrow",
+					key:    "up",
+					press:  false
+				}))
+				// window.audio = window.buildAudio()
+			}
 		}
 
 	/* receivePost */
@@ -261,13 +256,13 @@
 
 			// menu
 				if (post.overlay) {
-					menu.overlay = post.overlay
+					data.overlay = post.overlay
 				}
 				if (post.options) {
-					menu.options = post.options 
+					data.options = post.options 
 				}
 				if (post.text) {
-					menu.text    = post.text
+					data.text    = post.text
 				}
 
 			// gameplay
@@ -297,10 +292,10 @@
 				}
 
 			// draw
-				if (!data.state.start) {
+				if (!data.state || !data.state.start) {
 					drawMenu()
 				}
-				else if (data.state.start && data.map) {
+				else if (data.state && data.state.start && data.map) {
 					drawGame()
 				}
 
@@ -434,10 +429,11 @@
 		function drawMessage() {
 			drawText(canvas.width / 2, 7 * canvas.height / 8, data.message, {color: "#222222"})
 		}
-		
+
 	/* drawMenu */
 		function drawMenu() {
-			return false
+			// options
+
 		}
 
 /*** gameplay ***/
@@ -448,7 +444,7 @@
 			drawForeground()
 		}
 
-	/* drawEmpty */
+	/* drawSky */
 		function drawSky() {
 			context.clearRect(0, 0, canvas.width, canvas.height)
 			drawRectangle(    0, 0, canvas.width, canvas.height, {gradient: {x1: 0, y1: 0, x2: 0, y2: canvas.height, colors: {"0": data.theme.skyBottom, "1": data.theme.skyTop}}})
@@ -516,7 +512,7 @@
 
 			// auras
 				for (var a in data.auras) {
-					drawAura(1280 - ((data.auras[a].x - 32 - startX + mapLength + 20) % mapLength - 20) / 1.6, (data.auras[a].y / 1.6) + 40, 0.625, data.auras[a])
+					drawAura(1280 - ((data.auras[a].x - 32 - startX + mapLength + 200) % mapLength - 200) / 1.6, (data.auras[a].y / 1.6) + 40, 0.625, data.auras[a])
 				}
 
 			// pit
@@ -585,7 +581,7 @@
 
 			// auras
 				for (var a in data.auras) {
-					drawAura((data.auras[a].x - startX + mapLength + 32) % mapLength - 32, data.auras[a].y, 1, data.auras[a])
+					drawAura((data.auras[a].x - startX + mapLength + 256) % mapLength - 256, data.auras[a].y, 1, data.auras[a])
 				}
 
 			// win countdown ?

@@ -19,31 +19,16 @@
 					request.game.players[request.session.id].connected  = true
 					request.game.players[request.session.id].connection = request.connection
 
-					if (!request.game.data.state.start) {
-						var text = main.getAsset("text")
-						var overlay = text.main + "\n" +
-							(request.game.data.players[request.session.id].admin ? text.demons : text.heroes) + "\n" +
-							(request.game.data.players[request.session.id].admin ? text.numbers + " " : "") +
-							text.controls + "\n" +
-							text.towers + " " + text.respawn + "\n" +
-							text.thirds + "\n" +
-							text.songs + "\n" +
-							text.conclude
-
-						callback([request.session.id], {success: true, overlay: overlay})
-					}
-					else {
-						callback([request.session.id], {success: true, 
-							state:  request.game.data.state,
-							theme:  request.game.data.theme,
-							heroes: request.game.data.heroes,
-							demons: request.game.data.demons,
-							towers: request.game.data.towers,
-							map:    request.game.data.map,
-							arrows: request.game.data.arrows,
-							auras:  request.game.data.auras
-						})
-					}
+					callback([request.session.id], {success: true, 
+						state:  request.game.data.state,
+						theme:  request.game.data.theme,
+						heroes: request.game.data.heroes,
+						demons: request.game.data.demons,
+						towers: request.game.data.towers,
+						map:    request.game.data.map,
+						arrows: request.game.data.arrows,
+						auras:  request.game.data.auras
+					})
 				}
 			}
 			catch (error) {

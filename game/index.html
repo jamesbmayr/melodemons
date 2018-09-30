@@ -12,6 +12,24 @@
 	<body>
 		<div id="error" class="hidden"></div>
 		<canvas id="canvas" height="640" width="1280"></canvas>
+		<script node>
+			if (request.game.data.state.start) {
+				"<div id='overlay' style='font-size: 64px; text-align: center;'>" + 
+					"[click to rejoin]" + 
+				"</div>"
+			}
+			else {
+				var text = getAsset("text")
+				var overlay = text.main + "<br>" + (request.game.players[request.session.id].admin ? text.demons : text.heroes) + "<br><br><br>" +
+					(request.game.players[request.session.id].admin ? text.numbers + "<br>" : "") + text.arrows + "<br>" + text.letters + "<br><br><br>" +
+					text.towers + "<br>" + text.respawn + "<br>" + text.thirds + "<br>" + text.songs + "<br><br><br>" +
+					text.conclude + "<br><br>" + text.click
+
+				"<div id='overlay'>" + 
+					overlay +
+				"</div>"
+			}
+		</script>node>
 		<!-- <div id="container">
 			<pre id="dataview" style="text-align: left; position: absolute; top: 0px; left: 0px; height: 100%; width: 100%; font-size: 12px; overflow: scroll; padding: 0px; margin: 0px"></pre>
 		</div> -->
