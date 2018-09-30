@@ -457,10 +457,14 @@
 							players: {},
 							data: {
 								state: {
-									start: false,
-									end:   false,
-									beat:  0,
-									count: 0
+									start:   false,
+									end:     false,
+									beat:    0,
+									winning: {
+										team:      null,
+										color:     null,
+										countdown: 32
+									}
 								},
 								theme:  null,
 								heroes: {},

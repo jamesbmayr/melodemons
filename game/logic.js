@@ -78,7 +78,7 @@
 						changeSelection(request, callback)
 					}
 				}
-				else {
+				else if (!request.game.data.state.end) {
 					triggerMove(request, callback)
 				}
 			}
@@ -96,7 +96,7 @@
 					var instrument = request.game.data.heroes[request.session.id] ? request.game.data.heroes[request.session.id].instrument : request.game.players[request.session.id].admin ? request.game.data.demons[0].instrument : "triangle"
 					callback(Object.keys(request.game.players), {success: true, press: request.post.press, note: request.post.key, instrument: instrument})
 				}
-				else {
+				else if (!request.game.data.state.end) {
 					triggerNote(request, callback)
 				}
 			}
@@ -113,7 +113,7 @@
 				if (!request.game.data.state.start) {
 					//
 				}
-				else {
+				else if (!request.game.data.state.end) {
 					triggerNumber(request, callback)
 				}
 			}
@@ -496,7 +496,7 @@
 							avatar.state.y = (platform.y + 1) * 32 + 16
 						}
 						while (keys.find(function(k) {
-							return ((request.game.data.heroes[k].name    != avatar.name)
+							return ((request.game.data.heroes[k].name   !== avatar.name)
 								 && (request.game.data.heroes[k].state.x == avatar.state.x)
 								 && (request.game.data.heroes[k].state.y == avatar.state.y))
 						}))
@@ -513,7 +513,7 @@
 							avatar.state.y =                        (platform.y + 1) * 32 + 16
 						}
 						while (request.game.data.demons.find(function(d) {
-							return ((d.name    != avatar.name)
+							return ((d.name   !== avatar.name)
 								 && (d.state.x == avatar.state.x)
 								 && (d.state.y == avatar.state.y))
 						}))
@@ -815,6 +815,11 @@
 						callback(Object.keys(request.game.players), request.game.data)
 					}
 
+				// victory
+					else if (request.game.data.state.end) {
+						callback(Object.keys(request.game.players), request.game.data)
+					}
+
 				// gameplay
 					else {
 						// beat
@@ -844,6 +849,15 @@
 
 								if (request.game.data.state.beat % 8 == 0) {
 									updateKeys(  request, avatar)
+								}
+							}
+
+						// winning ?
+							if (request.game.data.state.winning.team && request.game.data.state.beat % 8 == 0) {
+								request.game.data.state.winning.countdown--
+
+								if (request.game.data.state.winning.countdown <= 0) {
+									request.game.data.state.end = new Date().getTime()
 								}
 							}
 
@@ -899,7 +913,7 @@
 					var future         = getCells(map.length, avatar.state.x, avatar.state.y, 32, 64)
 
 				// terrain collision - changing rows
-					if (avatar.state.rowDown != future.rowDown || avatar.state.rowUp != future.rowUp) {
+					if (avatar.state.rowDown !== future.rowDown || avatar.state.rowUp !== future.rowUp) {
 						// collision down - terrain
 							if ((avatar.state.vy <= 0)   &&
 							   ((map[future.colLeft ][0] && future.rowDown <= map[future.colLeft ][0].top)
@@ -927,7 +941,7 @@
 					}
 
 				// terrain collision - changing columns
-					if (avatar.state.colLeft != future.colLeft || avatar.state.colRight != future.colRight) {
+					if (avatar.state.colLeft !== future.colLeft || avatar.state.colRight !== future.colRight) {
 						// collision left
 							if      ((map[future.colLeft ][0] && future.rowUp   >= map[future.colLeft ][0].bottom && future.rowUp   <= map[future.colLeft ][0].top)
 							      || (map[future.colLeft ][0] && future.rowDown >= map[future.colLeft ][0].bottom && future.rowDown <= map[future.colLeft ][0].top)) {
@@ -1164,6 +1178,7 @@
 				if (avatar.state.health && avatar.state.keyable) {
 					// get notes
 						var changePlatform = false
+						var changeTower    = false
 						var notes = []
 						for (var k in avatar.state.keys[avatar.state.keys.length - 1]) {
 							notes.push(avatar.state.keys[avatar.state.keys.length - 1][k].slice(0,1))
@@ -1175,7 +1190,7 @@
 								return t.name == avatar.state.tower.name
 							})
 
-							if      (avatar.state.tower.platforms[0] && avatar.state.tower.platforms[0].team != avatar.team && notes.includes(avatar.state.tower.platforms[0].note)) {
+							if      (avatar.state.tower.platforms[0] && avatar.state.tower.platforms[0].team !== avatar.team && notes.includes(avatar.state.tower.platforms[0].note)) {
 								var platform = tower.platforms.find(function (p) {
 									return (p.x == avatar.state.tower.platforms[0].x && p.y == avatar.state.tower.platforms[0].y)
 								})
@@ -1184,7 +1199,7 @@
 								changePlatform = true
 								avatar.state.keyable = false
 							}
-							else if (avatar.state.tower.platforms[1] && avatar.state.tower.platforms[1].team != avatar.team && notes.includes(avatar.state.tower.platforms[1].note)) {
+							else if (avatar.state.tower.platforms[1] && avatar.state.tower.platforms[1].team !== avatar.team && notes.includes(avatar.state.tower.platforms[1].note)) {
 								var platform = tower.platforms.find(function (p) {
 									return (p.x == avatar.state.tower.platforms[1].x && p.y == avatar.state.tower.platforms[1].y)
 								})
@@ -1202,10 +1217,10 @@
 							var previousTeam = tower.team
 
 							for (var p in tower.platforms) {
-								if (tower.platforms[p].team != "heroes") {
+								if (tower.platforms[p].team !== "heroes") {
 									heroControl = false
 								}
-								if (tower.platforms[p].team != "demons") {
+								if (tower.platforms[p].team !== "demons") {
 									demonControl = false
 								}
 							}
@@ -1219,7 +1234,30 @@
 									tower.colors[2] = colors.black[2]
 								}
 
+								changeTower = true
 								updateSongs(request, tower)
+							}
+						}
+
+					// countdown ?
+						if (changeTower) {
+							var heroWinning     = true
+							var demonWinning    = true
+							var previousWinning = request.game.data.state.winning.team
+
+							for (var t in request.game.data.towers) {
+								if (request.game.data.towers[t].team !== "heroes") {
+									heroWinning = false
+								}
+								else if (request.game.data.towers[t].team !== "demons") {
+									demonWinning = false
+								}
+							}
+
+							request.game.data.state.winning.team = heroWinning ? "heroes" : demonWinning ? "demons" : null
+							if (request.game.data.state.winning.team !== previousWinning) {
+								request.game.data.state.winning.color = heroWinning ? colors.blue[2] : demonWinning ? colors.red[2] : null
+								request.game.data.state.winning.countdown = 32
 							}
 						}
 				}

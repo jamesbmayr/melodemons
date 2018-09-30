@@ -447,6 +447,10 @@
 					// loop
 						if (request.game && !request.game.loop) {
 							request.game.loop = setInterval(function() {
+								if (request.game.data.state.end) {
+									clearInterval(request.game.loop)
+								}
+								
 								game.updateState(request, function(recipients, data) {
 									for (var r in recipients) {
 										try {

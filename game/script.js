@@ -1,9 +1,10 @@
 /*** onload ***/
 	/* elements */
-		var canvas  = document.getElementById("canvas")
-		var context = canvas.getContext("2d")
-		window.data = data = {}
-		var sounds  = {}
+		var canvas     = document.getElementById("canvas")
+		var context    = canvas.getContext("2d")
+		window.data    = data = {}
+		var sounds     = {}
+		var eraseTimer = null
 
 /*** websocket ***/
 	/* checkLoop */
@@ -221,6 +222,21 @@
 					window.location = post.location
 				}
 
+			// message
+				if (post.message) {
+					data.message = post.message
+
+					if (eraseTimer) {
+						clearInterval(eraseTimer) 
+					}
+
+					eraseTimer = setTimeout(function() {
+						data.message = null
+						clearInterval(eraseTimer)
+						eraseTimer = null
+					}, 3000)
+				}
+
 			// gameplay
 				if (post.state) {
 					data.state = post.state
@@ -253,6 +269,10 @@
 				}
 				else if (data.state.start && data.map) {
 					drawGame()
+				}
+
+				if (data.message) {
+					drawMessage()
 				}
 		}
 
@@ -380,6 +400,11 @@
 	/* drawMenu */
 		function drawMenu() {
 			return false
+		}
+
+	/* drawMessage */
+		function drawMessage() {
+			drawText(canvas.width / 2, 7 * canvas.height / 8, data.message, {color: "#222222"})
 		}
 
 /*** gameplay ***/
@@ -530,7 +555,10 @@
 					drawAura((data.auras[a].x - startX + mapLength + 32) % mapLength - 32, data.auras[a].y, 1, data.auras[a])
 				}
 
-			
+			// win countdown ?
+				if (data.state.winning.team) {
+					drawText(canvas.width / 2, 7 * canvas.height / 8, (data.state.winning.countdown || data.state.winning.team + " win"), {color: data.state.winning.color, size: 64})
+				}
 		}
 
 	/* drawAvatar */
@@ -700,14 +728,10 @@
 
 			// name & flag
 				xPlacement = foreground ? (canvasX * multiplier) + centerDelta : 1280 - ((canvasX * multiplier) + centerDelta)
-				
-				drawText(xPlacement, (32 * multiplier * 17) + yOffset, tower.name, {
-					size:   16 * multiplier,
-					color:  tower.colors[2]
-				})
 
 				drawLine(     xPlacement          , (32 * multiplier * 14)                     + yOffset,        xPlacement, (32 * multiplier * 16) + yOffset, {color:  tower.colors[2], shadow: tower.colors[2], blur: 1})
 				drawRectangle(xPlacement + xOffset, (32 * multiplier * 14) + (20 * multiplier) + yOffset, (60 * multiplier), (40 * multiplier)               , {color:  tower.colors[2], shadow: tower.colors[2], blur: 2, radii: {topLeft: 4, topRight: 4, bottomRight: 4, bottomLeft: 4}})
+				drawText(     xPlacement + xOffset + (30 * multiplier), (32 * multiplier * 14) + (35 * multiplier) + yOffset,                      tower.name, {color:  "white", size:   12 * multiplier})
 		}
 
 	/* drawTowerLetters */
