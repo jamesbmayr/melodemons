@@ -511,6 +511,9 @@
 						platforms: [main.duplicateObject(platform)]
 					}
 
+				// set songs
+					avatar.state.songs.push(tower.name)
+
 				// set cells
 					var cells = getCells(request.game.data.map.length, avatar.state.x, avatar.state.y, 32, 64)
 						avatar.state.colLeft  = cells.colLeft
@@ -523,15 +526,30 @@
 
 	/* createAura */
 		module.exports.createAura = createAura
-		function createAura(request) {
+		function createAura(request, avatar, song) {
+			try {
+				var mapLength      = request.game.data.map.length * 32
+				var aura           = main.getAsset("aura")
+					aura.x         = (avatar.state.x + 16 + mapLength) % mapLength
+					aura.y         = avatar.state.y + 48
+					aura.name      = avatar.name
+					aura.team      = avatar.team
+					aura.song      = song.name
+					aura.melody    = song.melody
+					aura.radius    = song.radius * 32
+					aura.colors[0] = song.colors[0]
+					aura.colors[1] = song.colors[1]
 
+				return aura
+			}
+			catch (error) {main.logError(error)}
 		}
 
 	/* createArrow */
 		module.exports.createArrow = createArrow
 		function createArrow(request, avatar) {
 			try {
-				var mapLength = request.game.data.map.length * 32
+				var mapLength       = request.game.data.map.length * 32
 				var arrow           = main.getAsset("arrow")
 					arrow.x         = ((avatar.state.facing == "left" ? avatar.state.x : avatar.state.x + 32) + mapLength) % mapLength
 					arrow.vx        =   avatar.state.facing == "left" ? -16 : 16
@@ -710,6 +728,61 @@
 			catch (error) {main.logError(error)}
 		}
 
+	/* getMatch */
+		module.exports.getMatch = getMatch
+		function getMatch(melody, beats) {
+			try {
+				if (beats[0].length > 2 || beats[1].length > 2 || beats[2].length > 2 || beats[3].length > 2) { // to prevent pressing all keys
+					return false
+				}
+				else if (beats[0].includes(melody[0])) {
+					return (beats[1].includes(melody[1]) && beats[2].includes(melody[2]) && beats[3].includes(melody[3]))
+				}
+				else if (beats[0].includes(melody[1])) {
+					return (beats[1].includes(melody[2]) && beats[2].includes(melody[3]) && beats[3].includes(melody[0]))
+				}
+				else if (beats[0].includes(melody[2])) {
+					return (beats[1].includes(melody[3]) && beats[2].includes(melody[0]) && beats[3].includes(melody[1]))
+				}
+				else if (beats[0].includes(melody[3])) {
+					return (beats[1].includes(melody[0]) && beats[2].includes(melody[1]) && beats[3].includes(melody[2]))
+				}
+				else {
+					return false
+				}
+			}
+			catch (error) {main.logError(error)}
+		}
+
+	/* getWithin */
+		module.exports.getWithin = getWithin
+		function getWithin(mapLength, x1, y1, r1, x2, y2, r2) {
+			try {
+				// relevant column check
+					if ((x1 - r1 < x2) && (x2 < x1 + r1)) {
+						var distance = getScalar(x1 - x2, y1 - y2)
+					}
+					else if ((x2 < r1) && (x1 > mapLength - r1) && (x1 - r1 < x2 + mapLength) && (x2 + mapLength < x1 + r1)) {
+						var distance = getScalar(x1 - (x2 + mapLength), y1 - y2)
+					}
+					else if ((x1 < r1) && (x2 > mapLength - r1) && (x1 - r1 < x2 - mapLength) && (x2 - mapLength < x1 + r1)) {
+						var distance = getScalar((x1 + mapLength) - x2, y1 - y2)
+					}
+					else {
+						return false
+					}
+
+				// radius check
+					if (distance > r1 + r2) {
+						return false
+					}
+					else {
+						return true
+					}
+			}
+			catch (error) {main.logError(error)}
+		}
+
 /* updates */
 	/* updateState */
 		module.exports.updateState = updateState
@@ -745,6 +818,7 @@
 								updateHealth(    request, avatar)
 								updateTower(     request, avatar)
 								updateArrows(    request, avatar)
+								updateAuras(     request, avatar)
 
 								if (request.game.data.state.beat % 8 == 0) {
 									updateKeys(  request, avatar)
@@ -1047,7 +1121,7 @@
 							 && (avatar.state.y < arrow.y + arrow.radius && arrow.y - arrow.radius < avatar.state.y + 64)
 							 && (avatar.state.x < arrow.x + arrow.radius && arrow.x - arrow.radius < avatar.state.x + 32)) {
 								avatar.state.health = Math.max(0, Math.min(255, avatar.state.health - arrow.radius))
-								request.game.data.arrows.splice(a,1)
+								request.game.data.arrows.splice(a, 1)
 								a--
 							}
 						}
@@ -1180,7 +1254,7 @@
 
 							// dissipate ?
 								if (arrow.radius <= 0) {
-									request.game.data.arrows.splice(a,1)
+									request.game.data.arrows.splice(a, 1)
 									a--
 								}
 
@@ -1192,19 +1266,93 @@
 									// collision left
 										if      ((map[future.colLeft ][0] && future.rowUp   >= map[future.colLeft ][0].bottom && future.rowUp   <= map[future.colLeft ][0].top)
 										      || (map[future.colLeft ][0] && future.rowDown >= map[future.colLeft ][0].bottom && future.rowDown <= map[future.colLeft ][0].top)) {
-											request.game.data.arrows.splice(a,1)
+											request.game.data.arrows.splice(a, 1)
 											a--
 										}
 
 									// collision right
 										else if ((map[future.colRight][0] && future.rowUp   >= map[future.colRight][0].bottom && future.rowUp   <= map[future.colRight][0].top)
 										      || (map[future.colRight][0] && future.rowDown >= map[future.colRight][0].bottom && future.rowDown <= map[future.colRight][0].top)) {
-											request.game.data.arrows.splice(a,1)
+											request.game.data.arrows.splice(a, 1)
 											a--
 										}
 								}
 						}
 					}
+			}
+			catch (error) {main.logError(error)}
+		}
+
+	/* updateAuras */
+		module.exports.updateAuras = updateAuras
+		function updateAuras(request, avatar) {
+			try {
+				// last 4 beats
+					var beats = []
+					for (var b in avatar.state.keys) {
+						var beat = []
+						for (var k in avatar.state.keys[b]) {
+							beat.push(avatar.state.keys[b][k].slice(0,1))
+						}
+						beats.push(beat)
+					}
+
+					if (!beats[beats.length - 1].length) { beats.pop() }
+					beats = beats.slice(beats.length - 4)
+
+				// remove old aura ?
+					var auraExists = false
+					for (var a = 0; a < request.game.data.auras.length; a++) {
+						var aura = request.game.data.auras[a]
+
+						if (aura.name !== avatar.name) {
+							continue
+						}
+						else if (!avatar.state.health || !getMatch(aura.melody, beats)) {
+							request.game.data.auras.splice(a, 1)
+							a--
+						}
+						else {
+							auraExists = true
+							aura.x = avatar.state.x + 16
+							aura.y = avatar.state.y + 48
+							avatar.state.keyable = false
+						}
+					}
+
+				// create new aura ?
+					if (!auraExists && avatar.state.health) {
+						var songs = main.getAsset("songs")
+						var keys  = Object.keys(songs)
+						for (var k in keys) {
+							if ((avatar.song == keys[k] || avatar.state.songs.includes(keys[k])) && getMatch(songs[keys[k]].melody, beats)) {
+								var aura = createAura(request, avatar, songs[keys[k]])
+								request.game.data.auras.push(aura)
+
+								avatar.state.keyable = false
+								auraExists = true								
+								break
+							}
+						}
+					}
+
+				// collision detection
+					if (auraExists && aura) {
+						var mapLength = request.game.data.map.length * 32
+						var keys = Object.keys(request.game.data.heroes).concat(Object.keys(request.game.data.demons))
+						for (var k in keys) {
+
+							var opponent = (keys[k] > -1) ? request.game.data.demons[keys[k]] : request.game.data.heroes[keys[k]]
+							if ((aura.name == opponent.name) || (!opponent.state.health)) {
+								continue
+							}
+							else if (getWithin(mapLength, aura.x, aura.y, aura.radius, opponent.state.x + 16, opponent.state.y + 32, 16)) {
+								console.log("collision: " + opponent.name + " inside " + aura.song)
+							}
+						}
+					}
+
+
 			}
 			catch (error) {main.logError(error)}
 		}

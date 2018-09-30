@@ -35,139 +35,174 @@
 				switch (event.code) {
 					// arrows
 						case "ArrowUp":
-							key  = "up"
-							type = "Arrow"
+							key = "up"
 						break
 						case "ArrowRight":
-							key  = "right"
-							type = "Arrow"
+							key = "right"
 						break
 						case "ArrowDown":
-							key  = "down"
-							type = "Arrow"
+							key = "down"
 						break
 						case "ArrowLeft":
-							key  = "left"
-							type = "Arrow"
+							key = "left"
 						break
 
 					// music
-						case "KeyQ":
-						case "KeyA":
-						case "KeyZ":
-							key  = "A2"
-							type = "Note"
-						break
-						case "KeyW":
-						case "KeyS":
-						case "KeyX":
-							key  = "C3"
-							type = "Note"
-						break
-						case "KeyE":
-						case "KeyD":
-						case "KeyC":
-							key  = "D3"
-							type = "Note"
-						break
-						case "KeyR":
-						case "KeyF":
-						case "KeyV":
-							key  = "E3"
-							type = "Note"
-						break
-						case "KeyT":
-						case "KeyG":
-						case "KeyB":
-							key  = "G3"
-							type = "Note"
-						break
-						case "KeyY":
-						case "KeyH":
-						case "KeyN":
-							key  = "A3"
-							type = "Note"
-						break
-						case "KeyU":
-						case "KeyJ":
-						case "KeyM":
-							key  = "C4"
-							type = "Note"
-						break
-						case "KeyI":
-						case "KeyK":
-						case "Key,":
-							key  = "D4"
-							type = "Note"
-						break
-						case "KeyO":
-						case "KeyL":
-						case "Period":
-							key  = "E4"
-							type = "Note"
-						break
-						case "KeyP":
-						case "Semicolon":
-						case "Slash":
-							key  = "G4"
-							type = "Note"
-						break
-						case "BracketLeft":
-						case "Quote":
-						case "ShiftRight":
-							key  = "A4"
-							type = "Note"
-						break
+						// row 1
+							case "KeyQ":
+								key = "C4"
+							break
+							case "KeyW":
+								key = "D4"
+							break
+							case "KeyE":
+								key = "E4"
+							break
+							case "KeyR":
+							//	key = "F4"
+							break
+							case "KeyT":
+								key = "G4"
+							break
+							case "KeyY":
+								key = "A5"
+							break
+							case "KeyU":
+							//	key = "B5"
+							break
+							case "KeyI":
+								key = "C5"
+							break
+							case "KeyO":
+								key = "D5"
+							break
+							case "KeyP":
+								key = "E5"
+							break
+							case "BracketLeft":
+							//	key = "F5"
+							break
+							case "BracketRight":
+								key = "G5"
+							break
+							case "Backslash":
+								key = "A6"
+							break
+
+						// row 2
+							case "KeyA":
+								key = "C3"
+							break
+							case "KeyS":
+								key = "D3"
+							break
+							case "KeyD":
+								key = "E3"
+							break
+							case "KeyF":
+							//	key = "F3"
+							break
+							case "KeyG":
+								key = "G3"
+							break
+							case "KeyH":
+								key = "A4"
+							break
+							case "KeyJ":
+							//	key = "B4"
+							break
+							case "KeyK":
+								key = "C4"
+							break
+							case "KeyL":
+								key = "D4"
+							break
+							case "Semicolon":
+								key = "E4"
+							break
+							case "Quote":
+							//	key = "F4"
+							break
+						
+						// row 3
+							case "KeyZ":
+								key = "C2"
+							break
+							case "KeyX":
+								key = "D2"
+							break
+							case "KeyC":
+								key = "E2"
+							break
+							case "KeyV":
+							//	key = "F2"
+							break
+							case "KeyB":
+								key = "G2"
+							break
+							case "KeyN":
+								key = "A3"
+							break
+							case "KeyM":
+							//	key = "B3"
+							break
+							case "Comma":
+								key = "C3"
+							break
+							case "Period":
+								key = "D3"
+							break
+							case "Slash":
+								key = "E3"
+							break
 					
 					// numbers
 						case "Digit1":
-							key  = 1
-							type = "Number"
+							key = 1
 						break
 						case "Digit2":
-							key  = 2
-							type = "Number"
+							key = 2
 						break
 						case "Digit3":
-							key  = 3
-							type = "Number"
+							key = 3
 						break
 						case "Digit4":
-							key  = 4
-							type = "Number"
+							key = 4
 						break
 						case "Digit5":
-							key  = 5
-							type = "Number"
+							key = 5
 						break
 						case "Digit6":
-							key  = 6
-							type = "Number"
+							key = 6
 						break
 						case "Digit7":
-							key  = 7
-							type = "Number"
+							key = 7
 						break
 						case "Digit8":
-							key  = 8
-							type = "Number"
+							key = 8
 						break
 						case "Digit9":
-							key  = 9
-							type = "Number"
+							key = 9
 						break
 						case "Digit0":
-							key  = 10
-							type = "Number"
+							key = 10
 						break
 						case "Minus":
-							key  = 11
-							type = "Number"
+							key = 11
 						break
 						case "Equal":
 							key = 12
-							type = "Number"
 						break
+				}
+
+				if ([1,2,3,4,5,6,7,8,9,10,11,12].includes(key)) {
+					type = "Number"
+				}
+				else if (["up","right","down","left"].includes(key)) {
+					type = "Arrow"
+				}
+				else {
+					type = "Note"
 				}
 
 			// submit data
@@ -385,6 +420,11 @@
 						}
 				}
 
+			// arrows
+				for (var a in data.arrows) {
+					drawArrow(1280 - ((data.arrows[a].x - startX + mapLength + 20) % mapLength - 20) / 1.6, (data.arrows[a].y / 1.6) + 40, 0.625, data.arrows[a])
+				}
+
 			// heroes & demons
 				var keys = Object.keys(data.heroes).concat(Object.keys(data.demons))
 				for (var k in keys) {
@@ -392,9 +432,9 @@
 					drawAvatar(1280 - ((avatar.state.x - startX + mapLength + 20) % mapLength - 20) / 1.6, (avatar.state.y / 1.6) + 40, 20, 40, avatar)
 				}
 
-			// arrows
-				for (var a in data.arrows) {
-					drawArrow(1280 - ((data.arrows[a].x - startX + mapLength + 20) % mapLength - 20) / 1.6, (data.arrows[a].y / 1.6) + 40, 0.6, data.arrows[a])
+			// auras
+				for (var a in data.auras) {
+					drawAura(1280 - ((data.auras[a].x - startX + mapLength + 20) * mapLength - 20) / 1.6, (data.auras[a].y / 1.6) + 40, 0.625, data.auras[a])
 				}
 		}
 
@@ -446,6 +486,11 @@
 						}
 				}
 
+			// arrows
+				for (var a in data.arrows) {
+					drawArrow((data.arrows[a].x - startX + mapLength + 32) % mapLength - 32, data.arrows[a].y, 1, data.arrows[a])
+				}
+
 			// heroes & demons
 				var keys = Object.keys(data.heroes).concat(Object.keys(data.demons))
 				for (var k in keys) {
@@ -453,10 +498,12 @@
 					drawAvatar((avatar.state.x - startX + mapLength + 32) % mapLength - 32, avatar.state.y, 32, 64, avatar)
 				}
 
-			// arrows
-				for (var a in data.arrows) {
-					drawArrow((data.arrows[a].x - startX + mapLength + 32) % mapLength - 32, data.arrows[a].y, 1, data.arrows[a])
+			// auras
+				for (var a in data.auras) {
+					drawAura((data.auras[a].x - startX + mapLength + 32) % mapLength - 32, data.auras[a].y, 1, data.auras[a])
 				}
+
+			
 		}
 
 	/* drawAvatar */
@@ -517,6 +564,12 @@
 			// draw
 				drawTriangle(x, y + radius, x, y - radius, x - (3 * radius), y, {opacity: 0.5, color: arrow.colors[0], shadow: arrow.colors[1], blur: 4, border: 4})
 				drawCircle(  x, y,                            Math.abs(radius), {opacity:   1, color: arrow.colors[0], shadow: arrow.colors[1], blur: 4, border: 4})
+		}
+
+	/* drawAura */
+		function drawAura(x, y, multiplier, aura) {
+			// draw
+				drawCircle(x, y, aura.radius * multiplier, {opacity: 0.25, color: aura.colors[1], shadow: aura.colors[0], blur: 4, border: 4})
 		}
 
 	/* drawPit */
