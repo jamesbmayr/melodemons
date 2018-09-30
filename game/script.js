@@ -483,11 +483,11 @@
 
 			// auras
 				for (var a in data.auras) {
-					drawAura(1280 - ((data.auras[a].x - startX + mapLength + 20) * mapLength - 20) / 1.6, (data.auras[a].y / 1.6) + 40, 0.625, data.auras[a])
+					drawAura(1280 - ((data.auras[a].x - 32 - startX + mapLength + 20) % mapLength - 20) / 1.6, (data.auras[a].y / 1.6) + 40, 0.625, data.auras[a])
 				}
 
 			// pit
-				drawRectangle(    0, 0, canvas.width, 40           , {color: data.theme.pitBackground})
+				drawRectangle(0, 0, canvas.width, 40, {color: data.theme.pitBackground})
 		}
 
 	/* drawForeground */

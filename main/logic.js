@@ -78,6 +78,22 @@
 								<meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>'
 					break
 
+					case "text":
+						return {
+							main:     "In each of the sacred towers, a magical musician guards a powerful song. Whoever controls the tower is granted its power.",
+							heroes:   "As a hero of good, you must claim every tower - only then can the musicians perform the Song of Salvation.",
+							demons:   "As the demons of evil, you must claim every tower - only then can you force the musicians to perform the Song of Desolation.",
+							songs:    "Each hero and demon also possesses the power of a song, whose aura can help turn the tide of battle.",
+							arrows:   "Use the arrow keys to move, jump, and fall through platforms.",
+							numbers:  "Use the number keys to select each demon.",
+							notes:    "Use the letter keys to play notes.",
+							thirds:   "Play thirds (AC, CE, or EG) to fire magic arrows.",
+							melodies: "Play song melodies to create magic auras.",
+							towers:   "Play the note of a tower platform to claim it.",
+							respawn:  "Should you fall in battle, return to your tower and play the platform note to be resurrected."
+						}
+					break
+
 					case "heroes":
 						return [
 							{
@@ -224,29 +240,29 @@
 								colors: [colors.orange[3], colors.orange[1]]
 							},
 							"flight": {
-								name: "jump-up",
+								name: "flight",
 								description: "other heroes and demons within the aura can fly without landing",
 								melody: "CGEG",
 								radius: 7,
 								colors: [colors.cerulean[3], colors.cerulean[1]]
 							},
-							"paralysis": {
-								name: "paralysis",
-								description: "other heroes and demons within the aura are nearly unable to move",
-								melody: "AEGD",
-								radius: 7,
-								colors: [colors.browngray[3], colors.browngray[1]]
-							},
 							"confusion": {
 								name: "confusion",
 								description: "left and right controls are reversed within the aura",
 								melody: "EGAD",
-								radius: 6,
+								radius: 7,
 								colors: [colors.purple[3], colors.purple[1]]
+							},
+							"paralysis": {
+								name: "paralysis",
+								description: "other heroes and demons within the aura are nearly unable to move",
+								melody: "AEGD",
+								radius: 6,
+								colors: [colors.browngray[3], colors.browngray[1]]
 							},
 							"negation": {
 								name: "negation",
-								description: "other auras are nullified within this aura",
+								description: "prevents heroes and demons within the aura from casting other auras",
 								melody: "ECDG",
 								radius: 5,
 								colors: [colors.cyan[3], colors.cyan[1]]
@@ -511,7 +527,7 @@
 							keyable:  true,
 							keys:     [[],[],[],[],[],[],[],[]],
 							songs:    [],
-							points:   0
+							effects:  []
 						}
 					break
 
