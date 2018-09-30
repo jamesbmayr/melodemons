@@ -1,10 +1,9 @@
 /*** onload ***/
 	/* elements */
-		var canvas   = document.getElementById("canvas")
-		var context  = canvas.getContext("2d")
-		var dataview = document.getElementById("dataview")
+		var canvas  = document.getElementById("canvas")
+		var context = canvas.getContext("2d")
 		window.data = data = {}
-		var sounds   = {}
+		var sounds  = {}
 
 /*** websocket ***/
 	/* checkLoop */
@@ -218,21 +217,41 @@
 	/* receivePost */
 		function receivePost(post) {
 			// redirects
-				if (post.location !== undefined) {
+				if (post.location) {
 					window.location = post.location
 				}
 
-			// menu
-				else if (!data.state || !data.state.start) {
-					data = post
-					dataview.innerHTML = JSON.stringify(post, 2, 2, 2)
+			// gameplay
+				if (post.state) {
+					data.state = post.state
+				}
+				if (post.theme) {
+					data.theme = post.theme
+				}
+				if (post.heroes) {
+					data.heroes = post.heroes
+				}
+				if (post.demons) {
+					data.demons = post.demons
+				}
+				if (post.towers) {
+					data.towers = post.towers
+				}
+				if (post.map) {
+					data.map = post.map
+				}
+				if (post.arrows) {
+					data.arrows = post.arrows
+				}
+				if (post.auras) {
+					data.auras = post.auras
 				}
 
-			// gameplay
-				else {
-					data = post
-					dataview.innerHTML = JSON.stringify(post, 2, 2, 2)
-
+			// draw
+				if (!data.state.start) {
+					drawMenu()
+				}
+				else if (data.state.start && data.map) {
 					drawGame()
 				}
 		}
@@ -357,19 +376,24 @@
 			return gradient
 		}
 
-/*** draw loop ***/
+/*** menu ***/
+	/* drawMenu */
+		function drawMenu() {
+			return false
+		}
+
+/*** gameplay ***/
 	/* drawGame */
 		function drawGame() {
-			drawEmpty()
+			drawSky()
 			drawBackground()
 			drawForeground()
 		}
 
 	/* drawEmpty */
-		function drawEmpty() {
+		function drawSky() {
 			context.clearRect(0, 0, canvas.width, canvas.height)
 			drawRectangle(    0, 0, canvas.width, canvas.height, {gradient: {x1: 0, y1: 0, x2: 0, y2: canvas.height, colors: {"0": data.theme.skyBottom, "1": data.theme.skyTop}}})
-			drawRectangle(    0, 0, canvas.width, 40           , {color: data.theme.pitBackground})
 		}
 
 	/* drawBackground */
@@ -436,6 +460,9 @@
 				for (var a in data.auras) {
 					drawAura(1280 - ((data.auras[a].x - startX + mapLength + 20) * mapLength - 20) / 1.6, (data.auras[a].y / 1.6) + 40, 0.625, data.auras[a])
 				}
+
+			// pit
+				drawRectangle(    0, 0, canvas.width, 40           , {color: data.theme.pitBackground})
 		}
 
 	/* drawForeground */

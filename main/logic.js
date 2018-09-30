@@ -1,6 +1,8 @@
 /*** modules ***/
-	var http     = require("http")
-	var fs       = require("fs")
+	var http       = require("http")
+	var fs         = require("fs")
+	var colors     = getAsset("colors")
+	var songs      = getAsset("songs")
 	module.exports = {}
 
 /*** logs ***/
@@ -76,72 +78,7 @@
 								<meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>'
 					break
 
-					case "game":
-						return {
-							id: null,
-							created: (new Date().getTime()),
-							loop: null,
-							players: {},
-							data: {
-								state: {
-									start: false,
-									end:   false,
-									beat:  0,
-									count: 0
-								},
-								theme:  null,
-								heroes: {},
-								demons: [],
-								towers: [],
-								map:    [],
-								arrows: [],
-								auras:  []
-							}
-						}
-					break
-
-					case "player":
-						return {
-							id:         null,
-							created:    (new Date().getTime()),
-							name:       null,
-							selection:  0,
-							connected:  false,
-							connection: null
-						}
-					break
-
-					case "state":
-						return {
-							left:     false,
-							right:    false,
-							up:       false,
-							down:     false,
-							x:        0,
-							y:        0,
-							vx:       0,
-							vy:       0,
-							colLeft:  0,
-							colRight: 0,
-							rowUp:    0,
-							rowDown:  0,
-							facing:   ["left","right"][Math.floor(Math.random() * 2)],
-							selected: true,
-							jumpable: false,
-							surface:  false,
-							tower:    null,
-							health:   255,
-							keyable:  true,
-							keys:     [[],[],[],[],[],[],[],[]],
-							songs:    [],
-							points:   0
-						}
-					break
-
 					case "heroes":
-						var colors = getAsset("colors")
-						var songs  = getAsset("songs")
-
 						return [
 							{
 								name: "Grace",
@@ -189,8 +126,8 @@
 								name: "Charlotte",
 								team: "heroes",
 								instrument: "glassical",
-								colors: [songs.immunity.colors[0], songs.immunity.colors[1], colors.blue[2]],
-								song: "immunity"
+								colors: [songs.negation.colors[0], songs.negation.colors[1], colors.blue[2]],
+								song: "negation"
 							},
 							{
 								name: "Dorian",
@@ -203,9 +140,6 @@
 					break
 
 					case "demons":
-						var colors = getAsset("colors")
-						var songs  = getAsset("songs")
-
 						return [
 							{
 								name: "Armistopheles",
@@ -253,8 +187,8 @@
 								name: "Golardios",
 								team: "demons",
 								instrument: "qube",
-								colors: [songs.immunity.colors[0], songs.immunity.colors[1], colors.red[2]],
-								song: "immunity"
+								colors: [songs.negation.colors[0], songs.negation.colors[1], colors.red[2]],
+								song: "negation"
 							},
 							{
 								name: "Draphost",
@@ -267,16 +201,12 @@
 					break
 
 					case "songs":
-						var shapes = getAsset("shapes")
-						var colors = getAsset("colors")
-
 						return {
 							"healing": {
 								name: "healing",
 								description: "other heroes and demons within the aura regenerate health",
 								melody: "CDEG",
 								radius: 4,
-								cells: shapes.circle,
 								colors: [colors.green[3], colors.green[1]]
 							},
 							"protection": {
@@ -284,7 +214,6 @@
 								description: "attacks from outside the aura dissipate on collision",
 								melody: "CGAG",
 								radius: 5,
-								cells: shapes.square,
 								colors: [colors.yellow[3], colors.yellow[1]]
 							},
 							"strength": {
@@ -292,7 +221,6 @@
 								description: "attacks fired from within the aura are twice as powerful",
 								melody: "GEDE",
 								radius: 6,
-								cells: shapes.octagon,
 								colors: [colors.orange[3], colors.orange[1]]
 							},
 							"flight": {
@@ -300,7 +228,6 @@
 								description: "other heroes and demons within the aura can fly without landing",
 								melody: "CGEG",
 								radius: 7,
-								cells: shapes.diamond,
 								colors: [colors.cerulean[3], colors.cerulean[1]]
 							},
 							"paralysis": {
@@ -308,7 +235,6 @@
 								description: "other heroes and demons within the aura are nearly unable to move",
 								melody: "AEGD",
 								radius: 7,
-								cells: shapes.diamond,
 								colors: [colors.browngray[3], colors.browngray[1]]
 							},
 							"confusion": {
@@ -316,15 +242,13 @@
 								description: "left and right controls are reversed within the aura",
 								melody: "EGAD",
 								radius: 6,
-								cells: shapes.octagon,
 								colors: [colors.purple[3], colors.purple[1]]
 							},
-							"immunity": {
-								name: "immunity",
+							"negation": {
+								name: "negation",
 								description: "other auras are nullified within this aura",
 								melody: "ECDG",
 								radius: 5,
-								cells: shapes.square,
 								colors: [colors.cyan[3], colors.cyan[1]]
 							},
 							"pain": {
@@ -332,60 +256,12 @@
 								description: "other heroes and demons within the aura lose health",
 								melody: "ACAE",
 								radius: 4,
-								cells: shapes.circle,
 								colors: [colors.magenta[3], colors.magenta[1]]
 							}
 						}
 					break
 
-					case "shapes":
-						return {
-							circle: [
-								{x:  0, y:  0}, // center
-								{x:  0, y:  1}, {x:  1, y:  0}, {x:  0, y: -1}, {x: -1, y:  0}, // n e s w
-								{x: -1, y:  1}, {x:  1, y:  1}, {x:  1, y: -1}, {x: -1, y: -1}, // nw ne se sw
-								{x:  0, y:  2}, {x:  2, y:  0}, {x:  0, y: -2}, {x: -2, y:  0}, // nn ee ss ww
-								{x: -2, y:  1}, {x: -1, y:  2}, {x:  1, y:  2}, {x:  2, y:  1}, {x:  2, y: -1}, {x:  1, y: -2}, {x: -1, y: -2}, {x: -2, y: -1}, // nww nnw nne nee see sse ssw sww
-							],
-							octagon: [
-								{x:  0, y:  0}, // center
-								{x:  0, y:  1}, {x:  1, y:  0}, {x:  0, y: -1}, {x: -1, y:  0}, // n e s w
-								{x: -1, y:  1}, {x:  1, y:  1}, {x:  1, y: -1}, {x: -1, y: -1}, // nw ne se sw
-								{x:  0, y:  2}, {x:  2, y:  0}, {x:  0, y: -2}, {x: -2, y:  0}, // nn ee ss ww
-								{x: -2, y:  1}, {x: -1, y:  2}, {x:  1, y:  2}, {x:  2, y:  1}, {x:  2, y: -1}, {x:  1, y: -2}, {x: -1, y: -2}, {x: -2, y: -1}, // nww nnw nne nee see sse ssw sww
-								{x:  0, y:  3}, {x:  3, y:  0}, {x:  0, y: -3}, {x: -3, y:  0}, // nnn eee sss www
-								{x: -2, y:  2}, {x:  2, y:  2}, {x:  2, y: -2}, {x: -2, y: -2}, // nnww nnee ssee ssww
-								{x: -3, y:  1}, {x: -1, y:  3}, {x:  1, y:  3}, {x:  3, y:  1}, {x:  3, y: -1}, {x:  1, y: -3}, {x: -1, y: -3}, {x: -3, y: -1}, // nwww nnnw nnne neee seee ssse sssw swww
-							],
-							diamond: [
-								{x:  0, y:  0}, // center
-								{x:  0, y:  1}, {x:  1, y:  0}, {x:  0, y: -1}, {x: -1, y:  0}, // n e s w
-								{x: -1, y:  1}, {x:  1, y:  1}, {x:  1, y: -1}, {x: -1, y: -1}, // nw ne se sw
-								{x:  0, y:  2}, {x:  2, y:  0}, {x:  0, y: -2}, {x: -2, y:  0}, // nn ee ss ww
-								{x: -2, y:  1}, {x: -1, y:  2}, {x:  1, y:  2}, {x:  2, y:  1}, {x:  2, y: -1}, {x:  1, y: -2}, {x: -1, y: -2}, {x: -2, y: -1}, // nww nnw nne nee see sse ssw sww
-								{x:  0, y:  3}, {x:  3, y:  0}, {x:  0, y: -3}, {x: -3, y:  0}, // nnn eee sss www
-								{x: -2, y:  2}, {x:  2, y:  2}, {x:  2, y: -2}, {x: -2, y: -2}, // nnww nnee ssee ssww
-								{x: -3, y:  1}, {x: -1, y:  3}, {x:  1, y:  3}, {x:  3, y:  1}, {x:  3, y: -1}, {x:  1, y: -3}, {x: -1, y: -3}, {x: -3, y: -1}, // nwww nnnw nnne neee seee ssse sssw swww
-								{x:  0, y:  4}, {x:  4, y:  0}, {x:  0, y: -4}, {x: -4, y:  0}, // nnnn eeee ssss wwww
-							],
-							square: [
-								{x:  0, y:  0}, // center
-								{x:  0, y:  1}, {x:  1, y:  0}, {x:  0, y: -1}, {x: -1, y:  0}, // n e s w
-								{x: -1, y:  1}, {x:  1, y:  1}, {x:  1, y: -1}, {x: -1, y: -1}, // nw ne se sw
-								{x:  0, y:  2}, {x:  2, y:  0}, {x:  0, y: -2}, {x: -2, y:  0}, // nn ee ss ww
-								{x: -2, y:  1}, {x: -1, y:  2}, {x:  1, y:  2}, {x:  2, y:  1}, {x:  2, y: -1}, {x:  1, y: -2}, {x: -1, y: -2}, {x: -2, y: -1}, // nww nnw nne nee see sse ssw sww
-								{x:  0, y:  3}, {x:  3, y:  0}, {x:  0, y: -3}, {x: -3, y:  0}, // nnn eee sss www
-								{x: -2, y:  2}, {x:  2, y:  2}, {x:  2, y: -2}, {x: -2, y: -2}, // nnww nnee ssee ssww
-								{x: -3, y:  1}, {x: -1, y:  3}, {x:  1, y:  3}, {x:  3, y:  1}, {x:  3, y: -1}, {x:  1, y: -3}, {x: -1, y: -3}, {x: -3, y: -1}, // nwww nnnw nnne neee seee ssse sssw swww
-								{x: -3, y:  2}, {x: -2, y:  3}, {x:  2, y:  3}, {x:  3, y:  2}, {x:  3, y: -2}, {x:  2, y: -3}, {x: -2, y: -3}, {x: -3, y: -2}, // nnwww nnnww nnnee nneee sseee sssee sssww sswww
-							]
-						}
-					break
-
 					case "towers":
-						var colors = getAsset("colors")
-						var songs  = getAsset("songs")
-
 						return [
 							{
 								name: "healing",
@@ -418,9 +294,9 @@
 								platforms: [{x: 0, y: 11, color: colors.black[2], note: songs.confusion.melody[0]}, {x: 1, y: 10, color: colors.black[2], note: songs.confusion.melody[1]}, {x: 2, y: 8, color: colors.black[2], note: songs.confusion.melody[2]}, {x: 3, y: 8, color: colors.black[2], note: songs.confusion.melody[3]}, {x: 0, y: 7, color: colors.black[2], note: songs.confusion.melody[0]}, {x: 1, y: 6, color: colors.black[2], note: songs.confusion.melody[1]}, {x: 2, y: 4, color: colors.black[2], note: songs.confusion.melody[2]}, {x: 3, y: 4, color: colors.black[2], note: songs.confusion.melody[3]}]
 							},
 							{
-								name: "immunity",
-								colors: [songs.immunity.colors[0], songs.immunity.colors[1], colors.black[2]],
-								platforms: [{x: 0, y: 11, color: colors.black[2], note: songs.immunity.melody[0]}, {x: 1, y: 9, color: colors.black[2], note: songs.immunity.melody[1]}, {x: 2, y: 9, color: colors.black[2], note: songs.immunity.melody[2]}, {x: 3, y: 8, color: colors.black[2], note: songs.immunity.melody[3]}, {x: 0, y: 7, color: colors.black[2], note: songs.immunity.melody[0]}, {x: 1, y: 5, color: colors.black[2], note: songs.immunity.melody[1]}, {x: 2, y: 5, color: colors.black[2], note: songs.immunity.melody[2]}, {x: 3, y: 4, color: colors.black[2], note: songs.immunity.melody[3]}]
+								name: "negation",
+								colors: [songs.negation.colors[0], songs.negation.colors[1], colors.black[2]],
+								platforms: [{x: 0, y: 11, color: colors.black[2], note: songs.negation.melody[0]}, {x: 1, y: 9, color: colors.black[2], note: songs.negation.melody[1]}, {x: 2, y: 9, color: colors.black[2], note: songs.negation.melody[2]}, {x: 3, y: 8, color: colors.black[2], note: songs.negation.melody[3]}, {x: 0, y: 7, color: colors.black[2], note: songs.negation.melody[0]}, {x: 1, y: 5, color: colors.black[2], note: songs.negation.melody[1]}, {x: 2, y: 5, color: colors.black[2], note: songs.negation.melody[2]}, {x: 3, y: 4, color: colors.black[2], note: songs.negation.melody[3]}]
 							},
 							{
 								name: "pain",
@@ -431,8 +307,6 @@
 					break									
 
 					case "themes":
-						var colors = getAsset("colors")
-
 						return [
 							{
 								name: "beach",
@@ -539,6 +413,102 @@
 								skyBottom:          colors.beige[1]
 							}
 						]
+					break					
+
+					case "colors":
+						return {
+							magenta:    ["#ffcce6","#ff66b3","#e60073","#99004d","#33001a"],
+							red:        ["#fab7b7","#f66f6f","#d80e0e","#7c0808","#300303"],
+							brown:      ["#e09b06","#ae7804","#7c5603","#513802","#191101"],
+							browngray:  ["#d5cac3","#b6a196","#a18778","#786154","#4f4037"],
+							orange:     ["#fde4ce","#f9ae6c","#f68523","#ab5407","#442103"],
+							beige:      ["#f7f4ed","#e0d3b8","#c1a871","#91773f","#6a572f"],
+							yellow:     ["#f6f4d5","#e5dd80","#d8cb41","#beb227","#7f771a"],
+							green:      ["#a9d3ab","#539e57","#1a661e","#074f0b","#053007"],
+							greengray:  ["#d3ded4","#99b29b","#6a8c6c","#4d664e","#374938"],
+							cyan:       ["#e6ffff","#b3ffff","#33ffff","#00cccc","#008080"],
+							cerulean:   ["#dae7f1","#90b8d5","#4689b9","#2b5572","#1c374a"],
+							bluegray:   ["#dee9ed","#adc8d2","#7ba7b7","#487484","#2d4852"],
+							blue:       ["#d0e0fb","#d0e0fb","#2b76ef","#0b3d8e","#04142f"],
+							purple:     ["#dac0f7","#b08bda","#7b3dc2","#4a2574","#180c26"],
+							black:      ["#e4e6e7","#a2a7a9","#6e7477","#3d4142","#232526"],
+							white:      ["#c0dee5","#cee2e8","#dcf1f7","#e3f5f9","#f9fdff"]
+						}
+					break
+
+					default:
+						return null
+					break
+				}
+			}
+			catch (error) {logError(error)}
+		}
+
+	/* getSchema */
+		module.exports.getSchema = getSchema
+		function getSchema(index) {
+			try {
+				switch (index) {
+					case "game":
+						return {
+							id: null,
+							created: (new Date().getTime()),
+							loop: null,
+							players: {},
+							data: {
+								state: {
+									start: false,
+									end:   false,
+									beat:  0,
+									count: 0
+								},
+								theme:  null,
+								heroes: {},
+								demons: [],
+								towers: [],
+								map:    [],
+								arrows: [],
+								auras:  []
+							}
+						}
+					break
+
+					case "player":
+						return {
+							id:         null,
+							created:    (new Date().getTime()),
+							name:       null,
+							selection:  0,
+							connected:  false,
+							connection: null
+						}
+					break
+
+					case "state":
+						return {
+							left:     false,
+							right:    false,
+							up:       false,
+							down:     false,
+							x:        0,
+							y:        0,
+							vx:       0,
+							vy:       0,
+							colLeft:  0,
+							colRight: 0,
+							rowUp:    0,
+							rowDown:  0,
+							facing:   ["left","right"][Math.floor(Math.random() * 2)],
+							selected: true,
+							jumpable: false,
+							surface:  false,
+							tower:    null,
+							health:   255,
+							keyable:  true,
+							keys:     [[],[],[],[],[],[],[],[]],
+							songs:    [],
+							points:   0
+						}
 					break
 
 					case "arrow":
@@ -567,36 +537,12 @@
 						}
 					break
 
-					case "colors":
-						return {
-							magenta:    ["#ffcce6","#ff66b3","#e60073","#99004d","#33001a"],
-							red:        ["#fab7b7","#f66f6f","#d80e0e","#7c0808","#300303"],
-							brown:      ["#e09b06","#ae7804","#7c5603","#513802","#191101"],
-							browngray:  ["#d5cac3","#b6a196","#a18778","#786154","#4f4037"],
-							orange:     ["#fde4ce","#f9ae6c","#f68523","#ab5407","#442103"],
-							beige:      ["#f7f4ed","#e0d3b8","#c1a871","#91773f","#6a572f"],
-							yellow:     ["#f6f4d5","#e5dd80","#d8cb41","#beb227","#7f771a"],
-							green:      ["#a9d3ab","#539e57","#1a661e","#074f0b","#053007"],
-							greengray:  ["#d3ded4","#99b29b","#6a8c6c","#4d664e","#374938"],
-							cyan:       ["#e6ffff","#b3ffff","#33ffff","#00cccc","#008080"],
-							cerulean:   ["#dae7f1","#90b8d5","#4689b9","#2b5572","#1c374a"],
-							bluegray:   ["#dee9ed","#adc8d2","#7ba7b7","#487484","#2d4852"],
-							blue:       ["#d0e0fb","#d0e0fb","#2b76ef","#0b3d8e","#04142f"],
-							purple:     ["#dac0f7","#b08bda","#7b3dc2","#4a2574","#180c26"],
-							black:      ["#e4e6e7","#a2a7a9","#6e7477","#3d4142","#232526"],
-							white:      ["#c0dee5","#cee2e8","#dcf1f7","#e3f5f9","#f9fdff"]
-						}
-					break
-
 					default:
 						return null
 					break
 				}
 			}
-			catch (error) {
-				logError(error)
-				return false
-			}
+			catch (error) {logError(error)}
 		}
 
 /*** checks ***/

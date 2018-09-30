@@ -451,7 +451,14 @@
 									for (var r in recipients) {
 										try {
 											if (request.game.players[recipients[r]].connected) {
-												request.game.players[recipients[r]].connection.sendUTF(JSON.stringify(request.game.data))
+												request.game.players[recipients[r]].connection.sendUTF(JSON.stringify({
+													state:  request.game.data.state,
+													heroes: request.game.data.heroes,
+													demons: request.game.data.demons,
+													towers: request.game.data.towers,
+													arrows: request.game.data.arrows,
+													auras:  request.game.data.auras
+												}))
 											}
 										}
 										catch (error) {main.logError(error)}

@@ -9,7 +9,7 @@
 		function createGame(request, id, callback) {
 			try {
 				// create game
-					request.game    = main.getAsset("game")
+					request.game    = main.getSchema("game")
 					request.game.id = id
 
 				// create player
@@ -37,7 +37,7 @@
 					}
 
 				// create player
-					var player      = main.getAsset("player")
+					var player      = main.getSchema("player")
 						player.id   = request.session.id
 						player.name = name
 

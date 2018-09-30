@@ -1,5 +1,7 @@
 /*** modules ***/
-	var main = require("../main/logic")
+	var main       = require("../main/logic")
+	var colors     = main.getAsset("colors")
+	var songs      = main.getAsset("songs")
 	module.exports = {}
 
 /*** players ***/
@@ -14,10 +16,19 @@
 					callback([request.session.id], {success: false, message: "unable to find player in game"})
 				}
 				else {
-					// save connection
-						request.game.players[request.session.id].connected  = true
-						request.game.players[request.session.id].connection = request.connection
-					callback([request.session.id], {success: true, message: "connected", data: request.game.data})
+					request.game.players[request.session.id].connected  = true
+					request.game.players[request.session.id].connection = request.connection
+
+					callback([request.session.id], {success: true, 
+						state:  request.game.data.state,
+						theme:  request.game.data.theme,
+						heroes: request.game.data.heroes,
+						demons: request.game.data.demons,
+						towers: request.game.data.towers,
+						map:    request.game.data.map,
+						arrows: request.game.data.arrows,
+						auras:  request.game.data.auras
+					})
 				}
 			}
 			catch (error) {
@@ -48,11 +59,6 @@
 
 						if (!others.length) {
 							callback([], {success: true, delete: true})
-						}
-					
-					// still players
-						else {
-							callback(Object.keys(request.game.players), {success: true, data: request.game.data})
 						}
 				}
 			}
@@ -238,8 +244,17 @@
 							}
 		
 						// start game
-							request.game.data.state.start = new Date().getTime() + 3000
-							callback(players, {success: true, message: "starting game..."})
+							request.game.data.state.start = new Date().getTime()
+							callback(players, {success: true,
+								state:  request.game.data.state,
+								theme:  request.game.data.theme,
+								heroes: request.game.data.heroes,
+								demons: request.game.data.demons,
+								towers: request.game.data.towers,
+								map:    request.game.data.map,
+								arrows: request.game.data.arrows,
+								auras:  request.game.data.auras
+							})
 					}
 			}
 			catch (error) {
@@ -268,7 +283,7 @@
 
 				// set hero state
 					else {
-						hero.state = main.getAsset("state")
+						hero.state = main.getSchema("state")
 					}
 
 				return hero
@@ -291,7 +306,7 @@
 
 				// create demon
 					var demon = main.chooseRandom(allDemons)
-						demon.state = main.getAsset("state")
+						demon.state = main.getSchema("state")
 
 				// unselect subsequent demons
 					if (currentDemons.length) {
@@ -318,7 +333,6 @@
 
 				// create tower
 					var tower  = main.chooseRandom(allTowers)
-					var colors = main.getAsset("colors")
 
 				// set team
 					var players = Object.keys(request.game.players)
@@ -529,7 +543,7 @@
 		function createAura(request, avatar, song) {
 			try {
 				var mapLength      = request.game.data.map.length * 32
-				var aura           = main.getAsset("aura")
+				var aura           = main.getSchema("aura")
 					aura.x         = (avatar.state.x + 16 + mapLength) % mapLength
 					aura.y         = avatar.state.y + 48
 					aura.name      = avatar.name
@@ -550,7 +564,7 @@
 		function createArrow(request, avatar) {
 			try {
 				var mapLength       = request.game.data.map.length * 32
-				var arrow           = main.getAsset("arrow")
+				var arrow           = main.getSchema("arrow")
 					arrow.x         = ((avatar.state.facing == "left" ? avatar.state.x : avatar.state.x + 32) + mapLength) % mapLength
 					arrow.vx        =   avatar.state.facing == "left" ? -16 : 16
 					arrow.y         = avatar.state.y + 32
@@ -612,8 +626,8 @@
 				var avatar = getAvatar(request)
 
 				if (avatar.team !== "demons") {
-					request.game.data.theme = main.getAsset("themes")[request.post.key - 1] || {}
-					// callback([request.session.id], {success: false, message: "not demons"})
+					// request.game.data.theme = main.getAsset("themes")[request.post.key - 1] || {}
+					callback([request.session.id], {success: false, message: "not demons"})
 				}
 				else if (!request.game.data.demons[request.post.key - 1]) {
 					callback([request.session.id], {success: false, message: "demon not found"})
@@ -736,16 +750,24 @@
 					return false
 				}
 				else if (beats[0].includes(melody[0])) {
-					return (beats[1].includes(melody[1]) && beats[2].includes(melody[2]) && beats[3].includes(melody[3]))
+					return ((beats[0].includes(melody[1]) || beats[1].includes(melody[1]))
+					     && (beats[1].includes(melody[2]) || beats[2].includes(melody[2]))
+					     && (beats[2].includes(melody[3]) || beats[3].includes(melody[3])))
 				}
 				else if (beats[0].includes(melody[1])) {
-					return (beats[1].includes(melody[2]) && beats[2].includes(melody[3]) && beats[3].includes(melody[0]))
+					return ((beats[0].includes(melody[2]) || beats[1].includes(melody[2]))
+						 && (beats[1].includes(melody[3]) || beats[2].includes(melody[3]))
+						 && (beats[2].includes(melody[0]) || beats[3].includes(melody[0])))
 				}
 				else if (beats[0].includes(melody[2])) {
-					return (beats[1].includes(melody[3]) && beats[2].includes(melody[0]) && beats[3].includes(melody[1]))
+					return ((beats[0].includes(melody[3]) || beats[1].includes(melody[3]))
+						 && (beats[1].includes(melody[0]) || beats[2].includes(melody[0]))
+						 && (beats[2].includes(melody[1]) || beats[3].includes(melody[1])))
 				}
 				else if (beats[0].includes(melody[3])) {
-					return (beats[1].includes(melody[0]) && beats[2].includes(melody[1]) && beats[3].includes(melody[2]))
+					return ((beats[0].includes(melody[0]) || beats[1].includes(melody[0]))
+						 && (beats[1].includes(melody[1]) || beats[2].includes(melody[1]))
+						 && (beats[2].includes(melody[2]) || beats[3].includes(melody[2])))
 				}
 				else {
 					return false
@@ -1194,7 +1216,7 @@
 									tower.colors[2] = avatar.colors[2]
 								}
 								else {
-									tower.colors[2] = main.getAsset("colors").black[2]
+									tower.colors[2] = colors.black[2]
 								}
 
 								updateSongs(request, tower)
@@ -1322,7 +1344,6 @@
 
 				// create new aura ?
 					if (!auraExists && avatar.state.health) {
-						var songs = main.getAsset("songs")
 						var keys  = Object.keys(songs)
 						for (var k in keys) {
 							if ((avatar.song == keys[k] || avatar.state.songs.includes(keys[k])) && getMatch(songs[keys[k]].melody, beats)) {
