@@ -3,6 +3,7 @@
 		var canvas     = document.getElementById("canvas")
 		var context    = canvas.getContext("2d")
 		window.data    = data = {}
+		var menu       = {}
 		var sounds     = {}
 		var eraseTimer = null
 
@@ -209,9 +210,30 @@
 				if (key !== null && socket) {
 					socket.send(JSON.stringify({
 						action: "submit" + type,
-						key:   key,
-						press: press
+						key:    key,
+						press:  press
 					}))
+				}
+		}
+
+	/* submitClick */
+		document.addEventListener("click", submitClick)
+		function submitClick(event) {
+			// game start / end
+				if (data.clicked) {
+					return false
+				}
+
+			// menu
+				else {
+					data.clicked = true
+					socket.send(JSON.stringify({
+						action: "submitArrow",
+						key:    "up",
+						press:  true
+					}))
+
+					// window.audio = window.buildAudio()
 				}
 		}
 
@@ -235,6 +257,17 @@
 						clearInterval(eraseTimer)
 						eraseTimer = null
 					}, 3000)
+				}
+
+			// menu
+				if (post.overlay) {
+					menu.overlay = post.overlay
+				}
+				if (post.options) {
+					menu.options = post.options 
+				}
+				if (post.text) {
+					menu.text    = post.text
 				}
 
 			// gameplay
@@ -397,14 +430,14 @@
 		}
 
 /*** menu ***/
-	/* drawMenu */
-		function drawMenu() {
-			return false
-		}
-
 	/* drawMessage */
 		function drawMessage() {
 			drawText(canvas.width / 2, 7 * canvas.height / 8, data.message, {color: "#222222"})
+		}
+		
+	/* drawMenu */
+		function drawMenu() {
+			return false
 		}
 
 /*** gameplay ***/

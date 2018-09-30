@@ -83,14 +83,13 @@
 							main:     "In each of the sacred towers, a magical musician guards a powerful song. Whoever controls the tower is granted its power.",
 							heroes:   "As a hero of good, you must claim every tower - only then can the musicians perform the Song of Salvation.",
 							demons:   "As the demons of evil, you must claim every tower - only then can you force the musicians to perform the Song of Desolation.",
-							songs:    "Each hero and demon also possesses the power of a song, whose aura can help turn the tide of battle.",
-							arrows:   "Use the arrow keys to move, jump, and fall through platforms.",
 							numbers:  "Use the number keys to select each demon.",
-							notes:    "Use the letter keys to play notes.",
-							thirds:   "Play thirds (AC, CE, or EG) to fire magic arrows.",
-							melodies: "Play song melodies to create magic auras.",
+							controls: "Use the arrow keys to move; use the letter keys to play notes.",
 							towers:   "Play the note of a tower platform to claim it.",
-							respawn:  "Should you fall in battle, return to your tower and play the platform note to be resurrected."
+							respawn:  "If you die, return to your tower and play the platform note to respawn.",
+							thirds:   "Play thirds (AC, CE, or EG) to fire magic arrows.",
+							songs:    "Each hero and demon also possesses the power of a song - play song melodies to create magic auras.",
+							conclude: "Good luck!\n[click to continue]"
 						}
 					break
 
