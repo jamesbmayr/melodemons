@@ -754,7 +754,6 @@
 			// eyes
 				drawCircle(x +     (width / 4) + xOffset, y + (13 * height / 16) + yOffset, width / 8, {opacity: opacity, color: avatar.colors[2]}) // left eye
 				drawCircle(x + (3 * width / 4) + xOffset, y + (13 * height / 16) + yOffset, width / 8, {opacity: opacity, color: avatar.colors[2]}) // right eye
-
 		}
 
 	/* drawArrow */
@@ -802,16 +801,11 @@
 
 			for (var y = 0; y < 16; y++) {
 				if (y >= column[section].bottom && y <= column[section].top) {
-					if (section > 0) { // tower platforms
+					if (section > 0) { // platforms
 						drawRectangle(xPlacement, ((y + 1) * height) - (8 * multiplier) + yOffset, height, 8 * multiplier,
 							{color: platformColor, radii: {topLeft: 5, topRight: 5, bottomRight: 5, bottomLeft: 5}}
 						)
 					}
-					// else if (section > 0) { // obstacles
-					// 	drawRectangle(xPlacement, ((y    ) * height)     + yOffset, height, height,
-					// 		{color: platformColor, radii: {topLeft: 8, topRight: 8, bottomRight: 8, bottomLeft: 8}}
-					// 	)
-					// }
 					else if (y == column[section].top) { // terrain top
 						if (!columnNumber) { // first column
 							tl = (!data.map[data.map.length - 1][0] || data.map[data.map.length - 1][0].top < y) ? 8 : 0
