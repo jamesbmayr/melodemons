@@ -360,19 +360,18 @@
 					// on close
 						request.connection.on("close", function (reasonCode, description) {
 							game.removePlayer(request, function (recipients, data) {
+								for (var r in recipients) {
+									try {
+										if (request.game.players[recipients[r]].connected) {
+											request.game.players[recipients[r]].connection.sendUTF(JSON.stringify(data))
+										}
+									}
+									catch (error) {main.logError(error)}
+								}
+								
 								if (data.delete) {
 									clearInterval(request.game.loop)
 									delete db[request.game.id]
-								}
-								else {
-									for (var r in recipients) {
-										try {
-											if (request.game.players[recipients[r]].connected) {
-												request.game.players[recipients[r]].connection.sendUTF(JSON.stringify(data))
-											}
-										}
-										catch (error) {main.logError(error)}
-									}
 								}
 							})
 						})
@@ -381,9 +380,7 @@
 						request.connection.on("message", function (message) {
 							// get post data
 								request.post = null
-								try {
-									request.post = JSON.parse(message.utf8Data) || null
-								}
+								try { request.post = JSON.parse(message.utf8Data) || null }
 								catch (error) {main.logError(error)}
 
 							if (request.post && request.post.action) {
@@ -450,19 +447,12 @@
 								if (request.game.data.state.end) {
 									clearInterval(request.game.loop)
 								}
-								
+									
 								game.updateState(request, function(recipients, data) {
 									for (var r in recipients) {
 										try {
 											if (request.game.players[recipients[r]].connected) {
-												request.game.players[recipients[r]].connection.sendUTF(JSON.stringify({
-													state:  request.game.data.state,
-													heroes: request.game.data.heroes,
-													demons: request.game.data.demons,
-													towers: request.game.data.towers,
-													arrows: request.game.data.arrows,
-													auras:  request.game.data.auras
-												}))
+												request.game.players[recipients[r]].connection.sendUTF(JSON.stringify(data))
 											}
 										}
 										catch (error) {main.logError(error)}

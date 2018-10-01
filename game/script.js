@@ -255,48 +255,57 @@
 				}
 
 			// menu
-				if (post.overlay) {
-					data.overlay = post.overlay
+				if (post.admin     !== undefined) {
+					data.admin     = post.admin
 				}
-				if (post.options) {
-					data.options = post.options 
+				if (post.selection !== undefined) {
+					data.selection = post.selection
 				}
-				if (post.text) {
-					data.text    = post.text
+				if (post.options   !== undefined) {
+					data.options   = post.options 
+				}
+				if (post.text      !== undefined) {
+					data.text      = post.text
 				}
 
 			// gameplay
-				if (post.state) {
+				if (post.state  !== undefined) {
 					data.state = post.state
 				}
-				if (post.theme) {
+				if (post.theme  !== undefined) {
 					data.theme = post.theme
 				}
-				if (post.heroes) {
+				if (post.heroes !== undefined) {
 					data.heroes = post.heroes
 				}
-				if (post.demons) {
+				if (post.demons !== undefined) {
 					data.demons = post.demons
 				}
-				if (post.towers) {
+				if (post.towers !== undefined) {
 					data.towers = post.towers
 				}
-				if (post.map) {
+				if (post.map    !== undefined) {
 					data.map = post.map
 				}
-				if (post.arrows) {
+				if (post.arrows !== undefined) {
 					data.arrows = post.arrows
 				}
-				if (post.auras) {
+				if (post.auras  !== undefined) {
 					data.auras = post.auras
 				}
 
 			// draw
-				if (!data.state || !data.state.start) {
+				if (!data.state.start && data.clicked) {
 					drawMenu()
 				}
 				else if (data.state && data.state.start && data.map) {
 					drawGame()
+				}
+
+			// overlay & message
+				if (!data.clicked && data.state.start) {
+					document.getElementById("overlay").className = "rejoin"
+					document.getElementById("overlay").innerText = "[ click to rejoin ]"
 				}
 
 				if (data.message) {
@@ -432,8 +441,98 @@
 
 	/* drawMenu */
 		function drawMenu() {
-			// options
+			// clear
+				context.clearRect(0, 0, canvas.width, canvas.height)
 
+			// instructions
+				drawRectangle((canvas.width / 2) - 60, (canvas.height / 4) - 60, 40, 40,     {color: "#333333", radii: {topLeft: 10, topRight: 10, bottomRight: 10, bottomLeft: 10}}) // left
+				drawRectangle((canvas.width / 2) - 20, (canvas.height / 4) - 60, 40, 40,     {color: "#333333", radii: {topLeft: 10, topRight: 10, bottomRight: 10, bottomLeft: 10}}) // down
+				drawRectangle((canvas.width / 2) + 20, (canvas.height / 4) - 60, 40, 40,     {color: "#333333", radii: {topLeft: 10, topRight: 10, bottomRight: 10, bottomLeft: 10}}) // right
+				drawRectangle((canvas.width / 2) - 20, (canvas.height / 4) - 20, 40, 40,     {color: "#333333", radii: {topLeft: 10, topRight: 10, bottomRight: 10, bottomLeft: 10}}) // up
+				drawText(     (canvas.width / 2) - 40, (canvas.height / 4) - 45, "change",   {color: "#777777", size: 10}) // left
+				drawText(     (canvas.width / 2) -  0, (canvas.height / 4) - 45, "unselect", {color: "#777777", size: 10}) // down
+				drawText(     (canvas.width / 2) + 40, (canvas.height / 4) - 45, "change",   {color: "#777777", size: 10}) // right
+				drawText(     (canvas.width / 2) +  0, (canvas.height / 4) -  5, "select",   {color: "#777777", size: 10}) // up
+
+			// demons
+				if (data.admin) {
+					// selected theme
+						var selectedTheme = data.theme
+
+					// draw options
+						for (var o = 0; o < data.options.length; o++) {
+							var shadow = (o == data.selection) ? "#d80e0e" : "#222222" // shadow as selection tool
+							var x = (canvas.width  / 2) + 400 - ((data.options.length - o) * 100) + 50 - 40
+							var y = (canvas.height / 2) - 50
+							var isSelected = (selectedTheme && selectedTheme.name == data.options[o].name) ? true : false
+
+							drawRectangle(x, y, 80, 80, {color: "#dddddd", shadow: shadow, blur: 32, radii: {topLeft: 8, topRight: 8, bottomRight: 8, bottomLeft: 8}})
+							drawTheme(    x, y, 80, 80, data.options[o], isSelected)
+						}
+
+					// melody
+						if (selectedTheme) {
+							drawText(canvas.width / 2, 3 * canvas.height / 4, "launch game?", {color: "#dddddd", size: 32, shadow: "#d80e0e", blur: 16})
+						}
+				}
+
+			// heroes
+				else {
+					// selected / taken
+						var selectedHero = data.heroes[window.id]
+						var takenHeroes = []
+						for (var h in data.heroes) {
+							if (data.heroes[h]) {
+								takenHeroes.push(data.heroes[h].name)
+							}
+						}
+
+					// draw options
+						var optionKeys = Object.keys(data.options)
+						for (var o = 0; o < optionKeys.length; o++) {
+							var shadow = (o == data.selection) ? "#2b76ef" : "#222222" // shadow as selection tool
+							var color = (selectedHero && selectedHero.name == data.options[optionKeys[o]].name) ? "#2b76ef" : takenHeroes.includes(data.options[optionKeys[o]].name) ? "#222222" : "#dddddd"
+							var x = (canvas.width  / 2) + 400 - ((optionKeys.length - o) * 100) + 50
+							var y = (canvas.height / 2) - 50
+
+							drawRectangle(x - 40, y    , 80, 80, {color: color, shadow: shadow, blur: 32, radii: {topLeft: 8, topRight: 8, bottomRight: 8, bottomLeft: 8}})
+							drawAvatar(   x - 16, y + 8, 32, 64, data.options[optionKeys[o]])
+						}
+
+					// melody
+						if (selectedHero) {
+							drawText(canvas.width / 2, 3 * canvas.height / 4, "melody: " + selectedHero.melody, {color: selectedHero.colors[1], size: 32, shadow: "#2b76ef", blur: 16})
+						}
+				}
+		}
+
+	/* drawTheme */
+		function drawTheme(x, y, width, height, theme, isSelected) {
+			// variables
+				var terrainColor = isSelected ? theme.terrainForeground : theme.terrainBackground
+				var towerColor   = isSelected ? theme.towerForeground   : theme.towerBackground
+				var pitColor     = isSelected ? theme.pitForeground     : theme.pitBackground
+
+			// sky
+				drawRectangle(x, y, 80, 80, {gradient: {x1: x, y1: y, x2: x, y2: y + height, colors: {"0": theme.skyBottom, "1": theme.skyTop}}, radii: {topLeft: 4, topRight: 4, bottomRight: 8, bottomLeft: 8}})
+
+			// tower
+				drawRectangle(x + 60, y, 20, 80, {color: towerColor,   radii: {topLeft: 10, topRight: 10, bottomRight: 8, bottomLeft: 0}})
+
+			// terrain
+				drawRectangle(x     , y, 20, 40, {color: terrainColor, radii: {topLeft:  5, topRight:  5, bottomRight: 0, bottomLeft: 4}})
+				drawRectangle(x + 40, y, 40, 20, {color: terrainColor, radii: {topLeft:  5, topRight:  0, bottomRight: 4, bottomLeft: 0}})
+
+			// pit
+				drawRectangle(x + 20, y, 20, 10, {color: pitColor})
+
+			// name
+				if (isSelected) {
+					drawText(x + (width / 2), y + (5 * height / 4), theme.name, {opacity: 1, color: theme.terrainBackground, size: (width / 4), shadow: "#d80e0e", blur: 4})   // name
+				}
+				else {
+					drawText(x + (width / 2), y + (5 * height / 4), theme.name, {opacity: 1, color: theme.terrainBackground, size: (width / 4)})   // name
+				}
 		}
 
 /*** gameplay ***/
@@ -586,23 +685,36 @@
 
 			// win countdown ?
 				if (data.state.winning.team) {
-					drawText(canvas.width / 2, 7 * canvas.height / 8, (data.state.winning.countdown || data.state.winning.team + " win"), {color: data.state.winning.color, size: 64})
+					drawText(canvas.width / 2, 3 * canvas.height / 4, (data.state.winning.countdown || data.state.winning.team + " win"), {color: data.state.winning.color, size: 64})
 				}
 		}
 
 	/* drawAvatar */
 		function drawAvatar(x, y, width, height, avatar) {
 			// variables
-				var healthColor = avatar.state.health ? ("rgb(128, " + avatar.state.health + ", 000)") : "rgb(255,255,255)"
-				var healthWidth = avatar.state.health ? Math.floor((avatar.state.health + 1) * width / 256) : width
-				var opacity     = avatar.state.health ? 1 : 0.5
-					opacity     = opacity * (width == 32 ? 1 : 0.5)
-				var xOffset     = avatar.state.right  ? 2 : avatar.state.left   ? -2 : 0
-				var yOffset     = avatar.state.vy > 0 ? 2 : avatar.state.vy < 0 ? -2 : 0
+				if (avatar.state) {
+					var healthColor = avatar.state.health ? ("rgb(128, " + avatar.state.health + ", 000)") : "rgb(255,255,255)"
+					var healthWidth = avatar.state.health ? Math.floor((avatar.state.health + 1) * width / 256) : width
+					var opacity     = avatar.state.health ? 1 : 0.5
+						opacity     = opacity * (width == 32 ? 1 : 0.5)
+					var xOffset     = avatar.state.right  ? 2 : avatar.state.left   ? -2 : 0
+					var yOffset     = avatar.state.vy > 0 ? 2 : avatar.state.vy < 0 ? -2 : 0
+				}
+				else {
+					var xOffset = 0
+					var yOffset = 0
+					var opacity = 1
+				}
 
 			// name & healthbar
-				drawText(x + (width / 2), y + (5 * height / 4), avatar.name                          , {opacity: opacity, color: avatar.colors[2],     size: (width / 4)})   // name
-				drawLine(x              , y + (9 * height / 8), x + healthWidth, y + (9 * height / 8), {opacity: opacity, color: healthColor, blur: 2, shadow: healthColor}) // health bar
+				if (avatar.state) {
+					drawText(x + (width / 2), y + (5 * height / 4), avatar.name                          , {opacity: opacity, color: avatar.colors[2],     size: (width / 4)})   // name
+					drawLine(x              , y + (9 * height / 8), x + healthWidth, y + (9 * height / 8), {opacity: opacity, color: healthColor, blur: 2, shadow: healthColor}) // health bar
+				}
+				else {
+					drawText(x + (width / 2), y + (5 * height / 4), avatar.name                          , {opacity: opacity, color: avatar.colors[2],     size: (width / 2)})   // name
+					drawText(x + (width / 2), y - (2 * height / 4), avatar.song                          , {opacity: opacity, color: avatar.colors[2],     size: (width / 2)})   // song
+				}
 
 			// body
 				if (avatar.team == "heroes") {

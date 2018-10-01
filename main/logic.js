@@ -90,8 +90,7 @@
 							respawn:  "If you die, play the note of your tower's platform to respawn.",
 							thirds:   "Play thirds (AC, CE, EG) to shoot magic arrows.",
 							songs:    "Play song melodies to create magic auras.",
-							conclude: "Good luck!",
-							click:    "[click to continue]"
+							conclude: "Good luck!"
 						}
 					break
 
@@ -378,7 +377,7 @@
 								skyBottom:          colors.red[1]
 							},
 							{
-								name: "snowscape",
+								name: "arctic",
 								terrainForeground:  colors.white[4],
 								terrainBackground:  colors.white[2],
 								platformForeground: colors.bluegray[3],
@@ -391,7 +390,7 @@
 								skyBottom:          colors.cyan[1]	
 							},
 							{
-								name: "lagoon",
+								name: "abyss",
 								terrainForeground:  colors.blue[4],
 								terrainBackground:  colors.blue[2],
 								platformForeground: colors.blue[3],
@@ -404,7 +403,7 @@
 								skyBottom:          colors.blue[1]
 							},
 							{
-								name: "swamp",
+								name: "marshes",
 								terrainForeground:  colors.greengray[4],
 								terrainBackground:  colors.greengray[2],
 								platformForeground: colors.greengray[3],
@@ -446,7 +445,7 @@
 							cyan:       ["#e6ffff","#b3ffff","#33ffff","#00cccc","#008080"],
 							cerulean:   ["#dae7f1","#90b8d5","#4689b9","#2b5572","#1c374a"],
 							bluegray:   ["#dee9ed","#adc8d2","#7ba7b7","#487484","#2d4852"],
-							blue:       ["#d0e0fb","#d0e0fb","#2b76ef","#0b3d8e","#04142f"],
+							blue:       ["#d0e0fb","#7a9bd3","#2b76ef","#0b3d8e","#04142f"],
 							purple:     ["#dac0f7","#b08bda","#7b3dc2","#4a2574","#180c26"],
 							black:      ["#e4e6e7","#a2a7a9","#6e7477","#3d4142","#232526"],
 							white:      ["#c0dee5","#cee2e8","#dcf1f7","#e3f5f9","#f9fdff"]

@@ -19,16 +19,29 @@
 					request.game.players[request.session.id].connected  = true
 					request.game.players[request.session.id].connection = request.connection
 
-					callback([request.session.id], {success: true, 
-						state:  request.game.data.state,
-						theme:  request.game.data.theme,
-						heroes: request.game.data.heroes,
-						demons: request.game.data.demons,
-						towers: request.game.data.towers,
-						map:    request.game.data.map,
-						arrows: request.game.data.arrows,
-						auras:  request.game.data.auras
-					})
+					if (!request.game.data.state.start) {
+						callback([request.session.id], {success: true, 
+							admin:     (request.game.players[request.session.id].admin ? true : false),
+							selection: request.game.players[request.session.id].selection,
+							state:     request.game.data.state,
+							theme:     request.game.data.theme,
+							heroes:    request.game.data.heroes,
+							demons:    request.game.data.demons,
+							options:   request.game.players[request.session.id].admin ? main.getAsset("themes") : main.getAsset("heroes")
+						})
+					}
+					else {
+						callback([request.session.id], {success: true, 
+							state:   request.game.data.state,
+							theme:   request.game.data.theme,
+							heroes:  request.game.data.heroes,
+							demons:  request.game.data.demons,
+							towers:  request.game.data.towers,
+							map:     request.game.data.map,
+							arrows:  request.game.data.arrows,
+							auras:   request.game.data.auras
+						})
+					}
 				}
 			}
 			catch (error) {
@@ -43,12 +56,19 @@
 			try {
 				main.logStatus("[CLOSED]: " + request.path.join("/") + " @ " + (request.ip || "?"))
 				if (request.game) {
-
 					// remove player or connection?
 						if (request.game.data.state.start) {
 							request.game.players[request.session.id].connected = false
+							var avatar = getAvatar(request)
+								avatar.state.up    = false
+								avatar.state.right = false
+								avatar.state.down  = false
+								avatar.state.left  = false
 						}
 						else {
+							if (request.game.players[request.session.id].admin) {
+								var wasAdmin = true
+							}
 							delete request.game.players[request.session.id]
 						}
 
@@ -57,8 +77,8 @@
 							return request.game.players[p].connected
 						}) || []
 
-						if (!others.length) {
-							callback([], {success: true, delete: true})
+						if (!others.length || wasAdmin) {
+							callback(others, {success: true, delete: true, location: "../../../../"})
 						}
 				}
 			}
@@ -136,27 +156,29 @@
 
 					// set theme
 						if (!request.game.data.theme) {
-							if (request.post.key == "up") {
-								player.selection = Math.max(0, player.selection - 1)
-								callback([request.session.id], {success: true, selection: player.selection})
-							}
-							else if (request.post.key == "down") {
-								player.selection = Math.min(themes.length - 1, player.selection + 1)
-								callback([request.session.id], {success: true, selection: player.selection})
+							if (request.post.key == "left") {
+								player.selection = player.selection - 1
+								if (player.selection < 0) { player.selection = themes.length - 1 } // wrap around
+								callback([request.session.id], {success: true, selection: player.selection, theme: request.game.data.theme})
 							}
 							else if (request.post.key == "right") {
+								player.selection = player.selection + 1
+								if (player.selection > themes.length - 1) { player.selection = 0 } // wrap around
+								callback([request.session.id], {success: true, selection: player.selection, theme: request.game.data.theme})
+							}
+							else if (request.post.key == "up") {
 								request.game.data.theme = themes[player.selection]
-								callback([request.session.id], {success: true, selection: player.selection})
+								callback([request.session.id], {success: true, selection: player.selection, theme: request.game.data.theme})
 							}
 						}
 
 					// start game ?
 						else {
-							if (request.post.key == "left") {
+							if (request.post.key == "down") {
 								request.game.data.theme = null
-								callback([request.session.id], {success: true, selection: player.selection})
+								callback([request.session.id], {success: true, selection: player.selection, theme: request.game.data.theme})
 							}
-							else if (request.post.key == "right") {
+							else if (request.post.key == "up") {
 								launchGame(request, callback)
 							}
 						}
@@ -167,26 +189,31 @@
 
 					// set hero
 						if (!request.game.data.heroes[request.session.id]) {
-							if (request.post.key == "up") {
-								player.selection = Math.max(0, player.selection - 1)
-							}
-							else if (request.post.key == "down") {
-								player.selection = Math.min(heroes.length - 1, player.selection + 1)
+							if (request.post.key == "left") {
+								player.selection = player.selection - 1
+								if (player.selection < 0) { player.selection = heroes.length - 1 } // wrap around
+								callback([request.session.id], {success: true, selection: player.selection})
 							}
 							else if (request.post.key == "right") {
+								player.selection = player.selection + 1
+								if (player.selection > heroes.length - 1) { player.selection = 0 } // wrap around
+								callback([request.session.id], {success: true, selection: player.selection})
+							}
+							else if (request.post.key == "up") {
 								var hero = createHero(request, heroes[player.selection])
 								if (!hero) {
 									callback([request.session.id], {success: false, message: "hero already taken"})
 								}
 								else {
 									request.game.data.heroes[request.session.id] = heroes[player.selection]
+									callback([request.session.id], {success: true, selection: player.selection})
 								}
 							}
 						}
 
 					// unset hero
 						else {
-							if (request.post.key == "left") {
+							if (request.post.key == "down") {
 								request.game.data.heroes[request.session.id] = null
 								callback([request.session.id], {success: true, selection: player.selection})
 							}
@@ -277,6 +304,7 @@
 						}
 					}
 
+				// already selected ?
 					if (currentHeroes.includes(hero.name)) {
 						hero = null
 					}
@@ -284,6 +312,7 @@
 				// set hero state
 					else {
 						hero.state = main.getSchema("state")
+						hero.melody = songs[hero.song].melody
 					}
 
 				return hero
@@ -307,6 +336,7 @@
 				// create demon
 					var demon = main.chooseRandom(allDemons)
 						demon.state = main.getSchema("state")
+						demon.melody = songs[demon.song].melody
 
 				// unselect subsequent demons
 					if (currentDemons.length) {
@@ -813,7 +843,12 @@
 			try {
 				// menu
 					if (!request.game.data.state.start) {
-						callback(Object.keys(request.game.players), request.game.data)
+						callback(Object.keys(request.game.players), {
+							state:  request.game.data.state,
+							theme:  request.game.data.theme,
+							heroes: request.game.data.heroes,
+							demons: request.game.data.demons
+						})
 					}
 
 				// victory
@@ -872,7 +907,14 @@
 								}
 							}
 
-						callback(Object.keys(request.game.players), request.game.data)
+						callback(Object.keys(request.game.players), {
+							state:  request.game.data.state,
+							heroes: request.game.data.heroes,
+							demons: request.game.data.demons,
+							towers: request.game.data.towers,
+							arrows: request.game.data.arrows,
+							auras:  request.game.data.auras
+						})
 					}
 			}
 			catch (error) {main.logError(error)}
