@@ -1,10 +1,11 @@
 /*** onload ***/
 	/* elements */
-		var canvas     = document.getElementById("canvas")
-		var context    = canvas.getContext("2d")
-		window.data    = data = {}
-		var sounds     = {}
-		var eraseTimer = null
+		var canvas      = document.getElementById("canvas")
+		var context     = canvas.getContext("2d")
+		window.data     = data = {}
+		var instruments = {}
+		window.instruments = instruments
+		var eraseTimer  = null
 
 /*** websocket ***/
 	/* checkLoop */
@@ -51,19 +52,19 @@
 						// music
 							// row 1
 								case "KeyQ":
-									key = "C4"
+									key = "C5"
 								break
 								case "KeyW":
-									key = "D4"
+									key = "D5"
 								break
 								case "KeyE":
-									key = "E4"
+									key = "E5"
 								break
 								case "KeyR":
-								//	key = "F4"
+								//	key = "F5"
 								break
 								case "KeyT":
-									key = "G4"
+									key = "G5"
 								break
 								case "KeyY":
 									key = "A5"
@@ -72,19 +73,19 @@
 								//	key = "B5"
 								break
 								case "KeyI":
-									key = "C5"
+									key = "C6"
 								break
 								case "KeyO":
-									key = "D5"
+									key = "D6"
 								break
 								case "KeyP":
-									key = "E5"
+									key = "E6"
 								break
 								case "BracketLeft":
-								//	key = "F5"
+								//	key = "F6"
 								break
 								case "BracketRight":
-									key = "G5"
+									key = "G6"
 								break
 								case "Backslash":
 									key = "A6"
@@ -92,19 +93,19 @@
 
 							// row 2
 								case "KeyA":
-									key = "C3"
+									key = "C4"
 								break
 								case "KeyS":
-									key = "D3"
+									key = "D4"
 								break
 								case "KeyD":
-									key = "E3"
+									key = "E4"
 								break
 								case "KeyF":
-								//	key = "F3"
+								//	key = "F4"
 								break
 								case "KeyG":
-									key = "G3"
+									key = "G4"
 								break
 								case "KeyH":
 									key = "A4"
@@ -113,33 +114,33 @@
 								//	key = "B4"
 								break
 								case "KeyK":
-									key = "C4"
+									key = "C5"
 								break
 								case "KeyL":
-									key = "D4"
+									key = "D5"
 								break
 								case "Semicolon":
-									key = "E4"
+									key = "E5"
 								break
 								case "Quote":
-								//	key = "F4"
+								//	key = "F5"
 								break
 							
 							// row 3
 								case "KeyZ":
-									key = "C2"
+									key = "C3"
 								break
 								case "KeyX":
-									key = "D2"
+									key = "D3"
 								break
 								case "KeyC":
-									key = "E2"
+									key = "E3"
 								break
 								case "KeyV":
-								//	key = "F2"
+								//	key = "F3"
 								break
 								case "KeyB":
-									key = "G2"
+									key = "G3"
 								break
 								case "KeyN":
 									key = "A3"
@@ -148,13 +149,13 @@
 								//	key = "B3"
 								break
 								case "Comma":
-									key = "C3"
+									key = "C4"
 								break
 								case "Period":
-									key = "D3"
+									key = "D4"
 								break
 								case "Slash":
-									key = "E3"
+									key = "E4"
 								break
 						
 						// numbers
@@ -221,14 +222,13 @@
 		document.addEventListener("click", submitClick)
 		function submitClick(event) {
 			if (!data.clicked) {
-				data.clicked = true
-				document.getElementById("overlay").remove()
-				socket.send(JSON.stringify({
-					action: "submitArrow",
-					key:    "up",
-					press:  false
-				}))
-				// window.audio = window.buildAudio()
+				// overlay
+					data.clicked = true
+					document.getElementById("overlay").remove()
+
+				// audio
+					buildAudio()
+					setInstruments()
 			}
 		}
 
@@ -270,10 +270,10 @@
 
 			// gameplay
 				if (post.state  !== undefined) {
-					data.state = post.state
+					data.state  = post.state
 				}
 				if (post.theme  !== undefined) {
-					data.theme = post.theme
+					data.theme  = post.theme
 				}
 				if (post.heroes !== undefined) {
 					data.heroes = post.heroes
@@ -285,13 +285,13 @@
 					data.towers = post.towers
 				}
 				if (post.map    !== undefined) {
-					data.map = post.map
+					data.map    = post.map
 				}
 				if (post.arrows !== undefined) {
 					data.arrows = post.arrows
 				}
 				if (post.auras  !== undefined) {
-					data.auras = post.auras
+					data.auras   = post.auras
 				}
 
 			// draw
@@ -300,6 +300,14 @@
 				}
 				else if (data.state && data.state.start && data.map) {
 					drawGame()
+				}
+
+			// music
+				if (data.clicked && post.launch) {
+					setInstruments()
+				}
+				if (data.clicked && post.beat) {
+					playMusic()
 				}
 
 			// overlay & message
@@ -479,7 +487,7 @@
 			// heroes
 				else {
 					// selected / taken
-						var selectedHero = data.heroes[window.id]
+						var selectedHero = data.heroes[id]
 						var takenHeroes = []
 						for (var h in data.heroes) {
 							if (data.heroes[h]) {
@@ -517,11 +525,11 @@
 				drawRectangle(x, y, 80, 80, {gradient: {x1: x, y1: y, x2: x, y2: y + height, colors: {"0": theme.skyBottom, "1": theme.skyTop}}, radii: {topLeft: 4, topRight: 4, bottomRight: 8, bottomLeft: 8}})
 
 			// tower
-				drawRectangle(x + 60, y, 20, 80, {color: towerColor,   radii: {topLeft: 10, topRight: 10, bottomRight: 8, bottomLeft: 0}})
+				drawRectangle(x + 60, y, 20, 80, {color: towerColor,   radii: {topLeft: 5, topRight: 5, bottomRight: 8, bottomLeft: 0}})
 
 			// terrain
-				drawRectangle(x     , y, 20, 40, {color: terrainColor, radii: {topLeft:  5, topRight:  5, bottomRight: 0, bottomLeft: 4}})
-				drawRectangle(x + 40, y, 40, 20, {color: terrainColor, radii: {topLeft:  5, topRight:  0, bottomRight: 4, bottomLeft: 0}})
+				drawRectangle(x     , y, 20, 40, {color: terrainColor, radii: {topLeft: 5, topRight: 5, bottomRight: 0, bottomLeft: 4}})
+				drawRectangle(x + 40, y, 40, 20, {color: terrainColor, radii: {topLeft: 5, topRight: 0, bottomRight: 4, bottomLeft: 0}})
 
 			// pit
 				drawRectangle(x + 20, y, 20, 10, {color: pitColor})
@@ -552,7 +560,7 @@
 	/* drawBackground */
 		function drawBackground() {
 			// variables
-				var avatar    = data.heroes[window.id] || data.demons.find(function(d) { return d.state.selected }) || {x: 0, y: 0}
+				var avatar    = data.heroes[id] || data.demons.find(function(d) { return d.state.selected }) || {x: 0, y: 0}
 				var mapLength = data.map.length * 32
 				var oppositeX = (avatar.state.x + (mapLength / 2)) % mapLength
 				var offsetX   = (oppositeX % 32)
@@ -622,7 +630,7 @@
 		function drawForeground() {
 			// variables
 				var towers    = []
-				var avatar    = data.heroes[window.id] || data.demons.find(function(d) { return d.state.selected }) || {x: 0, y: 0}
+				var avatar    = data.heroes[id] || data.demons.find(function(d) { return d.state.selected }) || {x: 0, y: 0}
 				var mapLength = data.map.length * 32
 				var offsetX   = avatar.state.x  % 32
 				
@@ -848,22 +856,22 @@
 			// background
 				if (columnNumber % 64 == 0) {
 					drawRectangle(xPlacement, yOffset, (32 * multiplier), (32 * multiplier) * 13,
-						{color: towerColor, radii: {topLeft: foreground ? (32 * multiplier) : 0, topRight: foreground ? 0 : (32 * multiplier), bottomRight: 0, bottomLeft: 0}}
+						{color: towerColor, radii: {topLeft: foreground ? (8 * multiplier) : 0, topRight: foreground ? 0 : (8 * multiplier), bottomRight: 0, bottomLeft: 0}}
 					)
 				}
 				else if (columnNumber % 64 == 1) {
 					drawRectangle(xPlacement, yOffset, (32 * multiplier), (32 * multiplier) * 14,
-						{color: towerColor, radii: {topLeft: foreground ? (32 * multiplier) : 0, topRight: foreground ? 0 : (32 * multiplier), bottomRight: 0, bottomLeft: 0}}
+						{color: towerColor, radii: {topLeft: foreground ? (8 * multiplier) : 0, topRight: foreground ? 0 : (8 * multiplier), bottomRight: 0, bottomLeft: 0}}
 					)
 				}
 				else if (columnNumber % 64 == 2) {
 					drawRectangle(xPlacement, yOffset, (32 * multiplier), (32 * multiplier) * 14,
-						{color: towerColor, radii: {topLeft: foreground ? 0 : (32 * multiplier), topRight: foreground ? (32 * multiplier) : 0, bottomRight: 0, bottomLeft: 0}}
+						{color: towerColor, radii: {topLeft: foreground ? 0 : (8 * multiplier), topRight: foreground ? (8 * multiplier) : 0, bottomRight: 0, bottomLeft: 0}}
 					)
 				}
 				else if (columnNumber % 64 == 3) {
 					drawRectangle(xPlacement, yOffset, (32 * multiplier), (32 * multiplier) * 13,
-						{color: towerColor, radii: {topLeft: foreground ? 0 : (32 * multiplier), topRight: foreground ? (32 * multiplier) : 0, bottomRight: 0, bottomLeft: 0}}
+						{color: towerColor, radii: {topLeft: foreground ? 0 : (8 * multiplier), topRight: foreground ? (8 * multiplier) : 0, bottomRight: 0, bottomLeft: 0}}
 					)
 				}
 
@@ -896,4 +904,150 @@
 					size:   32 * multiplier,
 					color:  platform.color
 				})
+		}
+
+/*** music ***/
+	/* setInstruments */
+		function setInstruments() {
+			// avatar sounds
+				var keys = Object.keys(data.heroes).concat(Object.keys(data.demons))
+				for (var k in keys) {
+					var avatar = (keys[k] > -1) ? data.demons[keys[k]] : data.heroes[keys[k]]
+					instruments[avatar.instrument] = buildInstrument(getInstrument(avatar.instrument))
+					instruments[avatar.instrument].notes = []
+				}
+
+			// soundtrack
+				instruments.honeyharp = buildInstrument(getInstrument("honeyharp"))
+				instruments.honeyharp.setParameters({volume: 0.5})
+		}
+	
+	/* playMusic */
+		function playMusic() {
+			if (data.state.beat % 2 == 0) {
+				playAvatarSounds()
+				// playSoundtrack()
+			}
+		}
+
+	/* playSoundtrack */
+		function playSoundtrack() {
+			var section    = Math.floor(data.state.beat % 4096 / 512)
+			var whole      = Math.floor(data.state.beat % 512  / 32)
+			var quarter    = Math.floor(data.state.beat % 32   / 8)
+			var sixteenth  = Math.floor(data.state.beat % 8    / 2)
+			// console.log(section + ":" + whole + ":" + quarter + ":" + sixteenth)
+
+			// eigth notes
+				if (sixteenth == 0) {
+					instruments.honeyharp.press(getFrequency("A1")[0])
+
+				// quarter notes
+					if (quarter == 0) {
+						// whote notes
+							if (whole == 0) {
+								instruments.honeyharp.press(getFrequency("A3")[0])
+							}
+							else if (whole == 1) {
+								instruments.honeyharp.press(getFrequency("C3")[0])
+							}
+							else if (whole == 2) {
+								instruments.honeyharp.press(getFrequency("D3")[0])
+							}
+							else if (whole == 3) {
+								instruments.honeyharp.press(getFrequency("C3")[0])
+							}
+							else if (whole == 4) {
+								instruments.honeyharp.press(getFrequency("A3")[0])
+							}
+							else if (whole == 5) {
+								instruments.honeyharp.press(getFrequency("C3")[0])
+							}
+							else if (whole == 6) {
+								instruments.honeyharp.press(getFrequency("D3")[0])
+							}
+							else if (whole == 7) {
+								instruments.honeyharp.press(getFrequency("E3")[0])
+							}
+							else if (whole == 8) {
+								instruments.honeyharp.press(getFrequency("A3")[0])
+							}
+							else if (whole == 9) {
+								instruments.honeyharp.press(getFrequency("C3")[0])
+							}
+							else if (whole == 10) {
+								instruments.honeyharp.press(getFrequency("D3")[0])
+							}
+							else if (whole == 11) {
+								instruments.honeyharp.press(getFrequency("C3")[0])
+							}
+							else if (whole == 12) {
+								instruments.honeyharp.press(getFrequency("A3")[0])
+							}
+							else if (whole == 13) {
+								instruments.honeyharp.press(getFrequency("C3")[0])
+							}
+							else if (whole == 14) {
+								instruments.honeyharp.press(getFrequency("D3")[0])
+							}
+							else if (whole == 15) {
+								instruments.honeyharp.press(getFrequency("E3")[0])
+							}
+					}
+					if (quarter == 1) {
+						//
+					}
+					if (quarter == 2) {
+						if (whole == 3) {
+							instruments.honeyharp.press(getFrequency("G2")[0])
+						}
+						else if (whole == 7) {
+							instruments.honeyharp.press(getFrequency("G3")[0])
+						}
+						else if (whole == 11) {
+							instruments.honeyharp.press(getFrequency("G2")[0])
+						}
+						else if (whole == 15) {
+							instruments.honeyharp.press(getFrequency("G3")[0])
+						}
+						else {
+							instruments.honeyharp.press(getFrequency("A4")[0])
+						}
+					}
+					if (quarter == 3) {
+						//
+					}
+				}
+				else if (sixteenth == 1) {
+					//
+				}
+				else if (sixteenth == 2) {
+					instruments.honeyharp.press(getFrequency("A2")[0])
+				}
+				else if (sixteenth == 3) {
+					//
+				}
+		}
+
+	/* playAvatarSounds */
+		function playAvatarSounds() {
+			// clear cache on new quarter note
+				var reset = (data.state.beat % 8 == 0)
+
+			// heroes & demons
+				var keys = Object.keys(data.heroes).concat(Object.keys(data.demons))
+				for (var k = 0; k < keys.length; k++) {
+					var avatar = (keys[k] > -1) ? data.demons[keys[k]] : data.heroes[keys[k]]
+
+					if (reset) { instruments[avatar.instrument].notes = [] }
+
+					var notes = avatar.state.keys[avatar.state.keys.length - 1]
+					for (var n in notes) {
+						if (!instruments[avatar.instrument].notes.includes(notes[n])) {
+							instruments[avatar.instrument].notes.push(notes[n])
+							instruments[avatar.instrument].press(getFrequency(notes[n])[0])
+							instruments[avatar.instrument].lift( getFrequency(notes[n])[0], 0.1)
+						}
+					}
+				}
 		}

@@ -99,7 +99,7 @@
 							{
 								name: "Grace",
 								team: "heroes",
-								instrument: "honeyharp",
+								instrument: "sharpsichord",
 								colors: [songs.healing.colors[0], songs.healing.colors[1], colors.blue[2]],
 								song: "healing"
 							},
@@ -235,7 +235,7 @@
 							"strength": {
 								name: "strength",
 								description: "attacks fired from within the aura are twice as powerful",
-								melody: "GEDE",
+								melody: "EGED",
 								radius: 6,
 								colors: [colors.orange[3], colors.orange[1]]
 							},

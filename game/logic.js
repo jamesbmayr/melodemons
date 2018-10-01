@@ -273,6 +273,7 @@
 						// start game
 							request.game.data.state.start = new Date().getTime()
 							callback(players, {success: true,
+								launch: true,
 								state:  request.game.data.state,
 								theme:  request.game.data.theme,
 								heroes: request.game.data.heroes,
@@ -908,6 +909,7 @@
 							}
 
 						callback(Object.keys(request.game.players), {
+							beat:   true,
 							state:  request.game.data.state,
 							heroes: request.game.data.heroes,
 							demons: request.game.data.demons,

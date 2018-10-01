@@ -6,428 +6,615 @@
 /*** getFrequency ***/
 	window.getFrequency = getFrequency
 	function getFrequency(note) {
-		note = Math.floor(Math.max(0, Math.min(132, Number(note) || 0)))
 
 		switch (note) {
 			// octave -1
 				case 0: 			// C-1
+				case "C-1":
 					return [8.175, "C", 0, -1]
 				break
 				case 1: 			// C#-1 / Db-1
+				case "C#-1":
+				case "Db-1":
 					return [8.66, "C", 1, -1]
 				break
 				case 2: 			// D-1
+				case "D-1":
 					return [9.175, "D", 0, -1]
 				break
 				case 3: 			// D#-1 / Eb-1
+				case "D#-1":
+				case "Eb-1":
 					return [9.725, "E", -1, -1]
 				break
 				case 4: 			// E-1
+				case "E-1":
 					return [10.30, "E", 0, -1]
 				break
 				case 5: 			// F-1
+				case "F-1":
 					return [10.915, "F", 0, -1]
 				break
 				case 6: 			// F#-1 / Gb-1
+				case "F#-1":
+				case "Gb-1":
 					return [11.56, "F", 1, -1]
 				break
-				case 7: 			// -1
+				case 7: 			// G-1
+				case "G-1":
 					return [12.25, "G", 0, -1]
 				break
 				case 8: 			// G#-1 / Ab-1
+				case "G#-1":
+				case "Ab-1":
 					return [12.98, "A", -1, -1]
 				break
 				case 9: 			// A-1
+				case "A-1":
 					return [13.75, "A", 0, -1]
 				break
 				case 10: 			// A#-1 / Bb-1
+				case "A#-1":
+				case "Bb-1":
 					return [14.57, "B", -1, -1]
 				break
 				case 11: 			// B-1
+				case "B-1":
 					return [15.435, "B", 0, -1]
 				break
 
 			// octave 0
 				case 12: 			// C0
+				case "C0":
 					return [16.35, "C", 0, 0]
 				break
 				case 13: 			// C#0 / Db0
+				case "C#0":
+				case "Db0":
 					return [17.32, "C", 1, 0]
 				break
 				case 14: 			// D0
+				case "D0":
 					return [18.35, "D", 0, 0]
 				break
 				case 15: 			// D#0 / Eb0
+				case "D#0":
+				case "Eb0":
 					return [19.45, "E", -1, 0]
 				break
 				case 16: 			// E0
+				case "E0":
 					return [20.60, "E", 0, 0]
 				break
 				case 17: 			// F0
+				case "F0":
 					return [21.83, "F", 0, 0]
 				break
 				case 18: 			// F#0 / Gb0
+				case "F#0":
+				case "Gb0":
 					return [23.12, "F", 1, 0]
 				break
-				case 19: 			// 0
+				case 19: 			// G0
+				case "G0":
 					return [24.50, "G", 0, 0]
 				break
 				case 20: 			// G#0 / Ab0
+				case "G#0":
+				case "Ab0":
 					return [25.96, "A", -1, 0]
 				break
 				case 21: 			// A0
+				case "A0":
 					return [27.50, "A", 0, 0]
 				break
 				case 22: 			// A#0 / Bb0
+				case "A#0":
+				case "Bb0":
 					return [29.14, "B", -1, 0]
 				break
 				case 23: 			// B0
+				case "B0":
 					return [30.87, "B", 0, 0]
 				break
 
 			// octave 1
 				case 24: 			// C1
+				case "C1":
 					return [32.70, "C", 0, 1]
 				break
 				case 25: 			// C#1 / Db1
+				case "C#1":
+				case "Db1":
 					return [34.65, "C", 1, 1]
 				break
 				case 26: 			// D1
+				case "D1":
 					return [36.71, "D", 0, 1]
 				break
 				case 27: 			// D#1 / Eb1
+				case "D#1":
+				case "Eb1":
 					return [38.89, "E", -1, 1]
 				break
 				case 28: 			// E1
+				case "E1":
 					return [41.20, "E", 0, 1]
 				break
 				case 29: 			// F1
+				case "F1":
 					return [43.65, "F", 0, 1]
 				break
 				case 30: 			// F#1 / Gb1
+				case "F#1":
+				case "Gb1":
 					return [46.25, "F", 1, 1]
 				break
-				case 31: 			// 1
+				case 31: 			// G1
+				case "G1":
 					return [49.00, "G", 0, 1]
 				break
 				case 32: 			// G#1 / Ab1
+				case "G#1":
+				case "Ab1":
 					return [51.91, "A", -1, 1]
 				break
 				case 33: 			// A1
+				case "A1":
 					return [55.00, "A", 0, 1]
 				break
 				case 34: 			// A#1 / Bb1
+				case "A#1":
+				case "Bb1":
 					return [58.27, "B", -1, 1]
 				break
 				case 35: 			// B1
+				case "B1":
 					return [61.74, "B", 0, 1]
 				break
 
 			// octave 2
 				case 36: 			// C2
+				case "C2":
 					return [65.41, "C", 0, 2]
 				break
 				case 37: 			// C#2 / Db2
+				case "C#2":
+				case "Db2":
 					return [69.30, "C", 1, 2]
 				break
 				case 38: 			// D2
+				case "D2":
 					return [73.42, "D", 0, 2]
 				break
 				case 39: 			// D#2 / Eb2
+				case "D#2":
+				case "Eb2":
 					return [77.78, "E", -1, 2]
 				break
 				case 40: 			// E2
+				case "E2":
 					return [82.41, "E", 0, 2]
 				break
 				case 41: 			// F2
+				case "F2":
 					return [87.31, "F", 0, 2]
 				break
 				case 42: 			// F#2 / Gb2
+				case "F#2":
+				case "Gb2":
 					return [92.50, "F", 1, 2]
 				break
-				case 43: 			// 2
+				case 43: 			// G2
+				case "G2":
 					return [98.00, "G", 0, 2]
 				break
 				case 44: 			// G#2 / Ab2
+				case "G#2":
+				case "Ab2":
 					return [103.83, "A", -1, 2]
 				break
 				case 45: 			// A2
+				case "A2":
 					return [110.00, "A", 0, 2]
 				break
 				case 46: 			// A#2 / Bb2
+				case "A#2":
+				case "Bb2":
 					return [116.54, "B", -1, 2]
 				break
 				case 47: 			// B2
+				case "B2":
 					return [123.47, "B", 0, 2]
 				break
 
 			// octave 3
 				case 48: 			// C3
+				case "C3":
 					return [130.81, "C", 0, 3]
 				break
 				case 49: 			// C#3 / Db3
+				case "C#3":
+				case "Db3":
 					return [138.59, "C", 1, 3]
 				break
 				case 50: 			// D3
+				case "D3":
 					return [146.83, "D", 0, 3]
 				break
 				case 51: 			// D#3 / Eb3
+				case "D#3":
+				case "Eb3":
 					return [155.56, "E", -1, 3]
 				break
 				case 52: 			// E3
+				case "E3":
 					return [164.81, "E", 0, 3]
 				break
 				case 53: 			// F3
+				case "F3":
 					return [174.61, "F", 0, 3]
 				break
 				case 54: 			// F#3 / Gb3
+				case "F#3":
+				case "Gb3":
 					return [185.00, "F", 1, 3]
 				break
-				case 55: 			// G
+				case 55: 			// G3
+				case "G3":
 					return [196.00, "G", 0, 3]
 				break
 				case 56: 			// G#3 / Ab3
+				case "G#3":
+				case "Ab3":
 					return [207.65, "A", -1, 3]
 				break
 				case 57: 			// A3
+				case "A3":
 					return [220.00, "A", 0, 3]
 				break
 				case 58: 			// A#3 / Bb3
+				case "A#3":
+				case "Bb3":
 					return [233.08, "B", -1, 3]
 				break
 				case 59: 			// B3
+				case "B3":
 					return [246.94, "B", 0, 3]
 				break
 
 			// octave 4
 				case 60: 			// C4
+				case "C4":
 					return [261.63, "C", 0, 4]
 				break
 				case 61: 			// C#4 / Db4
+				case "C#4":
+				case "Db4":
 					return [277.18, "C", 1, 4]
 				break
 				case 62: 			// D4
+				case "D4":
 					return [293.67, "D", 0, 4]
 				break
 				case 63: 			// D#4 / Eb4
+				case "D#4":
+				case "Eb4":
 					return [311.13, "E", -1, 4]
 				break
 				case 64: 			// E4
+				case "E4":
 					return [329.63, "E", 0, 4]
 				break
 				case 65: 			// F4
+				case "F4":
 					return [349.23, "F", 0, 4]
 				break
 				case 66: 			// F#4 / Gb4
+				case "F#4":
+				case "Gb4":
 					return [369.99, "F", 1, 4]
 				break
 				case 67: 			// G4
+				case "G4":
 					return [392.00, "G", 0, 4]
 				break
 				case 68: 			// G#4 / Ab4
+				case "G#4":
+				case "Ab4":
 					return [415.30, "A", -1, 4]
 				break
 				case 69: 			// A4
+				case "A4":
 					return [440.00, "A", 0, 4]
 				break
 				case 70: 			// A#4 / Bb4
+				case "A#4":
+				case "Bb4":
 					return [466.16, "B", -1, 4]
 				break
 				case 71: 			// B4
+				case "B4":
 					return [493.88, "B", 0, 4]
 				break
 
 			// octave 5
 				case 72: 			// C5
+				case "C5":
 					return [523.25, "C", 0, 5]
 				break
 				case 73: 			// C#5 / Db5
+				case "C#5":
+				case "Db5":
 					return [554.37, "C", 1, 5]
 				break
 				case 74: 			// D5
+				case "D5":
 					return [587.33, "D", 0, 5]
 				break
 				case 75: 			// D#5 / Eb5
+				case "D#5":
+				case "Eb5":
 					return [622.25, "E", -1, 5]
 				break
 				case 76: 			// E5
+				case "E5":
 					return [659.25, "E", 0, 5]
 				break
 				case 77: 			// F5
+				case "F5":
 					return [698.46, "F", 0, 5]
 				break
 				case 78: 			// F#5 / Gb5
+				case "F#5":
+				case "Gb5":
 					return [739.99, "F", 1, 5]
 				break
 				case 79: 			// G5
+				case "G5":
 					return [783.99, "G", 0, 5]
 				break
 				case 80: 			// G#5 / Ab5
+				case "G#5":
+				case "Ab5":
 					return [830.61, "A", -1, 5]
 				break
 				case 81: 			// A5
+				case "A5":
 					return [880.00, "A", 0, 5]
 				break
 				case 82: 			// A#5 / Bb5
+				case "A#5":
+				case "Bb5":
 					return [932.33, "B", -1, 5]
 				break
 				case 83: 			// B5
+				case "B5":
 					return [987.77, "B", 0, 5]
 				break
 
 			// octave 6
 				case 84: 			// C6
+				case "C6":
 					return [1046.50, "C", 0, 6]
 				break
 				case 85: 			// C#6 / Db6
+				case "C#6":
+				case "Db6":
 					return [1108.73, "C", 1, 6]
 				break
 				case 86: 			// D6
+				case "D6":
 					return [1174.66, "D", 0, 6]
 				break
 				case 87: 			// D#6 / Eb6
+				case "D#6":
+				case "Eb6":
 					return [1244.51, "E", -1, 6]
 				break
 				case 88: 			// E6
+				case "E6":
 					return [1318.51, "E", 0, 6]
 				break
 				case 89: 			// F6
+				case "F6":
 					return [1396.91, "F", 0, 6]
 				break
 				case 90: 			// F#6 / Gb6
+				case "F#6":
+				case "Gb6":
 					return [1479.98, "F", 1, 6]
 				break
 				case 91: 			// G6
+				case "G6":
 					return [1567.98, "G", 0, 6]
 				break
 				case 92: 			// G#6 / Ab6
+				case "G#6":
+				case "Ab6":
 					return [1661.22, "A", -1, 6]
 				break
 				case 93: 			// A6
+				case "A6":
 					return [1760.00, "A", 0, 6]
 				break
 				case 94: 			// A#6 / Bb6
+				case "A#6":
+				case "Bb6":
 					return [1864.66, "B", -1, 6]
 				break
 				case 95: 			// B6
+				case "B6":
 					return [1975.53, "B", 0, 6]
 				break
 
 			// octave 7
 				case 96: 			// C7
+				case "C7":
 					return [2093.00, "C", 0, 7]
 				break
 				case 97: 			// C#7 / Db7
+				case "C#7":
+				case "Db7":
 					return [2217.46, "C", 1, 7]
 				break
 				case 98: 			// D7
+				case "D7":
 					return [2349.32, "D", 0, 7]
 				break
 				case 99: 			// D#7 / Eb7
+				case "D#7":
+				case "Eb7":
 					return [2489.02, "E", -1, 7]
 				break
 				case 100: 			// E7
+				case "E7":
 					return [2637.02, "E", 0, 7]
 				break
 				case 101: 			// F7
+				case "F7":
 					return [2793.83, "F", 0, 7]
 				break
 				case 102: 			// F#7 / Gb7
+				case "F#7":
+				case "Gb7":
 					return [2959.96, "F", 1, 7]
 				break
 				case 103: 			// G7
+				case "G7":
 					return [3135.96, "G", 0, 7]
 				break
 				case 104: 			// G#7 / Ab7
+				case "G#7":
+				case "Ab7":
 					return [3322.44, "A", -1, 7]
 				break
 				case 105: 			// A7
+				case "A7":
 					return [3520.00, "A", 0, 7]
 				break
 				case 106: 			// A#7 / Bb7
+				case "A#7":
+				case "Bb7":
 					return [3729.31, "B", -1, 7]
 				break
 				case 107: 			// B7
+				case "B7":
 					return [3951.07, "B", 0, 7]
 				break
 
 			// octave 8
 				case 108: 			// C8
+				case "C8":
 					return [4186.01, "C", 0, 8]
 				break
 				case 109: 			// C#8 / Db8
+				case "C#8":
+				case "Db8":
 					return [4434.92, "C", 1, 8]
 				break
 				case 110: 			// D8
+				case "D8":
 					return [4698.63, "D", 0, 8]
 				break
 				case 111: 			// D#8 / Eb8
+				case "D#8":
+				case "Eb8":
 					return [4978.03, "E", -1, 8]
 				break
 				case 112: 			// E8
+				case "E8":
 					return [5274.04, "E", 0, 8]
 				break
 				case 113: 			// F8
+				case "F8":
 					return [5587.65, "F", 0, 8]
 				break
 				case 114: 			// F#8 / Gb8
+				case "F#8":
+				case "Gb8":
 					return [5919.91, "F", 1, 8]
 				break
 				case 115: 			// G8
+				case "G8":
 					return [6271.93, "G", 0, 8]
 				break
 				case 116: 			// G#8 / Ab8
+				case "G#8":
+				case "Ab8":
 					return [6644.88, "A", -1, 8]
 				break
 				case 117: 			// A8
+				case "A8":
 					return [7040.00, "A", 0, 8]
 				break
 				case 118: 			// A#8 / Bb8
+				case "A#8":
+				case "Bb8":
 					return [7458.62, "B", -1, 8]
 				break
 				case 119: 			// B8
+				case "B8":
 					return [7902.13, "B", 0, 8]
 				break
 
 			// octave 9
 				case 120: 			// C9
+				case "C9":
 					return [8372.02, "C", 0, 9]
 				break
 				case 121: 			// C#9 / Db9
+				case "C#9":
+				case "Db9":
 					return [8869.84, "C", 1, 9]
 				break
 				case 122: 			// D9
+				case "D9":
 					return [9397.26, "D", 0, 9]
 				break
 				case 123: 			// D#9 / Eb9
+				case "D#9":
+				case "Eb9":
 					return [9956.06, "E", -1, 9]
 				break
 				case 124: 			// E9
+				case "E9":
 					return [10548.08, "E", 0, 9]
 				break
 				case 125: 			// F9
+				case "F9":
 					return [11175.30, "F", 0, 9]
 				break
 				case 126: 			// F#9 / Gb9
+				case "F#9":
+				case "Gb9":
 					return [11839.82, "F", 1, 9]
 				break
 				case 127: 			// G9
+				case "G9":
 					return [12543.86, "G", 0, 9]
 				break
 				case 128: 			// G#9 / Ab9
+				case "G#9":
+				case "Ab9":
 					return [13289.76, "A", -1, 9]
 				break
 				case 129: 			// A9
+				case "A9":
 					return [14080.00, "A", 0, 9]
 				break
 				case 130: 			// A#9 / Bb9
+				case "A#9":
+				case "Bb9":
 					return [14917.24, "B", -1, 9]
 				break
 				case 131: 			// B9
+				case "B9":
 					return [15804.26, "B", 0, 9]
 				break
 
 				case 132: 			// C10
+				case "C10":
 					return [16744.04, "C", 0, 10]
 
 			// other
@@ -437,9 +624,6 @@
 	}
 
 /*** buildAudio ***/
-	document.addEventListener("click", function() {
-		if (!window.audio) { buildAudio() }
-	})
 	window.buildAudio = buildAudio
 	function buildAudio() {
 		// audio context
@@ -449,44 +633,6 @@
 			master = audio.createGain()
 			master.connect(audio.destination)
 			master.gain.setValueAtTime(1, audio.currentTime)
-
-		// noise
-			buffers.white = audio.createScriptProcessor(1024, 1, 1)
-			buffers.white.onaudioprocess = function(event) {
-				var output = event.outputBuffer.getChannelData(0)
-				for (var i = 0; i < 1024; i++) {
-					output[i] = Math.random() * 2 - 1
-				}
-			}
-
-			var lastOut = 0.0
-			buffers.brown = audio.createScriptProcessor(1024, 1, 1)
-			buffers.brown.onaudioprocess = function(event) {
-				var output = event.outputBuffer.getChannelData(0)
-				for (var i = 0; i < 1024; i++) {
-					output[i] = (lastOut + (0.02 * (Math.random() * 2 - 1))) / 1.02
-					lastOut = output[i]
-					output[i] *= 3.5
-				}
-			}
-
-			var b0,  b1,  b2,  b3,  b4,  b5,  b6
-				b0 = b1 = b2 = b3 = b4 = b5 = b6 = 0.0
-			buffers.pink = audio.createScriptProcessor(1024, 1, 1)
-			buffers.pink.onaudioprocess = function(event) {
-				var output = event.outputBuffer.getChannelData(0)
-				for (var i = 0; i < 1024; i++) {
-					var random = Math.random() * 2 - 1
-					b0 = 0.99886 * b0 + random * 0.0555179
-					b1 = 0.99332 * b1 + random * 0.0750759
-					b2 = 0.96900 * b2 + random * 0.1538520
-					b3 = 0.86650 * b3 + random * 0.3104856
-					b4 = 0.55000 * b4 + random * 0.5329522
-					b5 = -0.7616 * b5 - random * 0.0168980
-					output[i] = (b0 + b1 + b2 + b3 + b4 + b5 + b6 + random * 0.5362) * 0.11
-					b6 = random * 0.115926
-				}
-			}
 	}
 
 /*** buildInstrument ***/
@@ -496,7 +642,6 @@
 			var i = {
 				parameters: {
 					polysynth: {},
-					noise:        {},
 					imag:         new Float32Array([0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]),
 					real:         new Float32Array(34),
 					wave:         null,
@@ -605,21 +750,6 @@
 									var harmonic = Object.keys(parameters.harmonic)[0]
 									i.parameters.imag[harmonic] = Math.max(0, Math.min(1, parameters.harmonic[harmonic]))
 									i.parameters.wave   = audio.createPeriodicWave(i.parameters.real, i.parameters.imag)
-								break
-
-							// noise
-								case "noise":
-									for (var color in parameters.noise) {
-										var value = Math.min(1, Math.max(0, parameters.noise[color]))
-										if (value) {
-											i.parameters.noise[color] = value
-										}
-										else {
-											if (Object.keys(i.parameters.noise).includes(color)) {
-												delete i.parameters.noise[color]
-											}
-										}
-									}
 								break
 
 							// envelope
@@ -753,22 +883,6 @@
 						i.velocities[pitch] = audio.createGain()
 						i.velocities[pitch].gain.setValueAtTime(0, audio.currentTime)
 						i.velocities[pitch].gain.setValueAtTime(velocity, now)
-
-					// noise
-						for (var color in i.parameters.noise) {
-							if (i.buffers[pitch + "_" + color]) {
-								i.buffers[pitch + "_" + color].gain.cancelScheduledValues(now)
-								i.buffers[pitch + "_" + color].disconnect()
-								delete i.buffers[pitch + "_" + color]
-							}
-
-							i.buffers[pitch + "_" + color] = audio.createGain()
-							i.buffers[pitch + "_" + color].connect(i.velocities[pitch])
-							i.buffers[pitch + "_" + color].gain.setValueAtTime(0, audio.currentTime)
-							i.buffers[pitch + "_" + color].gain.setValueAtTime((i.parameters.noise[color]), now)
-
-							buffers[color].connect(i.buffers[pitch + "_" + color])
-						}
 
 					// oscillator
 						var polysynths = Object.keys(i.parameters.polysynth)
@@ -918,11 +1032,6 @@
 							"12":  !(Math.floor(Math.random() * 3 - 1))
 						},
 						imag: [0, 1, Math.random() * (1/2), Math.random() * (1/3), Math.random() * (1/4), Math.random() * (1/5), Math.random() * (1/6), Math.random() * (1/7), Math.random() * (1/8), Math.random() * (1/9), Math.random() * (1/10), Math.random() * (1/11), Math.random() * (1/12), Math.random() * (1/13), Math.random() * (1/14), Math.random() * (1/15), Math.random() * (1/16), Math.random() * (1/17), Math.random() * (1/18), Math.random() * (1/19), Math.random() * (1/20), Math.random() * (1/21), Math.random() * (1/22), Math.random() * (1/23), Math.random() * (1/24), Math.random() * (1/25), Math.random() * (1/26), Math.random() * (1/27), Math.random() * (1/28), Math.random() * (1/29), Math.random() * (1/30), Math.random() * (1/31), Math.random() * (1/32), Math.random() * (1/33)],
-						noise: {
-							white: Math.floor(Math.random() * 2) / 10,
-							pink:  Math.floor(Math.random() * 3) / 10,
-							brown: Math.floor(Math.random() * 4) / 10
-						},
 						envelope: {
 							attack:  Math.random(),
 							decay:   Math.random(),
@@ -997,9 +1106,6 @@
 							"12": true
 						},
 						"imag": [0, (1/1), 0, (1/3), 0, (1/5), 0, (1/7), 0, (1/9), 0, (1/11), 0, (1/13), 0, (1/15), 0, (1/17), 0, (1/19), 0, (1/21), 0, (1/23), 0, (1/25), 0, (1/27), 0, (1/29), 0, (1/31), 0, (1/33)],
-						"noise": {
-							"white": 0.2,
-						},
 						"envelope": {
 							"attack": 0.01,
 							"decay": 0.2,
@@ -1073,9 +1179,6 @@
 							"-5":true,
 							"-12":true
 						},
-						"noise":{
-							"brown":0.08951406649616368
-						},
 						"imag":[0,1,0.17831625044345856,0.46575266122817993,0.2041115015745163,0.4126817286014557,0.10914841294288635,0.060591064393520355,0.08364199101924896,0.02575693279504776,0.01693502813577652,0.05870021879673004,0.0666189193725586,0.05404908210039139,0.06647317111492157,0.03880130127072334,0.053111664950847626,0.051343005150556564,0,0.0007156424107961357,0.014325405471026897,0.015581578016281128,0.010473430156707764,0,0,0,0,0,0.0028332876972854137,0,0,0,0,0.002175448928028345],
 						"envelope":{
 							"attack":0.005265295838668044,
@@ -1133,9 +1236,6 @@
 							"0":true,
 							"4":true,
 							"-7":true
-						},
-						"noise":{
-							"white":0.1
 						},
 						"imag":[0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
 						"envelope":{
@@ -1199,9 +1299,6 @@
 						"polysynth":{
 							"-12":true
 						},
-						"noise":{
-							"brown":0.1
-						},
 						"imag":[0,1,0.3432779610157013,0.2315126657485962,0.058497168123722076,0.1899126172065735,0.0448404885828495,0.12938399612903595,0.07931369543075562,0.054060198366642,0.0988508090376854,0.0522669218480587,0.056811220943927765,0.051076728850603104,0.032383546233177185,0.004351383075118065,0.04818083345890045,0.038509003818035126,0.014789948239922523,0.006924794986844063,0.034774232655763626,0.009429270401597023,0.003623893717303872,0.0258589219301939,0.0015618279576301575,0.022793792188167572,0.01324266754090786,0.007655204273760319,0.0041127512231469154,0.022874318063259125,0.016309715807437897,0.008302805945277214,0.008340908214449883,0.01348100509494543],
 						"envelope":{
 							"attack":0.6536874552533578,
@@ -1220,9 +1317,6 @@
 						"name": "honeyharp",
 						"polysynth":{
 							"0":true
-						},
-						"noise":{
-							"brown":0.07771135781383433
 						},
 						"imag":[0,1,0,0.2178429514169693,0,0.14940421283245087,0,0.1158275306224823,0.3807923495769501,0.08310726284980774,0.0001470343122491613,0.05094950646162033,0,0.012528758496046066,0,0.030789503827691078,0,0.036400504410266876,0.0427282489836216,0.0037623702082782984,0.007912619970738888,0.0005064468132331967,0,0.003089423757046461,0,0.014406030997633934,0.019122179597616196,0.03117973357439041,0.00888627115637064,0.03448168560862541,0.0077970088459551334,0.029125453904271126,0.022520482540130615,0.0078049697913229465],
 						"envelope":{
@@ -1292,11 +1386,6 @@
 					return {
 						"name": "boombash",
 						"polysynth":{},
-						"noise":{
-							"brown":1,
-							"pink":0.2578992314261315,
-							"white":0.1964133219470538
-						},
 						"imag":[0,1,0.40868428349494934,0.08447276800870895,0.22822679579257965,0.09141869843006134,0.005311598069965839,0.10934562236070633,0.0996362492442131,0.0382666289806366,0.09824904054403305,0.09028502553701401,0.012032506987452507,0.05659491941332817,0.05894125625491142,0.017785757780075073,0.025360263884067535,0.02204047329723835,0.03494184464216232,0.04936360940337181,0.0045935348607599735,0.007627259939908981,0.033219072967767715,0.0008758257608860731,0.028195969760417938,0.012396937236189842,0.0006363214342854917,0.018868671730160713,0.011601193808019161,0.026970135048031807,0.03008001483976841,0.03183966875076294,0.01011782418936491,0.020333627238869667],
 						"envelope":{
 							"attack":0.001,
@@ -1330,10 +1419,6 @@
 						"polysynth":{
 							"0":true
 						},
-						"noise":{
-							"pink":0.06997558991049634,
-							"brown":0.12449145646867371
-						},
 						"imag":[0,1,0.44293421506881714,0.32471582293510437,0.011000609025359154,0.17021837830543518,0.13372759521007538,0.11268258094787598,0.005569384433329105,0.1067923977971077,0.09378086030483246,0.08295878767967224,0.0006959254387766123,0.05424145981669426,0.0423087477684021,0.05841623246669769,0.023867418989539146,0.04862881824374199,0.046523261815309525,0.016646606847643852,0.04738473519682884,0.012283651158213615,0.021767525002360344,0.04069533571600914,0.01118484791368246,0.029461022466421127,0.024899769574403763,0.006698890123516321,0.01303438562899828,0.030736785382032394,0.002923727734014392,0.01851494237780571,0.020675845444202423,0.009414720349013805],
 						"envelope":{
 							"attack":0.04006067500076161,
@@ -1357,9 +1442,6 @@
 						"polysynth":{
 							"0":true,
 							"-12":true
-						},
-						"noise":{
-							"brown":0.055284552845528454
 						},
 						"imag":[0,1,1,0,1,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0.024414559826254845],
 						"envelope":{
@@ -1437,6 +1519,43 @@
 						}
 					}
 				break
+				case "sharpsichord":
+					return {
+						"name":"sharpsichord",
+						"polysynth":{
+							"0":true
+						},
+						"imag":[0,1,0.18338973820209503,0.06164489686489105,0.16505765914916992,0.05308644846081734,0.0630641058087349,0.03404829651117325,0.05037868767976761,0.09803289920091629,0.04073476791381836,0.06083011254668236,0.027402449399232864,0.008078854531049728,0.0028261858969926834,0.04333797097206116,0.04956173896789551,0.033073946833610535,0.028376849368214607,0.022788777947425842,0.011428376659750938,0.02052171155810356,0.005210720002651215,0.0385330505669117,0.03903305158019066,0.011357864364981651,0.025470439344644547,0.0014464398846030235,0.018127329647541046,0.01408306136727333,0.013367714360356331,0.0005558114498853683,0.015808377414941788,0.018298164010047913],
+						"envelope":{
+							"attack":0.010819334770028426,
+							"decay":0.3011093120255117,
+							"sustain":0.5990977031223057,
+							"release":0.8948628416772253
+						},
+						"bitcrusher":{
+							"bits":64,
+							"norm":0.8875034167880647
+						},
+						"filters":{
+							"0":{
+								"low":3223.3996504974443,
+								"mid":8543.374424708145,
+								"high":20000,
+								"gain":10.024587985114302
+							},
+							"1":{
+								"low":11.98732795784056,
+								"mid":32.70319566257483,
+								"high":89.21913292988074,
+								"gain":-22.936602870813402
+							}
+						},
+						"echo":{
+							"delay":0.13033631290023645,
+							"feedback":0.3335722262314059
+						}
+					}
+				break
 				default:
 					if (window.localStorage.synthesizers) {
 						var custom = JSON.parse(window.localStorage.synthesizers)
@@ -1461,7 +1580,7 @@
 	window.getInstruments = getInstruments
 	function getInstruments(defaults) {
 		try {
-			var array = ["random", "sine", "square", "triangle", "sawtooth", "shimmer", "jangle", "chordstrum", "lazerz", "darkflute", "buzzorgan", "swello", "honeyharp", "reedles", "boombash", "accordienne", "glassical", "clarinaut", "qube"]
+			var array = ["random", "sine", "square", "triangle", "sawtooth", "shimmer", "jangle", "chordstrum", "lazerz", "darkflute", "buzzorgan", "swello", "honeyharp", "reedles", "boombash", "accordienne", "glassical", "clarinaut", "qube", "sharpsichord"]
 
 			if (!defaults) {
 				if (window.localStorage.synthesizers) {
