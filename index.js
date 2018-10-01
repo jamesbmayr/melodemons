@@ -122,7 +122,7 @@
 													_404(error)
 												}
 												else {
-													fs.readFile("./" + (request.path[1] || "home") + "/stylesheet.css", "utf8", function (error, file) {
+													fs.readFile("./" + request.path[1] + "/stylesheet.css", "utf8", function (error, file) {
 														if (error) {
 															_404(error)
 														}
@@ -145,7 +145,7 @@
 													_404(error)
 												}
 												else {
-													response.end("window.addEventListener('load', function() { \n" + file + " \n}")
+													response.end("window.addEventListener('load', function() {\n\n" + file + "\n\n})")
 												}
 											})
 										}
@@ -161,12 +161,12 @@
 													_404(error)
 												}
 												else {
-													fs.readFile("./" + (request.path[1] || "home") + "/script.js", "utf8", function (error, file) {
+													fs.readFile("./" + request.path[1] + "/script.js", "utf8", function (error, file) {
 														if (error) {
 															_404(error)
 														}
 														else {
-															response.end("window.addEventListener('load', function() { \n" + data + "\n\n" + file + " \n}")
+															response.end("window.addEventListener('load', function() {\n\n" + data + "\n\n" + file + "\n\n})")
 														}
 													})
 												}
