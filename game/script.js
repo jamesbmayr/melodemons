@@ -920,7 +920,7 @@
 		function playMusic() {
 			if (data.state.beat % 2 == 0) {
 				playAvatarSounds()
-				// playSoundtrack()
+				playSoundtrack()
 			}
 		}
 
