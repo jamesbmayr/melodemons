@@ -19,7 +19,7 @@
 					"[ click to rejoin ]" + 
 				"</div>"
 			}
-			else {
+			else if (!request.game.data.state.end) {
 				var text = getAsset("text")
 				var overlay = text.main + "<br>" + (request.game.players[request.session.id].admin ? text.demons : text.heroes) + "<br><br><br>" +
 					(request.game.players[request.session.id].admin ? text.numbers + "<br>" : "") + text.arrows + "<br>" + text.letters + "<br><br><br>" +
@@ -29,6 +29,9 @@
 				"<div id='overlay'>" + 
 					overlay + "[ click to begin ]" +
 				"</div>"
+			}
+			else {
+				""
 			}
 		</script>node>
 	</body>

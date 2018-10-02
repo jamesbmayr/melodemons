@@ -99,21 +99,21 @@
 							{
 								name: "Grace",
 								team: "heroes",
-								instrument: "sharpsichord",
+								instrument: "glassical",
 								colors: [songs.healing.colors[0], songs.healing.colors[1], colors.blue[2]],
 								song: "healing"
 							},
 							{
 								name: "Arthur",
 								team: "heroes",
-								instrument: "chordstrum",
+								instrument: "clarinaut",
 								colors: [songs.protection.colors[0], songs.protection.colors[1], colors.blue[2]],
 								song: "protection"
 							},
 							{
 								name: "Emily",
 								team: "heroes",
-								instrument: "lazerz",
+								instrument: "shimmer",
 								colors: [songs.strength.colors[0], songs.strength.colors[1], colors.blue[2]],
 								song: "strength"
 							},
@@ -127,28 +127,28 @@
 							{
 								name: "Abigail",
 								team: "heroes",
-								instrument: "swello",
+								instrument: "buzzorgan",
 								colors: [songs.paralysis.colors[0], songs.paralysis.colors[1], colors.blue[2]],
 								song: "paralysis"
 							},
 							{
 								name: "Geoffrey",
 								team: "heroes",
-								instrument: "buzzorgan",
+								instrument: "sine",
 								colors: [songs.confusion.colors[0], songs.confusion.colors[1], colors.blue[2]],
 								song: "confusion"
 							},
 							{
 								name: "Charlotte",
 								team: "heroes",
-								instrument: "glassical",
+								instrument: "triangle",
 								colors: [songs.negation.colors[0], songs.negation.colors[1], colors.blue[2]],
 								song: "negation"
 							},
 							{
 								name: "Dorian",
 								team: "heroes",
-								instrument: "shimmer",
+								instrument: "qube",
 								colors: [songs.pain.colors[0], songs.pain.colors[1], colors.blue[2]],
 								song: "pain"
 							}
@@ -167,7 +167,7 @@
 							{
 								name: "Ebborthrosh",
 								team: "demons",
-								instrument: "sine",
+								instrument: "lazerz",
 								colors: [songs.protection.colors[0], songs.protection.colors[1], colors.red[2]],
 								song: "protection"
 							},
@@ -181,14 +181,14 @@
 							{
 								name: "Gifflegorn",
 								team: "demons",
-								instrument: "triangle",
+								instrument: "sharpsichord",
 								colors: [songs.flight.colors[0], songs.flight.colors[1], colors.red[2]],
 								song: "flight"
 							},
 							{
 								name: "Chrynthos",
 								team: "demons",
-								instrument: "clarinaut",
+								instrument: "swello",
 								colors: [songs.paralysis.colors[0], songs.paralysis.colors[1], colors.red[2]],
 								song: "paralysis"
 							},
@@ -202,7 +202,7 @@
 							{
 								name: "Golardios",
 								team: "demons",
-								instrument: "qube",
+								instrument: "chordstrum",
 								colors: [songs.negation.colors[0], songs.negation.colors[1], colors.red[2]],
 								song: "negation"
 							},
@@ -524,8 +524,8 @@
 							surface:  false,
 							tower:    null,
 							health:   255,
-							keyable:  true,
-							keys:     [[],[],[],[],[],[],[],[]],
+							cooldown: 0,
+							keys:     [[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]],
 							songs:    [],
 							effects:  []
 						}

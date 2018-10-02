@@ -32,6 +32,7 @@
 					}
 					else {
 						callback([request.session.id], {success: true, 
+							admin:     (request.game.players[request.session.id].admin ? true : false),
 							state:   request.game.data.state,
 							theme:   request.game.data.theme,
 							heroes:  request.game.data.heroes,
@@ -243,7 +244,7 @@
 						callback([request.session.id], {success: false, message: "game cannot exceed 6 players"})
 					}
 					else if (players.filter(function(p) { return (!request.game.players[p].admin && !request.game.data.heroes[p]) }).length) {
-						callback([request.session.id], {success: false, message: "some players have not selected a hero"})	
+						callback([request.session.id], {success: false, message: "some players have not chosen a hero"})	
 					}
 
 				// begin
@@ -305,7 +306,7 @@
 						}
 					}
 
-				// already selected ?
+				// already chosen ?
 					if (currentHeroes.includes(hero.name)) {
 						hero = null
 					}
@@ -338,6 +339,7 @@
 					var demon = main.chooseRandom(allDemons)
 						demon.state = main.getSchema("state")
 						demon.melody = songs[demon.song].melody
+						demon.number = currentDemons.length + 1
 
 				// unselect subsequent demons
 					if (currentDemons.length) {
@@ -659,7 +661,6 @@
 
 				if (avatar.team !== "demons") {
 					// request.game.data.theme = main.getAsset("themes")[request.post.key - 1] || {}
-					callback([request.session.id], {success: false, message: "not demons"})
 				}
 				else if (!request.game.data.demons[request.post.key - 1]) {
 					callback([request.session.id], {success: false, message: "demon not found"})
@@ -670,6 +671,10 @@
 					}
 
 					request.game.data.demons[request.post.key - 1].state.selected = true
+					request.game.data.demons[request.post.key - 1].state.left     = false
+					request.game.data.demons[request.post.key - 1].state.right    = false
+					request.game.data.demons[request.post.key - 1].state.up       = false
+					request.game.data.demons[request.post.key - 1].state.down     = false
 				}
 			}
 			catch (error) {main.logError(error)}
@@ -781,29 +786,33 @@
 				if (beats[0].length > 2 || beats[1].length > 2 || beats[2].length > 2 || beats[3].length > 2) { // to prevent pressing all keys
 					return false
 				}
-				else if (beats[0].includes(melody[0])) {
-					return ((beats[0].includes(melody[1]) || beats[1].includes(melody[1]))
-					     && (beats[1].includes(melody[2]) || beats[2].includes(melody[2]))
-					     && (beats[2].includes(melody[3]) || beats[3].includes(melody[3])))
+
+				if (beats[0].includes(melody[0])
+				 && beats[1].includes(melody[1])
+				 && beats[2].includes(melody[2])
+				 && beats[3].includes(melody[3])) {
+					return true
 				}
-				else if (beats[0].includes(melody[1])) {
-					return ((beats[0].includes(melody[2]) || beats[1].includes(melody[2]))
-						 && (beats[1].includes(melody[3]) || beats[2].includes(melody[3]))
-						 && (beats[2].includes(melody[0]) || beats[3].includes(melody[0])))
+				if (beats[0].includes(melody[1])
+				 && beats[1].includes(melody[2])
+				 && beats[2].includes(melody[3])
+				 && beats[3].includes(melody[0])) {
+					return true
 				}
-				else if (beats[0].includes(melody[2])) {
-					return ((beats[0].includes(melody[3]) || beats[1].includes(melody[3]))
-						 && (beats[1].includes(melody[0]) || beats[2].includes(melody[0]))
-						 && (beats[2].includes(melody[1]) || beats[3].includes(melody[1])))
+				if (beats[0].includes(melody[2])
+				 && beats[1].includes(melody[3])
+				 && beats[2].includes(melody[0])
+				 && beats[3].includes(melody[1])) {
+					return true
 				}
-				else if (beats[0].includes(melody[3])) {
-					return ((beats[0].includes(melody[0]) || beats[1].includes(melody[0]))
-						 && (beats[1].includes(melody[1]) || beats[2].includes(melody[1]))
-						 && (beats[2].includes(melody[2]) || beats[3].includes(melody[2])))
+				if (beats[0].includes(melody[3])
+				 && beats[1].includes(melody[0])
+				 && beats[2].includes(melody[1])
+				 && beats[3].includes(melody[2])) {
+					return true
 				}
-				else {
-					return false
-				}
+								
+				return false
 			}
 			catch (error) {main.logError(error)}
 		}
@@ -833,6 +842,35 @@
 					else {
 						return true
 					}
+			}
+			catch (error) {main.logError(error)}
+		}
+
+	/* getBeatAgo */
+		module.exports.getBeatAgo = getBeatAgo
+		function getBeatAgo(avatar, ago, length) {
+			try {
+				// variables
+					var beat = []
+					var start = Math.min(64, 64 - (((ago || 0)         ) * 8))
+					var end   = Math.max(1,  64 - (((ago || 0) + length) * 8))
+
+				// get beat, +/- half beat
+					for (var k = start; k > end; k--) {
+						for (var n in avatar.state.keys[k - 1]) {
+							beat.push(avatar.state.keys[k - 1][n].slice(0,1))
+						}
+					}
+
+				// remove duplicates
+					for (var b = 0; b < beat.length; b++) {
+						if (beat.indexOf(beat[b]) !== b) {
+							beat.splice(b,1)
+							b--
+						}
+					}
+
+				return beat
 			}
 			catch (error) {main.logError(error)}
 		}
@@ -876,7 +914,8 @@
 
 							for (var k in keys) {
 								var avatar = (keys[k] > -1) ? request.game.data.demons[keys[k]] : request.game.data.heroes[keys[k]]
-								updateAuras(     request, avatar)
+								updateSoundEffects(request, avatar)
+								updateAuras(       request, avatar)
 							}
 
 						// heroes & demons
@@ -893,14 +932,11 @@
 								updateTower(     request, avatar)
 								updateArrows(    request, avatar)
 								updateEffects(   request, avatar)
-
-								if (request.game.data.state.beat % 8 == 0) {
-									updateKeys(  request, avatar)
-								}
+								updateKeys(      request, avatar)
 							}
 
 						// winning ?
-							if (request.game.data.state.winning.team && request.game.data.state.beat % 8 == 0) {
+							if (request.game.data.state.winning.team) {
 								request.game.data.state.winning.countdown--
 
 								if (request.game.data.state.winning.countdown <= 0) {
@@ -1007,6 +1043,7 @@
 								future.colRight = (future.colRight + 1       + map.length) % map.length
 								avatar.state.x  = ((future.colLeft * 32 + 8) + mapLength ) % mapLength
 								avatar.state.vx = Math.max(0, avatar.state.vx)
+								avatar.state.collision = true
 							}
 
 						// collision right
@@ -1016,6 +1053,7 @@
 								future.colRight =  (future.colRight - 1       + map.length) % map.length
 								avatar.state.x  = ((future.colRight * 32 - 8) + mapLength ) % mapLength
 								avatar.state.vx = Math.min(0, avatar.state.vx)
+								avatar.state.collision = true
 							}
 					}
 
@@ -1095,14 +1133,14 @@
 							var opponent = (keys[k] > -1) ? request.game.data.demons[keys[k]] : request.game.data.heroes[keys[k]]
 
 							// wrap-around issue
-								var avLeft = (  avatar.state.colLeft == request.game.data.map.length - 1) ? (-1 * request.game.data.map.length) : 0
-								var opLeft = (opponent.state.colLeft == request.game.data.map.length - 1) ? (-1 * request.game.data.map.length) : 0
+								var avLeft = (  avatar.state.colLeft == request.game.data.map.length - 1 && opponent.state.colLeft == 0) ? (-1 * request.game.data.map.length) : 0
+								var opLeft = (opponent.state.colLeft == request.game.data.map.length - 1 &&   avatar.state.colLeft == 0) ? (-1 * request.game.data.map.length) : 0
 							
 							if ((opponent.name !== avatar.name) && (opponent.state.health)
-							 && ((avatar.state.rowUp             >= opponent.state.rowDown          && avatar.state.rowUp             <= opponent.state.rowUp)
-							  || (avatar.state.rowDown           >= opponent.state.rowDown          && avatar.state.rowDown           <= opponent.state.rowUp + 1)) // standing on someone's head
-							 && ((avatar.state.colLeft + avLeft  >= opponent.state.colLeft + opLeft && avatar.state.colLeft + avLeft  <= opponent.state.colRight)
-							  || (avatar.state.colRight          >= opponent.state.colLeft + opLeft && avatar.state.colRight          <= opponent.state.colRight))) { // same cells
+							 && ((avatar.state.rowUp                >= opponent.state.rowDown          && avatar.state.rowUp                 <= opponent.state.rowUp)
+							  || (avatar.state.rowDown              >= opponent.state.rowDown          && avatar.state.rowDown               <= opponent.state.rowUp + 1)) // standing on someone's head
+							 && ((avatar.state.colLeft + avLeft     >= opponent.state.colLeft + opLeft && avatar.state.colLeft + avLeft      <= opponent.state.colLeft + opLeft + 1)
+							  || (avatar.state.colLeft + avLeft + 1 >= opponent.state.colLeft + opLeft && avatar.state.colLeft + avLeft + 1  <= opponent.state.colLeft + opLeft + 1))) { // same cells
 								
 								// same x, moving y
 									if ((opponent.state.x + (opLeft * 32) <= avatar.state.x + (avLeft * 32)      && avatar.state.x + (avLeft * 32)      <= opponent.state.x + (opLeft * 32) + 32)
@@ -1134,6 +1172,8 @@
 											else if ((opponent.state.y < avatar.state.y + 64 && avatar.state.y + 64 <= opponent.state.y + 64) && avatar.state.vy > 0) {
 												  avatar.state.vy = Math.max(-24, Math.min(0,    avatar.state.vy))
 												  avatar.state.jumpable = false
+												  avatar.state.collision = true
+												opponent.state.collision = true
 												opponent.state.vy = Math.max(-24, Math.min(16, opponent.state.vy + 8))
 												opponent.state.surface  = true
 												opponent.state.jumpable = true
@@ -1146,6 +1186,8 @@
 											if ((opponent.state.x + (opLeft * 32) < avatar.state.x && avatar.state.x < opponent.state.x + (opLeft * 32) + 32) && avatar.state.vx < 0) {
 												  avatar.state.vx = Math.max(-16, Math.min(16,   avatar.state.vx + 4))
 												  avatar.state.x  = ((avatar.state.x + 4) + mapLength) % mapLength
+												  avatar.state.collision = true
+												opponent.state.collision = true
 												opponent.state.vx = Math.max(-16, Math.min(16, opponent.state.vx - 4))
 											}
 
@@ -1153,6 +1195,8 @@
 											else if ((opponent.state.x + (opLeft * 32) < avatar.state.x + (avLeft * 32) + 32 && avatar.state.x + (avLeft * 32) + 32 < opponent.state.x + (opLeft * 32) + 32) && avatar.state.vx > 0) {
 												  avatar.state.vx = Math.max(-16, Math.min(16,  avatar.state.vx - 4))
 												  avatar.state.x  = ((avatar.state.x - 4) + mapLength) % mapLength
+												  avatar.state.collision = true
+												opponent.state.collision = true
 												opponent.state.vx = Math.max(-16, Math.min(16, opponent.state.vx + 4))
 											}
 									}
@@ -1191,19 +1235,16 @@
 								if (avatar.state.health) { // alive --> heal
 									avatar.state.health = Math.max(0, Math.min(255, avatar.state.health + 2))
 								}
-								else if (!avatar.state.health && avatar.state.keyable) { // dead --> resurrect
-									var notes = []
-									for (var k in avatar.state.keys[avatar.state.keys.length - 1]) {
-										notes.push(avatar.state.keys[avatar.state.keys.length - 1][k].slice(0,1))
-									}
+								else if (!avatar.state.health && !avatar.state.cooldown) { // dead --> resurrect
+									var notes  = getBeatAgo(avatar, 0, 0.25)
 
 									if      (notes.length && avatar.state.tower.platforms[0] && avatar.state.tower.platforms[0].team == avatar.team && notes.includes(avatar.state.tower.platforms[0].note)) {
 										avatar.state.health = 255
-										avatar.state.keyable = false
+										avatar.state.cooldown = 8
 									}
 									else if (notes.length && avatar.state.tower.platforms[1] && avatar.state.tower.platforms[1].team == avatar.team && notes.includes(avatar.state.tower.platforms[1].note)) {
 										avatar.state.health = 255
-										avatar.state.keyable = false
+										avatar.state.cooldown = 8
 									}
 								}
 							}
@@ -1228,6 +1269,7 @@
 							 && (avatar.state.y < arrow.y + arrow.radius && arrow.y - arrow.radius < avatar.state.y + 64)
 							 && (avatar.state.x < arrow.x + arrow.radius && arrow.x - arrow.radius < avatar.state.x + 32)) {
 								avatar.state.health = Math.max(0, Math.min(255, avatar.state.health - arrow.radius))
+								avatar.state.collision = true
 								request.game.data.arrows.splice(a, 1)
 								a--
 							}
@@ -1250,14 +1292,11 @@
 		module.exports.updateTower = updateTower
 		function updateTower(request, avatar) {
 			try {
-				if (avatar.state.health && avatar.state.keyable) {
+				if (avatar.state.health && !avatar.state.cooldown) {
 					// get notes
 						var changePlatform = false
 						var changeTower    = false
-						var notes = []
-						for (var k in avatar.state.keys[avatar.state.keys.length - 1]) {
-							notes.push(avatar.state.keys[avatar.state.keys.length - 1][k].slice(0,1))
-						}
+						var notes = getBeatAgo(avatar, 0, 0.25)
 
 					// platform control
 						if (avatar.state.tower && notes.length) {
@@ -1272,7 +1311,7 @@
 								platform.team = avatar.team
 								platform.color = avatar.colors[2]
 								changePlatform = true
-								avatar.state.keyable = false
+								avatar.state.cooldown = 8
 							}
 							else if (avatar.state.tower.platforms[1] && avatar.state.tower.platforms[1].team !== avatar.team && notes.includes(avatar.state.tower.platforms[1].note)) {
 								var platform = tower.platforms.find(function (p) {
@@ -1281,7 +1320,7 @@
 								platform.team = avatar.team
 								platform.color = avatar.colors[2]
 								changePlatform = true
-								avatar.state.keyable = false
+								avatar.state.cooldown = 8
 							}
 						}
 
@@ -1316,25 +1355,34 @@
 
 					// countdown ?
 						if (changeTower) {
-							var heroWinning     = true
-							var demonWinning    = true
-							var previousWinning = request.game.data.state.winning.team
-
-							for (var t in request.game.data.towers) {
-								if (request.game.data.towers[t].team !== "heroes") {
-									heroWinning = false
-								}
-								if (request.game.data.towers[t].team !== "demons") {
-									demonWinning = false
-								}
-							}
-
-							request.game.data.state.winning.team = heroWinning ? "heroes" : demonWinning ? "demons" : null
-							if (request.game.data.state.winning.team !== previousWinning) {
-								request.game.data.state.winning.color = heroWinning ? colors.blue[2] : demonWinning ? colors.red[2] : null
-								request.game.data.state.winning.countdown = 32
-							}
+							updateWinning(request)
 						}
+				}
+			}
+			catch (error) {main.logError(error)}
+		}
+
+	/* updateWinning */
+		module.exports.updateWinning = updateWinning
+		function updateWinning(request) {
+			try {
+				var heroWinning     = true
+				var demonWinning    = true
+				var previousWinning = request.game.data.state.winning.team
+
+				for (var t in request.game.data.towers) {
+					if (request.game.data.towers[t].team !== "heroes") {
+						heroWinning = false
+					}
+					if (request.game.data.towers[t].team !== "demons") {
+						demonWinning = false
+					}
+				}
+
+				request.game.data.state.winning.team = heroWinning ? "heroes" : demonWinning ? "demons" : null
+				if (request.game.data.state.winning.team !== previousWinning) {
+					request.game.data.state.winning.color = heroWinning ? colors.blue[2] : demonWinning ? colors.red[2] : null
+					request.game.data.state.winning.countdown = (8 * 32) + 128 - (request.game.data.state.beat % 128)
 				}
 			}
 			catch (error) {main.logError(error)}
@@ -1366,16 +1414,13 @@
 		function updateArrows(request, avatar) {
 			try {
 				// create new arrows
-					if (avatar.state.health && avatar.state.keyable) {
-						var notes = []
-						for (var k in avatar.state.keys[avatar.state.keys.length - 1]) {
-							notes.push(avatar.state.keys[avatar.state.keys.length - 1][k].slice(0,1))
-						}
+					if (avatar.state.health && !avatar.state.cooldown) {
+						var notes = getBeatAgo(avatar, 0, 0.25)
 						notes.sort()
 
 						if (notes.length == 2 && ((notes[0] == "A" && notes[1] == "C") || (notes[0] == "C" && notes[1] == "E") || (notes[0] == "E" && notes[1] == "G"))) {
 							request.game.data.arrows.push(createArrow(request, avatar))
-							avatar.state.keyable = false
+							avatar.state.cooldown = 8
 						}
 					}
 
@@ -1436,17 +1481,12 @@
 		function updateAuras(request, avatar) {
 			try {
 				// last 4 beats
-					var beats = []
-					for (var b in avatar.state.keys) {
-						var beat = []
-						for (var k in avatar.state.keys[b]) {
-							beat.push(avatar.state.keys[b][k].slice(0,1))
-						}
-						beats.push(beat)
-					}
-
-					if (!beats[beats.length - 1].length) { beats.pop() }
-					beats = beats.slice(beats.length - 4)
+					var beats = [
+						getBeatAgo(avatar, 2.75, 1.5),
+						getBeatAgo(avatar, 1.75, 1.5),
+						getBeatAgo(avatar, 0.75, 1.5),
+						getBeatAgo(avatar, 0   , 1.25)
+					]
 
 				// remove old aura ?
 					var auraExists = false
@@ -1464,7 +1504,7 @@
 							auraExists = true
 							aura.x = avatar.state.x + 16
 							aura.y = avatar.state.y + 48
-							avatar.state.keyable = false
+							avatar.state.cooldown = 8
 						}
 					}
 
@@ -1476,7 +1516,7 @@
 								var aura = createAura(request, avatar, songs[keys[k]])
 								request.game.data.auras.push(aura)
 
-								avatar.state.keyable = false
+								avatar.state.cooldown = 8
 								auraExists = true								
 								break
 							}
@@ -1571,23 +1611,34 @@
 			catch (error) {main.logError(error)}
 		}
 
+	/* updateSoundEffects */
+		module.exports.updateSoundEffects = updateSoundEffects
+		function updateSoundEffects(request, avatar) {
+			try {
+				avatar.state.collision = false
+			}
+			catch (error) {main.logError(error)}
+		}
+
 	/* updateKeys */
 		module.exports.updateKeys = updateKeys
 		function updateKeys(request, avatar) {
 			try {
-				// repeat 8 beats ago for unselected demons (to loop 8 beats)
+				// repeat 64 beats for unselected demons (to loop 8 quarters)
 					if (!avatar.state.selected) {
 						avatar.state.keys.push(main.duplicateObject(avatar.state.keys[0]))
 					}
 				
 				// cycle beats
 					avatar.state.keys.shift()
-					while (avatar.state.keys.length < 8) {
+					while (avatar.state.keys.length < 64) {
 						avatar.state.keys.push([])
 					}
 
-				// can play keys again
-					avatar.state.keyable = true
+				// update cooldown
+					if (avatar.state.cooldown > 0) {
+						avatar.state.cooldown = avatar.state.cooldown - 1
+					}
 			}
 			catch (error) {main.logError(error)}
 		}

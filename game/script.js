@@ -224,7 +224,9 @@
 			if (!data.clicked) {
 				// overlay
 					data.clicked = true
-					document.getElementById("overlay").remove()
+					if (document.getElementById("overlay")) {
+						document.getElementById("overlay").remove()
+					}
 
 				// audio
 					buildAudio()
@@ -311,11 +313,10 @@
 				}
 
 			// overlay & message
-				if (!data.clicked && data.state.start) {
+				if (!data.clicked && data.state.start && !data.state.end) {
 					document.getElementById("overlay").className = "rejoin"
 					document.getElementById("overlay").innerText = "[ click to rejoin ]"
 				}
-
 				if (data.message) {
 					drawMessage()
 				}
@@ -464,30 +465,30 @@
 
 			// demons
 				if (data.admin) {
-					// selected theme
-						var selectedTheme = data.theme
+					// chosen theme
+						var chosenTheme = data.theme
 
 					// draw options
 						for (var o = 0; o < data.options.length; o++) {
 							var shadow = (o == data.selection) ? "#d80e0e" : "#222222" // shadow as selection tool
 							var x = (canvas.width  / 2) + 400 - ((data.options.length - o) * 100) + 50 - 40
 							var y = (canvas.height / 2) - 50
-							var isSelected = (selectedTheme && selectedTheme.name == data.options[o].name) ? true : false
+							var isChosen = (chosenTheme && chosenTheme.name == data.options[o].name) ? true : false
 
 							drawRectangle(x, y, 80, 80, {color: "#dddddd", shadow: shadow, blur: 32, radii: {topLeft: 8, topRight: 8, bottomRight: 8, bottomLeft: 8}})
-							drawTheme(    x, y, 80, 80, data.options[o], isSelected)
+							drawTheme(    x, y, 80, 80, data.options[o], isChosen)
 						}
 
 					// melody
-						if (selectedTheme) {
+						if (chosenTheme) {
 							drawText(canvas.width / 2, 3 * canvas.height / 4, "launch game?", {color: "#dddddd", size: 32, shadow: "#d80e0e", blur: 16})
 						}
 				}
 
 			// heroes
 				else {
-					// selected / taken
-						var selectedHero = data.heroes[id]
+					// chosen / taken
+						var chosenHero = data.heroes[id]
 						var takenHeroes = []
 						for (var h in data.heroes) {
 							if (data.heroes[h]) {
@@ -499,7 +500,7 @@
 						var optionKeys = Object.keys(data.options)
 						for (var o = 0; o < optionKeys.length; o++) {
 							var shadow = (o == data.selection) ? "#2b76ef" : "#222222" // shadow as selection tool
-							var color = (selectedHero && selectedHero.name == data.options[optionKeys[o]].name) ? "#2b76ef" : takenHeroes.includes(data.options[optionKeys[o]].name) ? "#222222" : "#dddddd"
+							var color = (chosenHero && chosenHero.name == data.options[optionKeys[o]].name) ? "#2b76ef" : takenHeroes.includes(data.options[optionKeys[o]].name) ? "#222222" : "#dddddd"
 							var x = (canvas.width  / 2) + 400 - ((optionKeys.length - o) * 100) + 50
 							var y = (canvas.height / 2) - 50
 
@@ -508,18 +509,18 @@
 						}
 
 					// melody
-						if (selectedHero) {
-							drawText(canvas.width / 2, 3 * canvas.height / 4, "melody: " + selectedHero.melody, {color: selectedHero.colors[1], size: 32, shadow: "#2b76ef", blur: 16})
+						if (chosenHero) {
+							drawText(canvas.width / 2, 3 * canvas.height / 4, "melody: " + chosenHero.melody, {color: chosenHero.colors[1], size: 32, shadow: "#2b76ef", blur: 16})
 						}
 				}
 		}
 
 	/* drawTheme */
-		function drawTheme(x, y, width, height, theme, isSelected) {
+		function drawTheme(x, y, width, height, theme, isChosen) {
 			// variables
-				var terrainColor = isSelected ? theme.terrainForeground : theme.terrainBackground
-				var towerColor   = isSelected ? theme.towerForeground   : theme.towerBackground
-				var pitColor     = isSelected ? theme.pitForeground     : theme.pitBackground
+				var terrainColor = isChosen ? theme.terrainForeground : theme.terrainBackground
+				var towerColor   = isChosen ? theme.towerForeground   : theme.towerBackground
+				var pitColor     = isChosen ? theme.pitForeground     : theme.pitBackground
 
 			// sky
 				drawRectangle(x, y, 80, 80, {gradient: {x1: x, y1: y, x2: x, y2: y + height, colors: {"0": theme.skyBottom, "1": theme.skyTop}}, radii: {topLeft: 4, topRight: 4, bottomRight: 8, bottomLeft: 8}})
@@ -535,7 +536,7 @@
 				drawRectangle(x + 20, y, 20, 10, {color: pitColor})
 
 			// name
-				if (isSelected) {
+				if (isChosen) {
 					drawText(x + (width / 2), y + (5 * height / 4), theme.name, {opacity: 1, color: theme.terrainBackground, size: (width / 4), shadow: "#d80e0e", blur: 4})   // name
 				}
 				else {
@@ -614,7 +615,7 @@
 				var keys = Object.keys(data.heroes).concat(Object.keys(data.demons))
 				for (var k in keys) {
 					var avatar = (keys[k] > -1) ? data.demons[keys[k]] : data.heroes[keys[k]]
-					drawAvatar(1280 - ((avatar.state.x - startX + mapLength + 20) % mapLength - 20) / 1.6, (avatar.state.y / 1.6) + 40, 20, 40, avatar)
+					drawAvatar(1280 - ((avatar.state.x - startX + mapLength + 20) % mapLength - 20) / 1.6, (avatar.state.y / 1.6) + 40, 20, 40, avatar, data.admin)
 				}
 
 			// auras
@@ -683,7 +684,7 @@
 				var keys = Object.keys(data.heroes).concat(Object.keys(data.demons))
 				for (var k in keys) {
 					var avatar = (keys[k] > -1) ? data.demons[keys[k]] : data.heroes[keys[k]]
-					drawAvatar((avatar.state.x - startX + mapLength + 32) % mapLength - 32, avatar.state.y, 32, 64, avatar)
+					drawAvatar((avatar.state.x - startX + mapLength + 32) % mapLength - 32, avatar.state.y, 32, 64, avatar, data.admin)
 				}
 
 			// auras
@@ -692,13 +693,16 @@
 				}
 
 			// win countdown ?
-				if (data.state.winning.team) {
-					drawText(canvas.width / 2, 3 * canvas.height / 4, (data.state.winning.countdown || data.state.winning.team + " win"), {color: data.state.winning.color, size: 64})
+				if (data.state.winning.team && !data.state.winning.countdown) {
+					drawText(canvas.width / 2,     canvas.height / 2, (data.state.winning.team + " win"),  {color: data.state.winning.color, size: 64, blur: 4, shadow: data.state.winning.color})
+				}
+				else if (data.state.winning.team && data.state.winning.countdown < 256) {
+					drawText(canvas.width / 2, 3 * canvas.height / 4, Math.ceil(data.state.winning.countdown / 16), {color: data.state.winning.color, size: 64})
 				}
 		}
 
 	/* drawAvatar */
-		function drawAvatar(x, y, width, height, avatar) {
+		function drawAvatar(x, y, width, height, avatar, admin) {
 			// variables
 				if (avatar.state) {
 					var healthColor = avatar.state.health ? ("rgb(128, " + avatar.state.health + ", 000)") : "rgb(255,255,255)"
@@ -733,11 +737,16 @@
 					drawRectangle(x + (13 * width / 16) + xOffset, y + (5 * height / 16) + (3 * height / 32) * Math.max(0, yOffset),  5 * width / 16,  5 * height / 32, {opacity: opacity, color: avatar.colors[1], shadow: avatar.colors[2], blur: 2, radii: {topLeft:  5, topRight:  5, bottomRight: 2, bottomLeft: 2}}) // right hand
 				}
 				else if (avatar.team == "demons") {
+					drawTriangle(x +  (3 * width / 8)           , y + (3 * height / 16)                                      , x +  (5 * width / 8)           , y +            (3 * height / 16)                       , x +     (width / 2) - (10 * xOffset), y + (3 * height / 8)                  , {opacity: opacity, color: avatar.colors[2], shadow: avatar.colors[2], blur: 2}) // tail
 					drawTriangle(x +      (width / 4)           , y +     (height / 4)                                       , x +      (width / 8)           , y                                                      , x + (3 * width / 8), y                                                      , {opacity: opacity, color: avatar.colors[2], shadow: avatar.colors[2], blur: 2}) // left foot
-					drawTriangle(x +  (3 * width / 4)           , y +     (height / 4)                                       , x + (7  * width / 8)           , y                                                      , x + (5 * width / 8), y                                                      , {opacity: opacity, color: avatar.colors[2], shadow: avatar.colors[2], blur: 2}) // right foot
-					drawTriangle(x -      (width / 16) + xOffset, y +     (height / 2) + (height / 16) * Math.max(0, yOffset), x + (3  * width / 16) + xOffset, y + (height / 2) + (height / 16) * Math.max(0, yOffset), x +     (width / 4), y + (height / 4) + (height / 16) * Math.max(0, yOffset), {opacity: opacity, color: avatar.colors[2], shadow: avatar.colors[2], blur: 2}) // left hand
+					drawTriangle(x +  (3 * width / 4)           , y +     (height / 4)                                       , x +  (7 * width / 8)           , y                                                      , x + (5 * width / 8), y                                                      , {opacity: opacity, color: avatar.colors[2], shadow: avatar.colors[2], blur: 2}) // right foot
+					drawTriangle(x -      (width / 16) + xOffset, y +     (height / 2) + (height / 16) * Math.max(0, yOffset), x +  (3 * width / 16) + xOffset, y + (height / 2) + (height / 16) * Math.max(0, yOffset), x +     (width / 4), y + (height / 4) + (height / 16) * Math.max(0, yOffset), {opacity: opacity, color: avatar.colors[2], shadow: avatar.colors[2], blur: 2}) // left hand
 					drawTriangle(x + (13 * width / 16) + xOffset, y +     (height / 2) + (height / 16) * Math.max(0, yOffset), x + (17 * width / 16) + xOffset, y + (height / 2) + (height / 16) * Math.max(0, yOffset), x + (3 * width / 4), y + (height / 4) + (height / 16) * Math.max(0, yOffset), {opacity: opacity, color: avatar.colors[2], shadow: avatar.colors[2], blur: 2}) // right hand
 					drawTriangle(x +      (width / 2)           , y + (7 * height / 8)                                       , x                              , y + (height / 8)                                       , x +      width     , y + (height / 8)                                       , {opacity: opacity, color: avatar.colors[0], shadow: avatar.colors[2], blur: 8}) // body
+
+					if (admin) {
+						drawText(x + (width / 2), y + (height / 4), avatar.number, {opacity: opacity, color: avatar.colors[1], size: (width / 2)}) // demon number
+					}
 				}
 
 			// head
@@ -913,135 +922,135 @@
 
 			// soundtrack
 				instruments.honeyharp = buildInstrument(getInstrument("honeyharp"))
-				instruments.honeyharp.setParameters({volume: 0.5})
+				instruments.honeyharp.setParameters({volume: 0.75})
 		}
 	
 	/* playMusic */
 		function playMusic() {
-			if (data.state.beat % 2 == 0) {
-				playAvatarSounds()
-				playSoundtrack()
+			var avatar = data.heroes[id] || data.demons.find(function(d) { return d.state.selected })
+			playEffects(     avatar)
+			playAvatarSounds(avatar)
+			playSoundtrack(  avatar)
+		}
+
+	/* playEffects */
+		function playEffects(avatar) {
+			if (avatar.state.collision) {
+				instruments.honeyharp.press(frequencies.A[0])
 			}
 		}
 
 	/* playSoundtrack */
-		function playSoundtrack() {
-			var section    = Math.floor(data.state.beat % 4096 / 512)
-			var whole      = Math.floor(data.state.beat % 512  / 32)
-			var quarter    = Math.floor(data.state.beat % 32   / 8)
-			var sixteenth  = Math.floor(data.state.beat % 8    / 2)
-			// console.log(section + ":" + whole + ":" + quarter + ":" + sixteenth)
+		function playSoundtrack(avatar) {
+			if (avatar.state.health) {
+				var section    = Math.floor(data.state.beat % 4096 / 512)
+				var whole      = Math.floor(data.state.beat % 512  / 32)
+				var quarter    = Math.floor(data.state.beat % 32   / 8)
+				var sixteenth  = Math.floor(data.state.beat % 8    / 2)
+				// console.log(section + ":" + whole + ":" + quarter + ":" + sixteenth)
 
-			// eigth notes
-				if (sixteenth == 0) {
-					instruments.honeyharp.press(getFrequency("A1")[0])
+				// eigth notes
+					if (sixteenth == 0) {
+						instruments.honeyharp.press(frequencies.A[1])
 
-				// quarter notes
-					if (quarter == 0) {
-						// whote notes
-							if (whole == 0) {
-								instruments.honeyharp.press(getFrequency("A3")[0])
-							}
-							else if (whole == 1) {
-								instruments.honeyharp.press(getFrequency("C3")[0])
-							}
-							else if (whole == 2) {
-								instruments.honeyharp.press(getFrequency("D3")[0])
-							}
-							else if (whole == 3) {
-								instruments.honeyharp.press(getFrequency("C3")[0])
-							}
-							else if (whole == 4) {
-								instruments.honeyharp.press(getFrequency("A3")[0])
-							}
-							else if (whole == 5) {
-								instruments.honeyharp.press(getFrequency("C3")[0])
-							}
-							else if (whole == 6) {
-								instruments.honeyharp.press(getFrequency("D3")[0])
+					// quarter notes
+						if (quarter == 0) {
+							// whote notes
+								if (whole == 0) {
+									instruments.honeyharp.press(frequencies.A[3])
+								}
+								else if (whole == 1) {
+									instruments.honeyharp.press(frequencies.C[3])
+								}
+								else if (whole == 2) {
+									instruments.honeyharp.press(frequencies.D[3])
+								}
+								else if (whole == 3) {
+									instruments.honeyharp.press(frequencies.C[3])
+								}
+								else if (whole == 4) {
+									instruments.honeyharp.press(frequencies.A[3])
+								}
+								else if (whole == 5) {
+									instruments.honeyharp.press(frequencies.C[3])
+								}
+								else if (whole == 6) {
+									instruments.honeyharp.press(frequencies.D[3])
+								}
+								else if (whole == 7) {
+									instruments.honeyharp.press(frequencies.E[3])
+								}
+								else if (whole == 8) {
+									instruments.honeyharp.press(frequencies.A[3])
+								}
+								else if (whole == 9) {
+									instruments.honeyharp.press(frequencies.C[3])
+								}
+								else if (whole == 10) {
+									instruments.honeyharp.press(frequencies.D[3])
+								}
+								else if (whole == 11) {
+									instruments.honeyharp.press(frequencies.C[3])
+								}
+								else if (whole == 12) {
+									instruments.honeyharp.press(frequencies.A[3])
+								}
+								else if (whole == 13) {
+									instruments.honeyharp.press(frequencies.C[3])
+								}
+								else if (whole == 14) {
+									instruments.honeyharp.press(frequencies.D[3])
+								}
+								else if (whole == 15) {
+									instruments.honeyharp.press(frequencies.E[3])
+								}
+						}
+						if (quarter == 1) {
+							//
+						}
+						if (quarter == 2) {
+							if (whole == 3) {
+								instruments.honeyharp.press(frequencies.G[2])
 							}
 							else if (whole == 7) {
-								instruments.honeyharp.press(getFrequency("E3")[0])
-							}
-							else if (whole == 8) {
-								instruments.honeyharp.press(getFrequency("A3")[0])
-							}
-							else if (whole == 9) {
-								instruments.honeyharp.press(getFrequency("C3")[0])
-							}
-							else if (whole == 10) {
-								instruments.honeyharp.press(getFrequency("D3")[0])
+								instruments.honeyharp.press(frequencies.G[3])
 							}
 							else if (whole == 11) {
-								instruments.honeyharp.press(getFrequency("C3")[0])
-							}
-							else if (whole == 12) {
-								instruments.honeyharp.press(getFrequency("A3")[0])
-							}
-							else if (whole == 13) {
-								instruments.honeyharp.press(getFrequency("C3")[0])
-							}
-							else if (whole == 14) {
-								instruments.honeyharp.press(getFrequency("D3")[0])
+								instruments.honeyharp.press(frequencies.G[2])
 							}
 							else if (whole == 15) {
-								instruments.honeyharp.press(getFrequency("E3")[0])
+								instruments.honeyharp.press(frequencies.G[3])
 							}
+							else {
+								instruments.honeyharp.press(frequencies.A[4])
+							}
+						}
+						if (quarter == 3) {
+							//
+						}
 					}
-					if (quarter == 1) {
+					else if (sixteenth == 1) {
 						//
 					}
-					if (quarter == 2) {
-						if (whole == 3) {
-							instruments.honeyharp.press(getFrequency("G2")[0])
-						}
-						else if (whole == 7) {
-							instruments.honeyharp.press(getFrequency("G3")[0])
-						}
-						else if (whole == 11) {
-							instruments.honeyharp.press(getFrequency("G2")[0])
-						}
-						else if (whole == 15) {
-							instruments.honeyharp.press(getFrequency("G3")[0])
-						}
-						else {
-							instruments.honeyharp.press(getFrequency("A4")[0])
-						}
+					else if (sixteenth == 2) {
+						instruments.honeyharp.press(frequencies.A[2])
 					}
-					if (quarter == 3) {
+					else if (sixteenth == 3) {
 						//
 					}
-				}
-				else if (sixteenth == 1) {
-					//
-				}
-				else if (sixteenth == 2) {
-					instruments.honeyharp.press(getFrequency("A2")[0])
-				}
-				else if (sixteenth == 3) {
-					//
-				}
+			}
 		}
 
 	/* playAvatarSounds */
-		function playAvatarSounds() {
-			// clear cache on new quarter note
-				var reset = (data.state.beat % 8 == 0)
-
+		function playAvatarSounds(avatar) {
 			// heroes & demons
 				var keys = Object.keys(data.heroes).concat(Object.keys(data.demons))
 				for (var k = 0; k < keys.length; k++) {
-					var avatar = (keys[k] > -1) ? data.demons[keys[k]] : data.heroes[keys[k]]
+					var opponent = (keys[k] > -1) ? data.demons[keys[k]] : data.heroes[keys[k]]
 
-					if (reset) { instruments[avatar.instrument].notes = [] }
-
-					var notes = avatar.state.keys[avatar.state.keys.length - 1]
+					var notes = opponent.state.keys[opponent.state.keys.length - 2]
 					for (var n in notes) {
-						if (!instruments[avatar.instrument].notes.includes(notes[n])) {
-							instruments[avatar.instrument].notes.push(notes[n])
-							instruments[avatar.instrument].press(getFrequency(notes[n])[0])
-							instruments[avatar.instrument].lift( getFrequency(notes[n])[0], 0.1)
-						}
+						instruments[opponent.instrument].press(frequencies[notes[n][0]][notes[n][1]])
 					}
 				}
 		}
