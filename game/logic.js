@@ -1,7 +1,5 @@
 /*** modules ***/
 	var main       = require("../main/logic")
-	var colors     = main.getAsset("colors")
-	var songs      = main.getAsset("songs")
 	module.exports = {}
 
 /*** players ***/
@@ -18,21 +16,33 @@
 				else {
 					request.game.players[request.session.id].connected  = true
 					request.game.players[request.session.id].connection = request.connection
+					var admin = request.game.players[request.session.id].admin || false
 
 					if (!request.game.data.state.start) {
+						// intro text
+							var text = main.getAsset("text")
+							var intro = text.main + "<br>" + (admin ? text.demons : text.heroes) + "<br><br><br>" +
+								(admin ? text.numbers + "<br>" : "") + text.arrows + "<br>" + text.letters + "<br><br><br>" +
+								text.towers + "<br>" + text.respawn + "<br>" + text.thirds + "<br>" + text.songs + "<br><br><br>" +
+								text.conclude + "<br><br>" + text.begin
+
 						callback([request.session.id], {success: true, 
-							admin:     (request.game.players[request.session.id].admin ? true : false),
+							intro:     intro,
+							admin:     admin,
 							selection: request.game.players[request.session.id].selection,
 							state:     request.game.data.state,
 							theme:     request.game.data.theme,
 							heroes:    request.game.data.heroes,
 							demons:    request.game.data.demons,
-							options:   request.game.players[request.session.id].admin ? main.getAsset("themes") : main.getAsset("heroes")
+							options:   (admin ? main.getAsset("themes") : main.getAsset("heroes")),
+							soundtracks: main.getAsset("soundtracks"),
+							sample:    main.getAsset("sample")
 						})
 					}
 					else {
 						callback([request.session.id], {success: true, 
-							admin:     (request.game.players[request.session.id].admin ? true : false),
+							rejoin:  (request.game.data.state.end ? null : main.getAsset("text").rejoin),
+							admin:   admin,
 							state:   request.game.data.state,
 							theme:   request.game.data.theme,
 							heroes:  request.game.data.heroes,
@@ -40,7 +50,8 @@
 							towers:  request.game.data.towers,
 							map:     request.game.data.map,
 							arrows:  request.game.data.arrows,
-							auras:   request.game.data.auras
+							auras:   request.game.data.auras,
+							soundtracks: main.getAsset("soundtracks")
 						})
 					}
 				}
@@ -314,7 +325,7 @@
 				// set hero state
 					else {
 						hero.state = main.getSchema("state")
-						hero.melody = songs[hero.song].melody
+						hero.melody = main.getAsset("songs")[hero.song].melody
 					}
 
 				return hero
@@ -338,7 +349,7 @@
 				// create demon
 					var demon = main.chooseRandom(allDemons)
 						demon.state = main.getSchema("state")
-						demon.melody = songs[demon.song].melody
+						demon.melody = main.getAsset("songs")[demon.song].melody
 						demon.number = currentDemons.length + 1
 
 				// unselect subsequent demons
@@ -370,6 +381,8 @@
 				// set team
 					var players = Object.keys(request.game.players)
 					if (currentTowers.length == 0) {
+						var colors = main.getAsset("colors")
+
 						tower.team = "heroes"
 						tower.colors[2] = colors.blue[2]
 						tower.platforms.forEach(function(p) {
@@ -378,6 +391,8 @@
 						})
 					}
 					else if (currentTowers.length == Math.floor(players.length / 2) + 1) {
+						var colors = main.getAsset("colors")
+
 						tower.team = "demons"
 						tower.colors[2] = colors.red[2]
 						tower.platforms.forEach(function(p) {
@@ -386,6 +401,8 @@
 						})
 					}
 					else {
+						var colors = main.getAsset("colors")
+
 						tower.team = null
 						tower.colors[2] = colors.black[2]
 						tower.platforms.forEach(function(p) {
@@ -930,6 +947,10 @@
 								updatePosition(  request, avatar)
 								updateHealth(    request, avatar)
 								updateTower(     request, avatar)
+							}
+
+							for (var k in keys) {
+								var avatar = (keys[k] > -1) ? request.game.data.demons[keys[k]] : request.game.data.heroes[keys[k]]
 								updateArrows(    request, avatar)
 								updateEffects(   request, avatar)
 								updateKeys(      request, avatar)
@@ -1269,7 +1290,8 @@
 							 && (avatar.state.y < arrow.y + arrow.radius && arrow.y - arrow.radius < avatar.state.y + 64)
 							 && (avatar.state.x < arrow.x + arrow.radius && arrow.x - arrow.radius < avatar.state.x + 32)) {
 								avatar.state.health = Math.max(0, Math.min(255, avatar.state.health - arrow.radius))
-								avatar.state.collision = true
+								avatar.state.shot   = true
+								avatar.state.vx     = Math.max(-10, Math.min(10, avatar.state.vx + (Math.floor(arrow.radius / 4) * Math.sign(arrow.vx))))
 								request.game.data.arrows.splice(a, 1)
 								a--
 							}
@@ -1345,6 +1367,7 @@
 									tower.colors[2] = avatar.colors[2]
 								}
 								else {
+									var colors = main.getAsset("colors")
 									tower.colors[2] = colors.black[2]
 								}
 
@@ -1381,6 +1404,8 @@
 
 				request.game.data.state.winning.team = heroWinning ? "heroes" : demonWinning ? "demons" : null
 				if (request.game.data.state.winning.team !== previousWinning) {
+					var colors = main.getAsset("colors")
+
 					request.game.data.state.winning.color = heroWinning ? colors.blue[2] : demonWinning ? colors.red[2] : null
 					request.game.data.state.winning.countdown = (8 * 32) + 128 - (request.game.data.state.beat % 128)
 				}
@@ -1510,6 +1535,8 @@
 
 				// create new aura ?
 					if (!auraExists && avatar.state.health && !avatar.state.effects.includes("negation")) {
+						var songs = main.getAsset("songs")
+
 						var keys  = Object.keys(songs)
 						for (var k in keys) {
 							if ((avatar.song == keys[k] || avatar.state.songs.includes(keys[k])) && getMatch(songs[keys[k]].melody, beats)) {
@@ -1575,7 +1602,7 @@
 									x: (32 * 64 * towerIndex) + 48,
 									y: (32 * 12)
 								}
-							}, songs[tower.name])
+							}, main.getAsset("songs")[tower.name])
 
 							request.game.data.auras.push(aura)
 						}
@@ -1616,6 +1643,7 @@
 		function updateSoundEffects(request, avatar) {
 			try {
 				avatar.state.collision = false
+				avatar.state.shot      = false
 			}
 			catch (error) {main.logError(error)}
 		}

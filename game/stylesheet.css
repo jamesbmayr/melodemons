@@ -13,15 +13,18 @@
 			top: 50%;
 			left: 50%;
 			transform: translateX(-50%) translateY(-50%);
-			text-align: center;
 			height: auto;
 			width: 75%;
-			font-family: 'Skranji', fantasy;
-			font-size: 20px;
-			color: #dddddd;
+			font-family: 'Skranji', fantasy;			
 			overflow: hidden;
 			user-select: none;
+			
+		}
+
+		#overlay.intro {
+			font-size: 20px;
 			text-align: left;
+			color: #dddddd;
 		}
 
 		#overlay.rejoin {
@@ -29,6 +32,10 @@
 			text-align: center;
 			color: #222222;
 			text-shadow: 0px 0px 10px #222222;
+		}
+
+		#overlay:not(.intro):not(.rejoin) {
+			display: none;
 		}
 
 	/* canvas */
