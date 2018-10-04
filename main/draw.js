@@ -300,8 +300,8 @@
 
 			// countdown ?
 				if (!isSample) {
-					if (data.state.beat <= 64) { // game launch
-						drawText(canvas.width / 2,     canvas.height / 2, 4 - Math.floor(data.state.beat / 16),  {color: color.black[4], size: 64, blur: 8})
+					if (data.state.beat <= 128) { // game launch
+						drawText(canvas.width / 2, 3 * canvas.height / 4, 8 - Math.floor(data.state.beat / 16)            ,  {color: colors.black[4], size: 64, blur: 8})
 					}
 					else if (data.state.winning.team && !data.state.winning.countdown) { // game over
 						drawText(canvas.width / 2,     canvas.height / 2, (data.state.winning.team.toUpperCase() + " WIN"),  {color: data.state.winning.color, size: 64, blur: 8, shadow: data.state.winning.color})

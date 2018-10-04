@@ -375,9 +375,11 @@
 				for (var k = 0; k < keys.length; k++) {
 					var opponent = (keys[k] > -1) ? data.demons[keys[k]] : data.heroes[keys[k]]
 
-					var notes = opponent.state.keys[opponent.state.keys.length - 2]
-					for (var n in notes) {
-						instruments[opponent.instrument].press(frequencies[notes[n][0]][notes[n][1]])
+					if (avatar.state.health || opponent.name == avatar.name) {
+						var notes = opponent.state.keys[opponent.state.keys.length - 2]
+						for (var n in notes) {
+							instruments[opponent.instrument].press(frequencies[notes[n][0]][notes[n][1]])
+						}
 					}
 				}
 		}

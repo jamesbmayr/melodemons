@@ -104,7 +104,7 @@
 
 					case "text":
 						return {
-							main:     "The sacred towers each possess a magic song. Control the tower to take its power.",
+							main:     "The sacred towers each protect a magic song. Control the tower to take its power.",
 							numbers:  " - Use NUMBER keys to select a demon.",
 							arrows:   " - Use ARROW keys to move.",
 							letters:  " - Use LETTER keys to play notes.",

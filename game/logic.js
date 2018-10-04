@@ -111,7 +111,7 @@
 						changeSelection(request, callback)
 					}
 				}
-				else if (!request.game.data.state.end && request.game.data.state.beat > 64) {
+				else if (!request.game.data.state.end && request.game.data.state.beat > 128) {
 					triggerMove(request, callback)
 				}
 			}
@@ -129,7 +129,7 @@
 					var instrument = request.game.data.heroes[request.session.id] ? request.game.data.heroes[request.session.id].instrument : request.game.players[request.session.id].admin ? request.game.data.demons[0].instrument : "triangle"
 					callback(Object.keys(request.game.players), {success: true, press: request.post.press, note: request.post.key, instrument: instrument})
 				}
-				else if (!request.game.data.state.end && request.game.data.state.beat > 64) {
+				else if (!request.game.data.state.end && request.game.data.state.beat > 128) {
 					triggerNote(request, callback)
 				}
 			}
@@ -146,7 +146,7 @@
 				if (!request.game.data.state.start) {
 					//
 				}
-				else if (!request.game.data.state.end && request.game.data.state.beat > 64) {
+				else if (!request.game.data.state.end && request.game.data.state.beat > 128) {
 					triggerNumber(request, callback)
 				}
 			}
