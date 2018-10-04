@@ -2,8 +2,8 @@
 	html, body {
 		height: 100%;
 		width: 100%;
-		box-shadow: 0px 0px 20px #111111 inset;
-		background-color: #111111;
+		box-shadow: 0px 0px 20px var(--black-4) inset;
+		background-color: var(--black-4);
 		overflow: hidden;
 	}
 
@@ -15,7 +15,7 @@
 			transform: translateX(-50%) translateY(-50%);
 			height: auto;
 			width: 75%;
-			font-family: 'Skranji', fantasy;			
+			font-family: var(--font);
 			overflow: hidden;
 			user-select: none;
 			
@@ -24,14 +24,15 @@
 		#overlay.intro {
 			font-size: 20px;
 			text-align: left;
-			color: #dddddd;
+			color: var(--white-4);
+			line-height: 1.35;
 		}
 
 		#overlay.rejoin {
 			font-size: 64px; 
 			text-align: center;
-			color: #222222;
-			text-shadow: 0px 0px 10px #222222;
+			color: var(--black-4);
+			text-shadow: 0px 0px 10px var(--white-4);
 		}
 
 		#overlay:not(.intro):not(.rejoin) {

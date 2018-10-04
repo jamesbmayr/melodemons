@@ -2,14 +2,14 @@
 	html, body {
 		width: 100%;
 		height: 100%;
-		background: linear-gradient(#445566, #001122);
+		background: linear-gradient(var(--cerulean-3), var(--cerulean-4));
 	}
 
 	/* container */
 		#container {
 			position: absolute;
 			height: auto;
-			width: auto;
+			min-width: 50%;
 			max-width: 90%;
 			top: 50%;
 			left: 50%;
@@ -17,15 +17,23 @@
 			transform: translateX(-50%) translateY(-50%);
 			text-align: center;
 			z-index: 2;
-			background: linear-gradient(#111111, #1a1a1a);
-			box-shadow: 0px 0px 25px #111111;
+			background: transparent;
 			user-select: none;
 			-webkit-user-select: none;
 			-moz-user-select: none;
 			-ms-user-select: none;
 			-o-user-select: none;
-			border-radius: 10px;
-			color: #dddddd;
+		}
+
+		#canvas {
+			position: absolute;
+			bottom: 0px;
+			left: 50%;
+			transform: translateX(-50%);
+			min-width: 200vh;
+			min-height: 100vh;
+			width: 100vw;
+			height: 50vw;
 		}
 
 /*** form ***/
@@ -35,27 +43,27 @@
 			width: 100%;
 			text-align: center;
 			line-height: 1;
-			font-size: 135%;
+			font-size: 125%;
 			text-transform: uppercase;
 			cursor: default;
-			color: #dddddd;
+			color: var(--black-4);
 		}
 
 	/* links */
 		#links {
 			float: left;
-			width: 90%;
-			margin: 5% 5% 10% 5%;
+			width: 100%;
+			margin: 5% 0% 5% 0%;
 			text-align: center;
 			line-height: 1;
-			font-size: 70%;
+			font-size: 65%;
 		}
 
 	/* inputs */
 		#createName {
 			float: left;
-			width: calc(100% - 8px);
-			padding: 4px;
+			width: calc(100% - 20px);
+			padding: 10px;
 			text-align: center;
 			line-height: 1;
 			font-size: 100%;
@@ -65,8 +73,8 @@
 
 		#gameCode {
 			float: left;
-			width: calc(60% - 8px);
-			padding: 4px;
+			width: calc(60% - 20px);
+			padding: 10px;
 			text-align: center;
 			line-height: 1;
 			font-size: 100%;

@@ -77,18 +77,29 @@
 					// assets
 						if (!request.session) {
 							switch (true) {
-								// logo
+								// icon
 									case (/\/favicon[.]ico$/).test(request.url):
 									case (/\/icon[.]png$/).test(request.url):
-									case (/\/logo[.]png$/).test(request.url):
 									case (/\/apple\-touch\-icon[.]png$/).test(request.url):
 									case (/\/apple\-touch\-icon\-precomposed[.]png$/).test(request.url):
 										try {
 											response.writeHead(200, {"Content-Type": "image/png"})
-											fs.readFile("./main/logo.png", function (error, file) {
-												if (error) {
-													_404(error)
+											fs.readFile("./main/icon.png", function (error, file) {
+												if (error) {_404(error)}
+												else {
+													response.end(file, "binary")
 												}
+											})
+										}
+										catch (error) {_404(error)}
+									break
+
+								// logo
+									case (/\/logo[.]png$/).test(request.url):
+										try {
+											response.writeHead(200, {"Content-Type": "image/png"})
+											fs.readFile("./main/logo.png", function (error, file) {
+												if (error) {_404(error)}
 												else {
 													response.end(file, "binary")
 												}
@@ -102,9 +113,21 @@
 										try {
 											response.writeHead(200, {"Content-Type": "image/png"})
 											fs.readFile("./main/banner.png", function (error, file) {
-												if (error) {
-													_404(error)
+												if (error) {_404(error)}
+												else {
+													response.end(file, "binary")
 												}
+											})
+										}
+										catch (error) {_404(error)}
+									break
+
+								// background
+									case (/\/background[.]png$/).test(request.url):
+										try {
+											response.writeHead(200, {"Content-Type": "image/png"})
+											fs.readFile("./main/background.png", function (error, file) {
+												if (error) {_404(error)}
 												else {
 													response.end(file, "binary")
 												}
@@ -118,16 +141,12 @@
 										try {
 											response.writeHead(200, {"Content-Type": "text/css"})
 											fs.readFile("./main/stylesheet.css", "utf8", function (error, data) {
-												if (error) {
-													_404(error)
-												}
+												if (error) {_404(error)}
 												else {
 													fs.readFile("./" + request.path[1] + "/stylesheet.css", "utf8", function (error, file) {
-														if (error) {
-															_404(error)
-														}
+														if (error) { _404(error) }
 														else {
-															response.end(data + file)
+															response.end(main.getAsset("css variables") + "\n\n" + data + "\n\n" + file)
 														}
 													})
 												}
@@ -141,11 +160,23 @@
 										try {
 											response.writeHead(200, {"Content-Type": "text/javascript"})
 											fs.readFile("./main/audio.js", "utf8", function (error, file) {
-												if (error) {
-													_404(error)
-												}
+												if (error) {_404(error)}
 												else {
 													response.end("window.addEventListener('load', function() {\n\n" + file + "\n\n})")
+												}
+											})
+										}
+										catch (error) {_404(error)}
+									break
+
+								// draw
+									case (/\/draw[.]js$/).test(request.url):
+										try {
+											response.writeHead(200, {"Content-Type": "text/javascript"})
+											fs.readFile("./main/draw.js", "utf8", function (error, file) {
+												if (error) {_404(error)}
+												else {
+													response.end("window.addEventListener('load', function() {\n\n" + main.getAsset("js variables") + "\n\n" + file + "\n\n})")
 												}
 											})
 										}
@@ -156,19 +187,10 @@
 									case (/\/script[.]js$/).test(request.url):
 										try {
 											response.writeHead(200, {"Content-Type": "text/javascript"})
-											fs.readFile("./main/script.js", "utf8", function (error, data) {
-												if (error) {
-													_404(error)
-												}
+											fs.readFile("./" + request.path[1] + "/script.js", "utf8", function (error, file) {
+												if (error) {_404(error)}
 												else {
-													fs.readFile("./" + request.path[1] + "/script.js", "utf8", function (error, file) {
-														if (error) {
-															_404(error)
-														}
-														else {
-															response.end("window.addEventListener('load', function() {\n\n" + data + "\n\n" + file + "\n\n})")
-														}
-													})
+													response.end("window.addEventListener('load', function() {\n\n" + file + "\n\n})")
 												}
 											})
 										}

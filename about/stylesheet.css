@@ -9,7 +9,8 @@
 			text-align: left;
 			overflow-x: hidden;
 			overflow-y: scroll;
-			background: linear-gradient(#445566, #001122);
+			background: transparent;
+			z-index: 2;
 		}
 
 		#container-inner {
@@ -17,6 +18,19 @@
 			max-width: 800px;
 			margin-left: auto;
 			margin-right: auto;
+		}
+
+	/* canvas */
+		#canvas {
+			position: absolute;
+			bottom: 0px;
+			left: 50%;
+			transform: translateX(-50%);
+			min-width: 200vh;
+			min-height: 100vh;
+			width: 100vw;
+			height: 50vw;
+			z-index: -1;
 		}
 
 	/* title */
@@ -28,13 +42,12 @@
 			margin-top: 5%;
 			display: block;
 			border-radius: 10px;
-			background: linear-gradient(#121212, #171717);
 		}
 
 		#logotype {
 			display: inline-block;
 			background-color: transparent;
-			background-image: url(./banner.png);
+			background-image: url(./logo.png);
 			background-repeat: no-repeat;
 			background-position: center;
 			background-size: cover;
@@ -51,7 +64,7 @@
 			margin: 0% 0% 10% 0%;
 			font-weight: normal;
 			cursor: default;
-			color: #111111;
+			color: var(--black-4);
 			line-height: 1.25;
 			border-radius: 10px;
 			width: 100%;
@@ -62,26 +75,26 @@
 		.header {
 			font-size: 150%;
 			width: 100%;
-			background-color: #111111;
-			color: #dddddd;
+			background-color: var(--black-4);
+			color: var(--white-4);
 			cursor: default;
 			text-align: center;
-			border-radius: 10px;
-			box-shadow: 0px 0px 25px #111111;
+			border-radius: 10px 10px 0px 0px;
+			box-shadow: 0px 0px 25px var(--black-4);
 			padding: 8px 0px 8px 0px;
 		}
 
 		.content {
-			background: linear-gradient(#121212, #171717);
+			background: linear-gradient(var(--black-4), var(--black-3));
 			padding: 5%;
-			margin: 0px 8px 0px 8px;
+			margin: 0px;
 			font-size: 100%;
-			color: #dddddd;
+			color: var(--white-4);
 			cursor: default;
 			text-align: center;
 			border-radius: 0px 0px 10px 10px;
-			width: calc(100% - 10% - 16px);
-			box-shadow: 0px 0px 25px #111111;
+			width: calc(100% - 10%);
+			box-shadow: 0px 0px 25px var(--black-4);
 		}
 
 	/* feedback */
@@ -103,11 +116,33 @@
 
 		#feedback-submit {
 			vertical-align: bottom;
-			padding: 10px;
+			padding: 7px;
 			width: 100px;
 			border-radius: 0px 10px 10px 0px;
 			border: 0px;
-			background-color: #dddddd;
-			color: #111111;
+			background-color: var(--white-4);
+			color: var(--black-4);
+		}
+
+/*** colors ***/
+	/* text */
+		.redtext {
+			color: var(--red-2);
+		}
+
+		.orangetext {
+			color: var(--orange-2);
+		}
+
+		.greentext {
+			color: var(--green-2);
+		}
+
+		.bluetext {
+			color: var(--blue-2);
+		}
+
+		.purpletext {
+			color: var(--purple-2);
 		}
 		

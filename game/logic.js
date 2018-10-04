@@ -21,10 +21,11 @@
 					if (!request.game.data.state.start) {
 						// intro text
 							var text = main.getAsset("text")
-							var intro = text.main + "<br>" + (admin ? text.demons : text.heroes) + "<br><br><br>" +
+							var intro = text.main + "<br><br><br>" +
 								(admin ? text.numbers + "<br>" : "") + text.arrows + "<br>" + text.letters + "<br><br><br>" +
-								text.towers + "<br>" + text.respawn + "<br>" + text.thirds + "<br>" + text.songs + "<br><br><br>" +
-								text.conclude + "<br><br>" + text.begin
+								text.thirds + "<br>" + text.songs + "<br>" + text.towers + "<br><br><br>" +
+								(admin ? text.demons : text.heroes) + "<br><br><br>" +
+								text.begin
 
 						callback([request.session.id], {success: true, 
 							intro:     intro,

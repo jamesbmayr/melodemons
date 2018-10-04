@@ -59,11 +59,9 @@
 					case "logo":
 						return "logo.png"
 					break
-					
 					case "google fonts":
-						return '<link href="https://fonts.googleapis.com/css?family=Skranji" rel="stylesheet">'
+						return '<link href="https://fonts.googleapis.com/css?family=Orbitron" rel="stylesheet">'
 					break
-
 					case "meta":
 						return '<meta charset="UTF-8"/>\
 								<meta name="description" content="Melodemons is an asymmetrical multiplayer music-based tower defense platformer."/>\
@@ -75,20 +73,46 @@
 								<meta property="og:image" content="https://melodemons.herokuapp..com/banner.png"/>\
 								<meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>'
 					break
+					case "css variables":
+						var colors = getAsset("colors")
+						var cssColors = ""
+						for (var hue in colors) {
+							for (var shade in colors[hue]) {
+								cssColors += "		--" + hue + "-" + shade + ": " + colors[hue][shade] + ";\n"
+							}
+						}
+						
+						return ('/*** variables ***/\n' +
+								'	:root {\n' +
+								'		--font: Orbitron, sans-serif;\n' +
+										cssColors +
+								'	}')
+					break
+					case "js variables":
+						var colors = getAsset("colors")
+						var jsColors = ""
+						for (var hue in colors) {
+							for (var shade in colors[hue]) {
+								jsColors += "	--" + hue + "-" + shade + ": " + colors[hue][shade] + ";\n"
+							}
+						}
+						
+						return ('/*** variables ***/\n' +
+								'	var font   = window.font   = "Orbitron"\n' +
+								'	var colors = window.colors = ' + JSON.stringify(getAsset("colors"), null, "\t"))
+					break
 
 					case "text":
 						return {
-							main:     "In each of the magic towers, a powerful musician guards a song. Control the tower to acquire its power.",
-							heroes:   "As a hero of good, you must claim every tower - only then can the Song of Salvation be performed.",
-							demons:   "As the demons of evil, you must claim every tower - only then can the Song of Desolation be performed.",
-							numbers:  "Use the number keys to select each demon.",
-							arrows:   "Use the arrow keys to move.",
-							letters:  "Use the letter keys to play notes.",
-							towers:   "Play the note of a tower platform to claim it.",
-							respawn:  "If you die, play the note of your tower's platform to respawn.",
-							thirds:   "Play thirds (AC, CE, EG) to shoot magic arrows.",
-							songs:    "Play song melodies to create magic auras.",
-							conclude: "Good luck!",
+							main:     "The sacred towers each possess a magic song. Control the tower to take its power.",
+							numbers:  " - Use NUMBER keys to select a demon.",
+							arrows:   " - Use ARROW keys to move.",
+							letters:  " - Use LETTER keys to play notes.",
+							towers:   " - Play the note of a tower platform to claim it, and resurrect there if you die.",
+							thirds:   " - Play thirds - AC, CE, EG -  to cast magic arrows.",
+							songs:    " - Play tower songs - or your name's first 4 letters - to create magic auras.",
+							heroes:   "As a hero of good, claim every tower to sound the Song of Salvation.",
+							demons:   "As the demons of evil, claim every tower to sound the Song of Desolation.",
 							begin:    "[ click to begin ]",
 							rejoin:   "[ click to rejoin ]"
 						}
@@ -100,56 +124,56 @@
 
 						return [
 							{
-								name: "Grace",
+								name: "Deacon",
 								team: "heroes",
 								instrument: "glassical",
 								colors: [songs.healing.colors[0], songs.healing.colors[1], colors.blue[2]],
 								song: "healing"
 							},
 							{
-								name: "Arthur",
-								team: "heroes",
-								instrument: "clarinaut",
-								colors: [songs.protection.colors[0], songs.protection.colors[1], colors.blue[2]],
-								song: "protection"
-							},
-							{
-								name: "Emily",
-								team: "heroes",
-								instrument: "shimmer",
-								colors: [songs.strength.colors[0], songs.strength.colors[1], colors.blue[2]],
-								song: "strength"
-							},
-							{
-								name: "Clark",
+								name: "Acadia",
 								team: "heroes",
 								instrument: "jangle",
 								colors: [songs.flight.colors[0], songs.flight.colors[1], colors.blue[2]],
 								song: "flight"
 							},
 							{
-								name: "Abigail",
+								name: "Gaden",
 								team: "heroes",
-								instrument: "buzzorgan",
-								colors: [songs.paralysis.colors[0], songs.paralysis.colors[1], colors.blue[2]],
-								song: "paralysis"
+								instrument: "clarinaut",
+								colors: [songs.protection.colors[0], songs.protection.colors[1], colors.blue[2]],
+								song: "protection"
 							},
 							{
-								name: "Geoffrey",
+								name: "Cadence",
 								team: "heroes",
 								instrument: "sine",
 								colors: [songs.confusion.colors[0], songs.confusion.colors[1], colors.blue[2]],
 								song: "confusion"
 							},
 							{
-								name: "Charlotte",
+								name: "Edgar",
 								team: "heroes",
 								instrument: "triangle",
 								colors: [songs.negation.colors[0], songs.negation.colors[1], colors.blue[2]],
 								song: "negation"
 							},
 							{
-								name: "Dorian",
+								name: "Aeden",
+								team: "heroes",
+								instrument: "shimmer",
+								colors: [songs.strength.colors[0], songs.strength.colors[1], colors.blue[2]],
+								song: "strength"
+							},
+							{
+								name: "Adagio",
+								team: "heroes",
+								instrument: "buzzorgan",
+								colors: [songs.paralysis.colors[0], songs.paralysis.colors[1], colors.blue[2]],
+								song: "paralysis"
+							},
+							{
+								name: "Cager",
 								team: "heroes",
 								instrument: "qube",
 								colors: [songs.pain.colors[0], songs.pain.colors[1], colors.blue[2]],
@@ -164,56 +188,56 @@
 
 						return [
 							{
-								name: "Armistopheles",
+								name: "Deacorog",
 								team: "demons",
 								instrument: "square",
 								colors: [songs.healing.colors[0], songs.healing.colors[1], colors.red[2]],
 								song: "healing"
 							},
 							{
-								name: "Ebborthrosh",
-								team: "demons",
-								instrument: "lazerz",
-								colors: [songs.protection.colors[0], songs.protection.colors[1], colors.red[2]],
-								song: "protection"
-							},
-							{
-								name: "Dumrog",
-								team: "demons",
-								instrument: "sawtooth",
-								colors: [songs.strength.colors[0], songs.strength.colors[1], colors.red[2]],
-								song: "strength"
-							},
-							{
-								name: "Gifflegorn",
+								name: "Acadreus",
 								team: "demons",
 								instrument: "sharpsichord",
 								colors: [songs.flight.colors[0], songs.flight.colors[1], colors.red[2]],
 								song: "flight"
 							},
 							{
-								name: "Chrynthos",
+								name: "Gademur",
 								team: "demons",
-								instrument: "swello",
-								colors: [songs.paralysis.colors[0], songs.paralysis.colors[1], colors.red[2]],
-								song: "paralysis"
+								instrument: "lazerz",
+								colors: [songs.protection.colors[0], songs.protection.colors[1], colors.red[2]],
+								song: "protection"
 							},
 							{
-								name: "Archnus",
+								name: "Cadelpho",
 								team: "demons",
 								instrument: "reedles",
 								colors: [songs.confusion.colors[0], songs.confusion.colors[1], colors.red[2]],
 								song: "confusion"
 							},
 							{
-								name: "Golardios",
+								name: "Edgathris",
 								team: "demons",
 								instrument: "chordstrum",
 								colors: [songs.negation.colors[0], songs.negation.colors[1], colors.red[2]],
 								song: "negation"
 							},
 							{
-								name: "Draphost",
+								name: "Aederion",
+								team: "demons",
+								instrument: "sawtooth",
+								colors: [songs.strength.colors[0], songs.strength.colors[1], colors.red[2]],
+								song: "strength"
+							},
+							{
+								name: "Adaglume",
+								team: "demons",
+								instrument: "swello",
+								colors: [songs.paralysis.colors[0], songs.paralysis.colors[1], colors.red[2]],
+								song: "paralysis"
+							},
+							{
+								name: "Cagepodes",
 								team: "demons",
 								instrument: "accordienne",
 								colors: [songs.pain.colors[0], songs.pain.colors[1], colors.red[2]],
@@ -229,56 +253,56 @@
 							"healing": {
 								name: "healing",
 								description: "other heroes and demons within the aura regenerate health",
-								melody: "CDEG",
+								melody: "DEAC",
 								radius: 4,
 								colors: [colors.green[3], colors.green[1]]
-							},
-							"protection": {
-								name: "protection",
-								description: "attacks from outside the aura dissipate on collision",
-								melody: "CGAG",
-								radius: 5,
-								colors: [colors.yellow[3], colors.yellow[1]]
-							},
-							"strength": {
-								name: "strength",
-								description: "attacks fired from within the aura are twice as powerful",
-								melody: "EGED",
-								radius: 6,
-								colors: [colors.orange[3], colors.orange[1]]
 							},
 							"flight": {
 								name: "flight",
 								description: "other heroes and demons within the aura can fly without landing",
-								melody: "CGEG",
+								melody: "ACAD",
 								radius: 7,
 								colors: [colors.cerulean[3], colors.cerulean[1]]
+							},
+							"protection": {
+								name: "protection",
+								description: "attacks from outside the aura dissipate on collision",
+								melody: "GADE",
+								radius: 5,
+								colors: [colors.yellow[3], colors.yellow[1]]
 							},
 							"confusion": {
 								name: "confusion",
 								description: "left and right controls are reversed within the aura",
-								melody: "EGAD",
+								melody: "CADE",
 								radius: 7,
 								colors: [colors.purple[3], colors.purple[1]]
-							},
-							"paralysis": {
-								name: "paralysis",
-								description: "other heroes and demons within the aura are nearly unable to move",
-								melody: "AEGD",
-								radius: 6,
-								colors: [colors.browngray[3], colors.browngray[1]]
 							},
 							"negation": {
 								name: "negation",
 								description: "prevents heroes and demons within the aura from casting other auras",
-								melody: "ECDG",
+								melody: "EDGA",
 								radius: 5,
 								colors: [colors.cyan[3], colors.cyan[1]]
+							},
+							"strength": {
+								name: "strength",
+								description: "attacks fired from within the aura are twice as powerful",
+								melody: "AEDE",
+								radius: 6,
+								colors: [colors.orange[3], colors.orange[1]]
+							},
+							"paralysis": {
+								name: "paralysis",
+								description: "other heroes and demons within the aura are nearly unable to move",
+								melody: "ADAG",
+								radius: 6,
+								colors: [colors.browngray[3], colors.browngray[1]]
 							},
 							"pain": {
 								name: "pain",
 								description: "other heroes and demons within the aura lose health",
-								melody: "ACAE",
+								melody: "CAGE",
 								radius: 4,
 								colors: [colors.magenta[3], colors.magenta[1]]
 							}
@@ -403,19 +427,6 @@
 								skyBottom:          colors.cyan[1]	
 							},
 							{
-								name: "abyss",
-								terrainForeground:  colors.blue[4],
-								terrainBackground:  colors.blue[2],
-								platformForeground: colors.blue[3],
-								platformBackground: colors.blue[1],
-								pitForeground:      colors.bluegray[3],
-								pitBackground:      colors.bluegray[2],
-								towerForeground:    colors.purple[1],
-								towerBackground:    colors.purple[0],
-								skyTop:             colors.blue[0],
-								skyBottom:          colors.blue[1]
-							},
-							{
 								name: "marshes",
 								terrainForeground:  colors.greengray[4],
 								terrainBackground:  colors.greengray[2],
@@ -427,6 +438,19 @@
 								towerBackground:    colors.brown[0],
 								skyTop:             colors.cerulean[0],
 								skyBottom:          colors.cerulean[1]
+							},
+							{
+								name: "abyss",
+								terrainForeground:  colors.blue[4],
+								terrainBackground:  colors.blue[2],
+								platformForeground: colors.blue[3],
+								platformBackground: colors.blue[1],
+								pitForeground:      colors.bluegray[3],
+								pitBackground:      colors.bluegray[2],
+								towerForeground:    colors.purple[1],
+								towerBackground:    colors.purple[0],
+								skyTop:             colors.blue[0],
+								skyBottom:          colors.blue[1]
 							},
 							{
 								name: "wasteland",

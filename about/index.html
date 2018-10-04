@@ -4,9 +4,12 @@
 		<title>Melodemons</title>
 		<script node> getAsset("meta") </script>node>
 		<script node> getAsset("google fonts") </script>node>
-		<link rel="shortcut icon" type="image/png" href="logo.png"/>
+		<link rel="shortcut icon" type="image/png" href="icon.png"/>
 		<link rel="stylesheet" type="text/css" href="about/stylesheet.css"/>
+		<script type="text/javascript" src="main/draw.js"></script>
 		<script type="text/javascript" src="about/script.js"></script>
+		<script>window.sample = <script node>JSON.stringify(getAsset("sample"), null, "\t")</script>node></script>
+		<script>window.theme  = <script node>JSON.stringify(chooseRandom(getAsset("themes")), null, "\t")</script>node></script>
 	</head>
 	<body>
 		<div id="error" class="hidden"></div>
@@ -22,9 +25,9 @@
 				<div id="rules" class="section">
 					<div class="header">Launch</div>
 					<div class="content">
-						Every game has a unique 4-character id. On the <a href="./" target="_blank" class="bluetext">homepage</a>, start a new one - or join your friend's!
+						Every game has a unique 4-character id. Go <a href="./" target="_blank" class="bluetext">home</a> to start a new one - or join a friend's!
 						<br><br>
-						On the settings screen, choose your: <span class="greentext">heroes</span> and <span class="redtext">demons</span>, pick a <span class="bluetext">map</span>, and start playing!
+						On the settings screen, choose your <span class="greentext">heroes</span> and <span class="redtext">demons</span>, pick a <span class="purpletext">theme</span>, and start playing!
 					</div>
 				</div>
 				<div id="rules" class="section">
@@ -45,12 +48,13 @@
 				<div id="code" class="section">
 					<div class="header">Code</div>
 					<div class="content">
-						The app is powered by <span class="greentext">nodeJS</span> and <span class="bluetext">websockets</span>, written in 100% raw <span class="redtext">javascript</span>. 
+						The app is powered by <span class="greentext">nodeJS</span> and <span class="purpletext">websockets</span>, written in 100% raw <span class="redtext">javascript</span>. 
 						<br><br>
-						See the latest updates on <a class="bluetext" href="https://www.github.com/jamesbmayr/melodemons" target="_blank">GitHub</a>.
+						See the latest updates on <a href="https://www.github.com/jamesbmayr/melodemons" target="_blank">GitHub</a>.
 					</div>
 				</div>
 			</div>
 		</div>
+		<canvas id="canvas" height="640" width="1280"></canvas>
 	</body>
 </html>
