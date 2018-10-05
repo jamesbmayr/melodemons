@@ -7,6 +7,7 @@
 	var main = require("./main/logic")
 	var game = require("./game/logic")
 	var home = require("./home/logic")
+	var db   = {}
 
 /*** server ***/
 	var port = main.getEnvironment("port")
@@ -27,19 +28,11 @@
 	})
 		socket.on("request", handleSocket)
 
-/*** database ***/
-	var db   = {}
-	var dbLoop = setInterval(function() {
-		main.cleanDatabase(db)
-	}, (1000 * 60 * 60))
-
 /*** handleRequest ***/
 	function handleRequest(request, response) {
 		// collect data
 			var data = ""
-			request.on("data", function (chunk) {
-				data += chunk
-			})
+			request.on("data", function (chunk) { data += chunk })
 			request.on("end", parseRequest)
 
 		/* parseRequest */
@@ -66,9 +59,7 @@
 							main.determineSession(request, routeRequest)
 						}
 				}
-				catch (error) {
-					_403("unable to parse request")
-				}
+				catch (error) {_403("unable to parse request")}
 			}
 
 		/* routeRequest */
@@ -384,10 +375,11 @@
 								request.connection.close()
 							}
 							else {
+								data = JSON.stringify(data)
 								for (var r in recipients) {
 									try {	
 										if (request.game.players[recipients[r]].connected) {
-											request.game.players[recipients[r]].connection.sendUTF(JSON.stringify(data))
+											request.game.players[recipients[r]].connection.sendUTF(data)
 										}
 									}
 									catch (error) {main.logError(error)}
@@ -428,10 +420,11 @@
 									case "submitArrow":
 										try {
 											game.submitArrow(request, function(recipients, data) {
+												data = JSON.stringify(data)
 												for (var r in recipients) {
 													try {
 														if (request.game.players[recipients[r]].connected) {
-															request.game.players[recipients[r]].connection.sendUTF(JSON.stringify(data))
+															request.game.players[recipients[r]].connection.sendUTF(data)
 														}
 													}
 													catch (error) {main.logError(error)}
@@ -444,10 +437,11 @@
 									case "submitNote":
 										try {
 											game.submitNote(request, function(recipients, data) {
+												data = JSON.stringify(data)
 												for (var r in recipients) {
 													try {
 														if (request.game.players[recipients[r]].connected) {
-															request.game.players[recipients[r]].connection.sendUTF(JSON.stringify(data))
+															request.game.players[recipients[r]].connection.sendUTF(data)
 														}
 													}
 													catch (error) {main.logError(error)}
@@ -460,10 +454,11 @@
 									case "submitNumber":
 										try {
 											game.submitNumber(request, function(recipients, data) {
+												data = JSON.stringify(data)
 												for (var r in recipients) {
 													try {
 														if (request.game.players[recipients[r]].connected) {
-															request.game.players[recipients[r]].connection.sendUTF(JSON.stringify(data))
+															request.game.players[recipients[r]].connection.sendUTF(data)
 														}
 													}
 													catch (error) {main.logError(error)}
@@ -481,16 +476,13 @@
 
 					// loop
 						if (request.game && !request.game.loop) {
-							request.game.loop = setInterval(function() {
-								if (request.game.data.state.end) {
-									clearInterval(request.game.loop)
-								}
-									
+							request.game.loop = setInterval(function() {								
 								game.updateState(request, function(recipients, data) {
+									data = JSON.stringify(data).replace('{', '{"beat": true, ')
 									for (var r in recipients) {
 										try {
 											if (request.game.players[recipients[r]].connected) {
-												request.game.players[recipients[r]].connection.sendUTF(JSON.stringify(data))
+												request.game.players[recipients[r]].connection.sendUTF(data)
 											}
 										}
 										catch (error) {main.logError(error)}

@@ -29,17 +29,9 @@
 		module.exports.createPlayer = createPlayer
 		function createPlayer(request) {
 			try {
-				// get name
-					var name = main.sanitizeString(request.post.name) || null
-						name = name || "player " + (Object.keys(request.game.players).length + 1)
-					if (name.length > 10) {
-						name = name.slice(0,10)
-					}
-
 				// create player
 					var player      = main.getSchema("player")
 						player.id   = request.session.id
-						player.name = name
 
 				// return value
 					return player

@@ -60,17 +60,6 @@
 		}
 
 	/* inputs */
-		#createName {
-			float: left;
-			width: calc(100% - 20px);
-			padding: 10px;
-			text-align: center;
-			line-height: 1;
-			font-size: 100%;
-			border-radius: 10px;
-			border: 0px;
-		}
-
 		#gameCode {
 			float: left;
 			width: calc(60% - 20px);
@@ -78,14 +67,8 @@
 			text-align: center;
 			line-height: 1;
 			font-size: 100%;
-			border-radius: 10px 0px 0px 10px;
+			border-radius: var(--borderRadius) 0px 0px var(--borderRadius);
 			border: 0px;
-		}
-
-		@-moz-document url-prefix() {
-			#createName, #gameCode {
-				padding: 11px 4px 12px 4px;
-			}
 		}
 
 	/* buttons */
@@ -96,9 +79,9 @@
 			text-align: center;
 			line-height: 1;
 			font-size: 100%;
-			padding: 11px 4px 12px 4px;
+			padding: 10px 4px 10px 4px;
 			margin: 5% 0% 5% 0%;
-			border-radius: 10px;
+			border-radius: var(--borderRadius);
 			border: 0px;
 		}
 
@@ -106,9 +89,15 @@
 			float: left;
 			width: 40%;
 			text-align: center;
-			line-height: 1;
+			line-height: 1.05;
 			font-size: 100%;
 			padding: 10px 4px 10px 4px;
-			border-radius: 0px 10px 10px 0px;
+			border-radius: 0px var(--borderRadius) var(--borderRadius) 0px;
 			border: 0px;
+		}
+
+		@-moz-document url-prefix() {
+			#joinGame {
+				line-height: 1;
+			}
 		}

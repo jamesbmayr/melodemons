@@ -37,8 +37,8 @@
 			font-family: var(--font);
 			outline: none;
 			cursor: pointer;
-			border: 4px solid var(--black-4);
-			border-radius: 0px;
+			border: 5px solid var(--black-4);
+			border-radius: var(--borderRadius);
 			-webkit-appearance: none;
 			-moz-appearance: none;
 			white-space: nowrap;
@@ -94,7 +94,7 @@
 			font-size: 100%;
 			text-align: center;
 			pointer-events: none;
-			border-radius: 10px;
+			border-radius: var(--borderRadius);
 		}
 
 /*** vendor prefixes ***/
@@ -121,7 +121,6 @@
 			font-family: var(--font);
 			text-align: center;
 			color: var(--black-2);
-			padding: 10px;
 		}
 
 		::-moz-placeholder {

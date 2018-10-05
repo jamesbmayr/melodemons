@@ -70,7 +70,10 @@
 				main.logStatus("[CLOSED]: " + request.path.join("/") + " @ " + (request.ip || "?"))
 				if (request.game) {
 					// remove player or connection?
-						if (request.game.data.state.start) {
+						if (request.game.data.state.end) {
+							delete request.game.players[request.session.id]
+						}
+						else if (request.game.data.state.start) {
 							request.game.players[request.session.id].connected = false
 							var avatar = getAvatar(request)
 								avatar.state.up    = false
@@ -79,10 +82,12 @@
 								avatar.state.left  = false
 						}
 						else {
-							if (request.game.players[request.session.id].admin) {
-								var wasAdmin = true
-							}
+							var wasAdmin = (request.game.players[request.session.id] && request.game.players[request.session.id].admin) ? true : false
 							delete request.game.players[request.session.id]
+
+							if (!wasAdmin) {
+								delete request.game.data.heroes[request.session.id]
+							}
 						}
 
 					// delete game ?
@@ -112,7 +117,7 @@
 					}
 				}
 				else if (!request.game.data.state.end && request.game.data.state.beat > 128) {
-					triggerMove(request, callback)
+					triggerMove(request)
 				}
 			}
 			catch (error) {
@@ -126,11 +131,10 @@
 		function submitNote (request, callback) {
 			try {
 				if (!request.game.data.state.start) {
-					var instrument = request.game.data.heroes[request.session.id] ? request.game.data.heroes[request.session.id].instrument : request.game.players[request.session.id].admin ? request.game.data.demons[0].instrument : "triangle"
-					callback(Object.keys(request.game.players), {success: true, press: request.post.press, note: request.post.key, instrument: instrument})
+					triggerNote(request)
 				}
 				else if (!request.game.data.state.end && request.game.data.state.beat > 128) {
-					triggerNote(request, callback)
+					triggerNote(request)
 				}
 			}
 			catch (error) {
@@ -147,7 +151,7 @@
 					//
 				}
 				else if (!request.game.data.state.end && request.game.data.state.beat > 128) {
-					triggerNumber(request, callback)
+					triggerNumber(request)
 				}
 			}
 			catch (error) {
@@ -227,7 +231,7 @@
 					// unset hero
 						else {
 							if (request.post.key == "down") {
-								request.game.data.heroes[request.session.id] = null
+								delete request.game.data.heroes[request.session.id]
 								callback([request.session.id], {success: true, selection: player.selection})
 							}
 						}	
@@ -282,6 +286,9 @@
 								var avatar = (keys[k] > -1) ? request.game.data.demons[keys[k]] : request.game.data.heroes[keys[k]]
 								createStartPosition(request, avatar)
 							}
+
+						// beat
+							request.game.data.state.beat = request.game.data.state.beat % 32 * -1
 		
 						// start game
 							request.game.data.state.start = new Date().getTime()
@@ -634,14 +641,11 @@
 /*** triggers ***/
 	/* triggerMove */
 		module.exports.triggerMove = triggerMove
-		function triggerMove(request, callback) {
+		function triggerMove(request) {
 			try {
 				var avatar = getAvatar(request)
 
-				if (!avatar) {
-					callback({success: false, message: "no avatar selected"})
-				}
-				else {
+				if (avatar) {
 					avatar.state[request.post.key] = request.post.press
 					
 					if (request.post.key == "up" && !request.post.press) {
@@ -657,14 +661,11 @@
 
 	/* triggerNote */
 		module.exports.triggerNote = triggerNote
-		function triggerNote(request, callback) {
+		function triggerNote(request) {
 			try {
 				var avatar = getAvatar(request)
 
-				if (!avatar) {
-					callback({success: false, message: "no avatar selected"})
-				}
-				else if (request.post.press && !avatar.state.keys[avatar.state.keys.length - 1].includes(request.post.key)) {
+				if (request.post.press && avatar && !avatar.state.keys[avatar.state.keys.length - 1].includes(request.post.key)) {
 					avatar.state.keys[avatar.state.keys.length - 1].push(request.post.key)
 				}
 			}
@@ -673,17 +674,9 @@
 
 	/* triggerNumber */
 		module.exports.triggerNumber = triggerNumber
-		function triggerNumber(request, callback) {
+		function triggerNumber(request) {
 			try {
-				var avatar = getAvatar(request)
-
-				if (avatar.team !== "demons") {
-					// request.game.data.theme = main.getAsset("themes")[request.post.key - 1] || {}
-				}
-				else if (!request.game.data.demons[request.post.key - 1]) {
-					callback([request.session.id], {success: false, message: "demon not found"})
-				}
-				else {
+				if (request.game.players[request.session.id].admin && request.game.data.demons[request.post.key - 1]) {
 					for (var d in request.game.data.demons) {
 						request.game.data.demons[d].state.selected = false
 					}
@@ -722,9 +715,9 @@
 		function getCells(columnCount, x, y, width, height) {
 			try {
 				return {
-					colLeft:  (Math.floor( x           / 32) + columnCount) % columnCount,
-					colRight: (Math.floor((x + width)  / 32) + columnCount) % columnCount,
-					rowDown:   Math.floor( y           / 32),
+					colLeft:  (Math.floor( x               / 32) + columnCount) % columnCount,
+					colRight: (Math.floor((x + width)      / 32) + columnCount) % columnCount,
+					rowDown:   Math.floor( y               / 32),
 					rowUp:     Math.floor((y + height - 1) / 32)
 				}
 			}
@@ -789,9 +782,6 @@
 				// data ?
 					if (touchedTower.name) {
 						return touchedTower
-					}
-					else {
-						return null
 					}
 			}
 			catch (error) {main.logError(error)}
@@ -898,8 +888,18 @@
 		module.exports.updateState = updateState
 		function updateState(request, callback) {
 			try {
+				// beat
+					request.game.data.state.beat++
+
 				// menu
 					if (!request.game.data.state.start) {
+						// sounds
+							var keys   = Object.keys(request.game.data.heroes).concat(Object.keys(request.game.data.demons))
+							for (var k in keys) {
+								var avatar = (keys[k] > -1) ? request.game.data.demons[keys[k]] : request.game.data.heroes[keys[k]]
+								updateKeys(request, avatar)
+							}
+
 						callback(Object.keys(request.game.players), {
 							state:  request.game.data.state,
 							theme:  request.game.data.theme,
@@ -910,14 +910,11 @@
 
 				// victory
 					else if (request.game.data.state.end) {
-						callback(Object.keys(request.game.players), request.game.data)
+						callback(Object.keys(request.game.players), {state: request.game.data.state})
 					}
 
 				// gameplay
 					else {
-						// beat
-							request.game.data.state.beat++
-
 						// map
 							var map    = request.game.data.map
 							var towers = request.game.data.towers
@@ -963,11 +960,11 @@
 
 								if (request.game.data.state.winning.countdown <= 0) {
 									request.game.data.state.end = new Date().getTime()
+									request.game.data.state.beat = 0
 								}
 							}
 
 						callback(Object.keys(request.game.players), {
-							beat:   true,
 							state:  request.game.data.state,
 							heroes: request.game.data.heroes,
 							demons: request.game.data.demons,
@@ -1441,10 +1438,7 @@
 			try {
 				// create new arrows
 					if (avatar.state.health && !avatar.state.cooldown) {
-						var notes = getBeatAgo(avatar, 0, 0.25)
-						notes.sort()
-
-						if (notes.length == 2 && ((notes[0] == "A" && notes[1] == "C") || (notes[0] == "C" && notes[1] == "E") || (notes[0] == "E" && notes[1] == "G"))) {
+						if (getBeatAgo(avatar, 0, 0.25).length == 3) {
 							request.game.data.arrows.push(createArrow(request, avatar))
 							avatar.state.cooldown = 8
 						}

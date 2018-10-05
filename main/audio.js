@@ -51,7 +51,6 @@
 							feedback: 0
 						}
 					},
-					timeouts:    {},
 					tones:       {},
 					velocities:  {},
 					envelopes:   {},
@@ -246,12 +245,6 @@
 							var pitch = Math.max(8.18, Math.min(16744.04, pitch))
 							var now   = audio.currentTime + (Number(when) || 0)
 
-						// timeouts
-							if (i.timeouts[pitch]) {
-								clearInterval(i.timeouts[pitch])
-								delete i.timeouts[pitch]
-							}
-
 						// velocity
 							if (velocity) {
 								velocity = Math.max(0, Math.min(2, (velocity || 1)))
@@ -335,51 +328,7 @@
 
 								i.envelopes[pitch].connect(i.bitcrushers[pitch])
 							}
-
-					} catch (error) {}
-				}
-
-			/* lift */
-				i.lift = function(pitch, when, velocity) {
-					try {
-						// info
-							var pitch = Math.max(8.18, Math.min(16744.04, pitch))
-							var now   = audio.currentTime + (Number(when) || 0)				
-
-						// envelope
-							i.envelopes[pitch].gain.cancelScheduledValues(now)
-							i.envelopes[pitch].gain.setValueAtTime(i.envelopes[pitch].gain.value, now)
-							i.envelopes[pitch].gain.exponentialRampToValueAtTime(0.001, now + (i.parameters.envelope.release || 0))
-
-						// delete
-							i.timeouts[pitch] = setTimeout(function() {
-								if (i.bitcrushers[pitch]) {
-									i.bitcrushers[pitch].disconnect()
-									delete i.bitcrushers[pitch]
-								}
-
-								if (i.envelopes[pitch]) {
-									i.envelopes[pitch].gain.cancelScheduledValues(now + (i.parameters.envelope.release || 0))
-									i.envelopes[pitch].disconnect()
-									delete i.envelopes[pitch]
-								}
-
-								if (i.velocities[pitch]) {
-									i.velocities[pitch].gain.cancelScheduledValues(now + (i.parameters.envelope.release || 0))
-									i.velocities[pitch].disconnect()
-									delete i.velocities[pitch]
-								}
-
-								Object.keys(i.tones).forEach(function (t) {
-									if (t.split("_")[0] == pitch) {
-										i.tones[t].stop(now + (i.parameters.envelope.release || 0))
-										i.tones[t].disconnect()
-										delete i.tones[t]
-									}
-								})
-							}, ((Number(when) || 0) + (i.parameters.envelope.release || 0)) * 1000)
-
-					} catch (error) {}
+					} catch (error) {console.log(error)}
 				}
 			
 			// start

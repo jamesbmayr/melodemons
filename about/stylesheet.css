@@ -41,7 +41,7 @@
 			padding: 4px;
 			margin-top: 5%;
 			display: block;
-			border-radius: 10px;
+			border-radius: var(--borderRadius);
 		}
 
 		#logotype {
@@ -66,10 +66,11 @@
 			cursor: default;
 			color: var(--black-4);
 			line-height: 1.25;
-			border-radius: 10px;
+			border-radius: var(--borderRadius);
 			width: 100%;
 			text-align: center;
 			background: transparent;
+			overflow: hidden;
 		}
 
 		.header {
@@ -79,7 +80,6 @@
 			color: var(--white-4);
 			cursor: default;
 			text-align: center;
-			border-radius: 10px 10px 0px 0px;
 			box-shadow: 0px 0px 25px var(--black-4);
 			padding: 8px 0px 8px 0px;
 		}
@@ -92,7 +92,6 @@
 			color: var(--white-4);
 			cursor: default;
 			text-align: center;
-			border-radius: 0px 0px 10px 10px;
 			width: calc(100% - 10%);
 			box-shadow: 0px 0px 25px var(--black-4);
 		}
@@ -103,25 +102,35 @@
 			max-width: calc(100% - 28px);
 			min-width: calc(100% - 28px);
 			margin-bottom: 2%;
-			border-radius: 10px;
+			border-radius: var(--borderRadius);
 			border: 0px;
 		}
 
 		#feedback-email {
 			width: calc(100% - 28px - 100px);
 			padding: 10px;
-			border-radius: 10px 0px 0px 10px;
+			border-radius: var(--borderRadius) 0px 0px var(--borderRadius);
 			border: 0px;
+			line-height: 1;
+			font-size: 100%;
 		}
 
 		#feedback-submit {
 			vertical-align: bottom;
-			padding: 7px;
+			padding: 10px;
 			width: 100px;
-			border-radius: 0px 10px 10px 0px;
+			line-height: 1.05;
+			font-size: 100%;
+			border-radius: 0px var(--borderRadius) var(--borderRadius) 0px;
 			border: 0px;
 			background-color: var(--white-4);
 			color: var(--black-4);
+		}
+
+		@-moz-document url-prefix() {
+			#feedback-submit {
+				line-height: 1;
+			}
 		}
 
 /*** colors ***/

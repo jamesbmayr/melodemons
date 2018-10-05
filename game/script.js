@@ -48,6 +48,19 @@
 			"Digit0": 0
 		}
 
+		var keyNotes = {
+			"C3": ["KeyQ","KeyA","KeyZ"],
+			"D3": ["KeyW","KeyS","KeyX"],
+			"E3": ["KeyE","KeyD","KeyC"],
+			"F3": [],
+			"G3": ["KeyT","KeyG","KeyB"],
+			"A3": ["KeyY","KeyH","KeyN"],
+			"B3": [],
+			"C4": ["KeyI","KeyK","Comma"],
+			"D4": ["KeyO","KeyL","Period"],
+			"E4": ["KeyP","Semicolon","Slash"]
+		}
+
 /*** websocket ***/
 	/* socket */
 		createSocket()
@@ -104,6 +117,25 @@
 						type = "Note"
 					}
 
+				// prevent spamming notes
+					if (type == "Note") {
+						if (data.pressed.includes(event.code)) {
+							if (press) {
+								type = null
+							}
+							else {
+								data.pressed = data.pressed.filter(function(k) {
+									return (k !== event.code)
+								}) || []
+							}
+						}
+						else {
+							if (press) {
+								data.pressed.push(event.code)
+							}
+						}
+					}
+
 				// submit data
 					if (type && socket) {
 						socket.send(JSON.stringify({
@@ -111,23 +143,6 @@
 							key:    key,
 							press:  press
 						}))
-					}
-
-				// menu --> play notes
-					if ((!data.state || !data.state.start) && (type == "Note")) {
-						if (!data.press) {
-							data.cooldown = false
-						}
-						else if (!data.cooldown) {
-							if (data.admin) {
-								data.cooldown = true
-								instruments[data.demons[0].instrument].press(frequencies[key[0]][key[1]])
-							}
-							else if (data.heroes[id]) {
-								data.cooldown = true
-								instruments[data.heroes[id].instrument].press(frequencies[key[0]][key[1]])
-							}
-						}
 					}
 			}
 		}
@@ -143,6 +158,7 @@
 					}
 
 				// audio
+					data.pressed = []
 					buildAudio()
 					setInstruments()
 			}
@@ -193,7 +209,7 @@
 				if (data.clicked && post.beat) {
 					playMusic()
 				}
-				if (data.clicked && (!data.state || !data.state.start) && post.heroes[id]) {
+				if (data.clicked && (!data.state || !data.state.start) && (post.heroes[id] && !Object.keys(instruments).includes(post.heroes[id].instrument))) {
 					setInstruments()
 				}
 
@@ -221,9 +237,7 @@
 
 			// background
 				drawMap(data.sample, data.theme, data, true)
-
-			// instructions
-				drawDPad()
+				drawDPad((canvas.width / 2) - 75, (canvas.height / 8) - 75, 50)
 
 			// demons
 				if (data.admin) {
@@ -243,7 +257,8 @@
 
 					// melody
 						if (chosenTheme) {
-							drawText(canvas.width / 2, 3 * canvas.height / 4, "launch game?", {color: colors.red[4], size: 32, shadow: colors.red[2], blur: 16})
+							drawText(canvas.width / 2, 13 * canvas.height / 16, "launch game?", {color: colors.red[4], size: 32, shadow: colors.red[2], blur: 16})
+							drawKeyboard(canvas.width / 4, canvas.height / 4, canvas.width / 2, canvas.height / 2, data.pressed)
 						}
 				}
 
@@ -272,21 +287,57 @@
 
 					// melody
 						if (chosenHero) {
-							drawText(canvas.width / 2, 3 * canvas.height / 4, "melody: " + chosenHero.melody, {color: chosenHero.colors[0], size: 32, shadow: colors.blue[2], blur: 16})
+							drawText(canvas.width / 2, 13 * canvas.height / 16, "melody: " + chosenHero.melody, {color: chosenHero.colors[0], size: 32, shadow: colors.blue[2], blur: 16})
+							drawKeyboard(canvas.width / 4, canvas.height / 4, canvas.width / 2, canvas.height / 2, data.pressed)
 						}
 				}
 		}
 
 	/* drawDPad */
-		function drawDPad() {
-			drawRectangle((canvas.width / 2) - 75, (canvas.height / 8) - 75, 50, 50,     {color: colors.black[3], radii: {topLeft: 10, topRight: 10, bottomRight: 10, bottomLeft: 10}}) // left
-			drawRectangle((canvas.width / 2) - 25, (canvas.height / 8) - 75, 50, 50,     {color: colors.black[3], radii: {topLeft: 10, topRight: 10, bottomRight: 10, bottomLeft: 10}}) // down
-			drawRectangle((canvas.width / 2) + 25, (canvas.height / 8) - 75, 50, 50,     {color: colors.black[3], radii: {topLeft: 10, topRight: 10, bottomRight: 10, bottomLeft: 10}}) // right
-			drawRectangle((canvas.width / 2) - 25, (canvas.height / 8) - 25, 50, 50,     {color: colors.black[3], radii: {topLeft: 10, topRight: 10, bottomRight: 10, bottomLeft: 10}}) // up
-			drawText(     (canvas.width / 2) - 50, (canvas.height / 8) - 55, "change",   {color: colors.black[2], size: 10}) // left
-			drawText(     (canvas.width / 2) -  0, (canvas.height / 8) - 55, "unselect", {color: colors.black[2], size: 10}) // down
-			drawText(     (canvas.width / 2) + 50, (canvas.height / 8) - 55, "change",   {color: colors.black[2], size: 10}) // right
-			drawText(     (canvas.width / 2) +  0, (canvas.height / 8) -  5, "select",   {color: colors.black[2], size: 10}) // up
+		function drawDPad(x, y, size) {
+			drawRectangle(x                 , y                 , size, size, {color: colors.black[3], radii: {topLeft: (size / 5), topRight: (size / 5), bottomRight: (size / 5), bottomLeft: (size / 5)}}) // left
+			drawRectangle(x + size          , y                 , size, size, {color: colors.black[3], radii: {topLeft: (size / 5), topRight: (size / 5), bottomRight: (size / 5), bottomLeft: (size / 5)}}) // down
+			drawRectangle(x + size + size   , y                 , size, size, {color: colors.black[3], radii: {topLeft: (size / 5), topRight: (size / 5), bottomRight: (size / 5), bottomLeft: (size / 5)}}) // right
+			drawRectangle(x + size          , y +      size     , size, size, {color: colors.black[3], radii: {topLeft: (size / 5), topRight: (size / 5), bottomRight: (size / 5), bottomLeft: (size / 5)}}) // up
+			drawText(     x +     (size / 2), y + (2 * size / 5), "change",   {color: colors.black[2], size: (size / 5)}) // left
+			drawText(     x + (3 * size / 2), y + (2 * size / 5), "unselect", {color: colors.black[2], size: (size / 5)}) // down
+			drawText(     x + (5 * size / 2), y + (2 * size / 5), "change",   {color: colors.black[2], size: (size / 5)}) // right
+			drawText(     x + (3 * size / 2), y + (7 * size / 5), "select",   {color: colors.black[2], size: (size / 5)}) // up
+		}
+
+	/* drawKeyboard */
+		function drawKeyboard(x, y, width, height, pressed) {
+			// outline
+				drawRectangle(x, y, width, height, {color: colors.white[4], shadow: colors.black[4], blur: 8, opacity: 0.75, radii: {topLeft: 10, topRight: 10, bottomRight: 10, bottomLeft: 10}})
+
+			// white keys
+				var noteKeys = Object.keys(keyNotes)
+				var notesLength = noteKeys.length
+				for (var n = 0; n < notesLength; n++) {
+					var topLeft = (n == 0) ? 10 : 0
+					var topRight = (n == notesLength - 1) ? 10 : 0
+					var letters = keyNotes[noteKeys[n]]
+					var color = (pressed.includes(letters[0]) || pressed.includes(letters[1]) || pressed.includes(letters[2])) ? colors.black[1] : colors.black[0]
+
+					drawRectangle(x + (n * width / notesLength), y, (width / notesLength), height, {color: color, opacity: 0.75, shadow: colors.black[4], blur: 2, radii: {topLeft: topLeft, topRight: topRight, bottomRight: 10, bottomLeft: 10}})
+
+					for (var l = 0; l < letters.length; l++) {
+						var letter = letters[l].replace("Key","")
+						if (letter.length > 1) {
+							letter = letter.replace("Comma",",").replace("Period",".").replace("Semicolon",";").replace("Slash","/")
+						}
+
+						drawText(x + (n * width / notesLength) + (width / notesLength / 2), y + height - (l * height / 8) - (23 * height / 32), letter, {color: colors.black[2], opacity: 0.75, size: width / notesLength / 2})
+					}
+				}
+
+			// black keys
+				for (var n = 0; n < notesLength; n++) {
+					if (n !== 3 && n !== 6 && n !== 9) {
+						var xOffset = (n == 2) ? (width / notesLength) : 0
+						drawRectangle(x + (n * width / notesLength) + (3 * width / notesLength / 4) + xOffset, y + (3 * height / 8), (width / notesLength / 2), (5 * height / 8), {color: colors.black[4], opacity: 0.75, radii: {topLeft: 0, topRight: 0, bottomRight: 10, bottomLeft: 10}})
+					}
+				}
 		}
 
 	/* drawTheme */
@@ -321,6 +372,11 @@
 /*** music ***/
 	/* setInstruments */
 		function setInstruments() {
+			// reset
+				for (var i in instruments) {
+					delete instruments[i]
+				}
+
 			// avatar sounds
 				var keys = Object.keys(data.heroes).concat(Object.keys(data.demons))
 				for (var k in keys) {
@@ -340,7 +396,7 @@
 			var avatar = data.heroes[id] || data.demons.find(function(d) { return d.state.selected })
 			playSoundEffects(avatar)
 			playAvatarSounds(avatar)
-			playSoundtrack(  avatar)
+			playSoundtrack(  avatar)			
 		}
 
 	/* playSoundEffects */
@@ -349,37 +405,65 @@
 				instruments.honeyharp.press(frequencies.A[0])
 			}
 			if (avatar.state.shot) {
-				instruments.honeyharp.press(frequences.A[1])
+				instruments.honeyharp.press(frequences.A[0])
 			}
 		}
 
 	/* playSoundtrack */
 		function playSoundtrack(avatar) {
-			if (avatar.state.health) {
-				var section    = Math.floor(data.state.beat % 2048 / 512) // 4 sections
-				var measure    = Math.floor(data.state.beat % 512  / 32) // 16 measures
-				var quarter    = Math.floor(data.state.beat % 32   / 8) // 4 quarters
-				var sixteenth  = Math.floor(data.state.beat % 8    / 2) // 4 sixteenths
+			if (!data.state.start || data.state.end || avatar.state.health) {
+				// negative beat ?
+					if (data.state.beat < 0) {
+						data.state.beat = data.state.beat + 512
+						var launchingSoon = true
+					}
 
-				var notes = data.soundtracks.game[section][measure][quarter][sixteenth]
-				for (var n in notes) {
-					instruments.honeyharp.press(frequencies[notes[n][0]][notes[n][1]])
-				}
+				// get time
+					var section    = Math.floor(data.state.beat % 2048 / 512) // 4 sections
+					var measure    = Math.floor(data.state.beat % 512  / 32) // 16 measures
+					var quarter    = Math.floor(data.state.beat % 32   / 8) // 4 quarters
+					var sixteenth  = Math.floor(data.state.beat % 8    / 2) // 4 sixteenths
+
+				// special sections
+					if (!data.state || !data.state.start || launchingSoon || data.state.end) {
+						var soundtrack = "menu"
+							section = 0
+					}
+					else if (data.state.winning.team && data.state.winning.countdown < 256) {
+						var soundtrack = data.state.winning.team
+							section = 0
+							measure = Math.floor((256 - data.state.winning.countdown) / 32) // 8 measures
+					}
+					else {
+						var soundtrack = "game"
+					}
+
+				// play beat
+					var notes = data.soundtracks[soundtrack][section][measure][quarter][sixteenth]
+					for (var n in notes) {
+						instruments.honeyharp.press(frequencies[notes[n][0]][notes[n][1]])
+					}
 			}
 		}
 
 	/* playAvatarSounds */
 		function playAvatarSounds(avatar) {
-			// heroes & demons
-				var keys = Object.keys(data.heroes).concat(Object.keys(data.demons))
-				for (var k = 0; k < keys.length; k++) {
-					var opponent = (keys[k] > -1) ? data.demons[keys[k]] : data.heroes[keys[k]]
+			if (data.state.start && avatar.state.health) {
+				// heroes & demons
+					var keys = Object.keys(data.heroes).concat(Object.keys(data.demons))
+					for (var k = 0; k < keys.length; k++) {
+						var opponent = (keys[k] > -1) ? data.demons[keys[k]] : data.heroes[keys[k]]
 
-					if (avatar.state.health || opponent.name == avatar.name) {
 						var notes = opponent.state.keys[opponent.state.keys.length - 2]
 						for (var n in notes) {
 							instruments[opponent.instrument].press(frequencies[notes[n][0]][notes[n][1]])
 						}
 					}
+			}
+			else {
+				var notes = avatar.state.keys[avatar.state.keys.length - 2]
+				for (var n in notes) {
+					instruments[avatar.instrument].press(frequencies[notes[n][0]][notes[n][1]])
 				}
+			}
 		}
