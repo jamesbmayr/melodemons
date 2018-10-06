@@ -105,7 +105,7 @@
 									break
 
 									case "volume":
-										parameters.volume = Math.max(0, Math.min(1, parameters.volume ))
+										parameters.volume = Math.max(0, Math.min(1, parameters.volume))
 										i.volume.gain.setValueAtTime(parameters.volume, now)
 									break
 
@@ -385,7 +385,11 @@
 							"decay": 1,
 							"sustain": 0,
 							"release": 0.5
-						}
+						},
+						"echo": {
+							"delay": 0.1,
+							"feedback": 0.7
+						},
 					}
 				break
 				case "square":
@@ -431,7 +435,8 @@
 							"decay": 1,
 							"sustain": 0,
 							"release": 1
-						}
+						},
+						"volume": 0.75
 					}
 				break
 				case "shimmer":
@@ -455,6 +460,7 @@
 							"delay": 0.08,
 							"feedback": 0.7
 						},
+						"volume": 0.25
 					}
 				break
 				case "jangle":
@@ -488,7 +494,8 @@
 						"echo":{
 							"delay":0.07412233349465767,
 							"feedback":0.6897265497330863
-						}
+						},
+						"volume": 0.25
 					}
 				break
 				case "chordstrum":
@@ -507,7 +514,8 @@
 						"echo":{
 							"delay":0.0010553957105702905,
 							"feedback":0.8857754774228093
-						}
+						},
+						"volume": 0.5
 					}
 				break
 				case "lazerz":
@@ -544,7 +552,8 @@
 						"echo":{
 							"delay":0.21428571428571427,
 							"feedback":0.2748267474475922
-						}
+						},
+						"volume": 0.75
 					}
 				break
 				case "buzzorgan":
@@ -629,7 +638,8 @@
 						"echo":{
 							"delay":0.00187234042553192,
 							"feedback":0.76714675029034326
-						}
+						},
+						"volume": 0.5
 					}
 				break
 				case "accordienne":
@@ -684,7 +694,8 @@
 						"echo":{
 							"delay":0.08495044767097758,
 							"feedback":0.8535788212223554
-						}
+						},
+						"volume": 0.25
 					}
 				break
 				case "clarinaut":

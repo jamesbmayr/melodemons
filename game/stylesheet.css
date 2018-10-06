@@ -5,6 +5,11 @@
 		box-shadow: 0px 0px 20px var(--black-4) inset;
 		background-color: var(--black-4);
 		overflow: hidden;
+		cursor: pointer;
+	}
+
+	body.clicked {
+		cursor: none;
 	}
 
 	/* overlay */
@@ -18,7 +23,6 @@
 			font-family: var(--font);
 			overflow: hidden;
 			user-select: none;
-			
 		}
 
 		#overlay.intro {

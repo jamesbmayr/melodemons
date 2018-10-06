@@ -118,7 +118,7 @@
 					}
 
 				// prevent spamming notes
-					if (type == "Note") {
+					if (type == "Note" || !data.state || !data.state.start) {
 						if (data.pressed.includes(event.code)) {
 							if (press) {
 								type = null
@@ -156,6 +156,7 @@
 					if (document.getElementById("overlay")) {
 						document.getElementById("overlay").remove()
 					}
+					document.body.className = "clicked"
 
 				// audio
 					data.pressed = []
@@ -237,7 +238,8 @@
 
 			// background
 				drawMap(data.sample, data.theme, data, true)
-				drawDPad((canvas.width / 2) - 75, (canvas.height / 8) - 75, 50)
+				drawDPad((13 * canvas.width / 16), (canvas.height / 4), (canvas.height / 8), data.pressed)
+				drawKeyboard((5 * canvas.width / 16), (canvas.height / 4), (canvas.width / 2), (canvas.height / 4), data.pressed)
 
 			// demons
 				if (data.admin) {
@@ -248,7 +250,7 @@
 						for (var o = 0; o < data.options.length; o++) {
 							var shadow = (o == data.selection) ? colors.red[2] : colors.black[4] // shadow as selection tool
 							var x = (canvas.width  / 2) + 400 - ((data.options.length - o) * 100) + 50 - 40
-							var y = (canvas.height / 2) - 50
+							var y = (canvas.height / 2)
 							var isChosen = (chosenTheme && chosenTheme.name == data.options[o].name) ? true : false
 
 							drawRectangle(x, y, 80, 80, {color: colors.white[4], shadow: shadow, blur: 32, radii: {topLeft: 8, topRight: 8, bottomRight: 8, bottomLeft: 8}})
@@ -258,7 +260,6 @@
 					// melody
 						if (chosenTheme) {
 							drawText(canvas.width / 2, 13 * canvas.height / 16, "launch game?", {color: colors.red[4], size: 32, shadow: colors.red[2], blur: 16})
-							drawKeyboard(canvas.width / 4, canvas.height / 4, canvas.width / 2, canvas.height / 2, data.pressed)
 						}
 				}
 
@@ -279,7 +280,7 @@
 							var shadow = (o == data.selection) ? colors.blue[2] : colors.black[4] // shadow as selection tool
 							var color = (chosenHero && chosenHero.name == data.options[optionKeys[o]].name) ? colors.blue[2] : takenHeroes.includes(data.options[optionKeys[o]].name) ? colors.black[4] : colors.white[4]
 							var x = (canvas.width  / 2) + 400 - ((optionKeys.length - o) * 100) + 50
-							var y = (canvas.height / 2) - 50
+							var y = (canvas.height / 2)
 
 							drawRectangle(x - 40, y    , 80, 80, {color: color, shadow: shadow, blur: 32, radii: {topLeft: 8, topRight: 8, bottomRight: 8, bottomLeft: 8}})
 							drawAvatar(   x - 16, y + 8, 32, 64, data.options[optionKeys[o]])
@@ -288,27 +289,41 @@
 					// melody
 						if (chosenHero) {
 							drawText(canvas.width / 2, 13 * canvas.height / 16, "melody: " + chosenHero.melody, {color: chosenHero.colors[0], size: 32, shadow: colors.blue[2], blur: 16})
-							drawKeyboard(canvas.width / 4, canvas.height / 4, canvas.width / 2, canvas.height / 2, data.pressed)
 						}
 				}
 		}
 
 	/* drawDPad */
-		function drawDPad(x, y, size) {
-			drawRectangle(x                 , y                 , size, size, {color: colors.black[3], radii: {topLeft: (size / 5), topRight: (size / 5), bottomRight: (size / 5), bottomLeft: (size / 5)}}) // left
-			drawRectangle(x + size          , y                 , size, size, {color: colors.black[3], radii: {topLeft: (size / 5), topRight: (size / 5), bottomRight: (size / 5), bottomLeft: (size / 5)}}) // down
-			drawRectangle(x + size + size   , y                 , size, size, {color: colors.black[3], radii: {topLeft: (size / 5), topRight: (size / 5), bottomRight: (size / 5), bottomLeft: (size / 5)}}) // right
-			drawRectangle(x + size          , y +      size     , size, size, {color: colors.black[3], radii: {topLeft: (size / 5), topRight: (size / 5), bottomRight: (size / 5), bottomLeft: (size / 5)}}) // up
-			drawText(     x +     (size / 2), y + (2 * size / 5), "change",   {color: colors.black[2], size: (size / 5)}) // left
-			drawText(     x + (3 * size / 2), y + (2 * size / 5), "unselect", {color: colors.black[2], size: (size / 5)}) // down
-			drawText(     x + (5 * size / 2), y + (2 * size / 5), "change",   {color: colors.black[2], size: (size / 5)}) // right
-			drawText(     x + (3 * size / 2), y + (7 * size / 5), "select",   {color: colors.black[2], size: (size / 5)}) // up
+		function drawDPad(x, y, size, pressed) {
+			// offset center
+				x = x - (3 * size / 2)
+				y = y - (size)
+
+			// draw squares
+				drawRectangle(x                 , y                 , size, size, {color: colors.white[4], shadow: colors.black[4], blur: 8, opacity: 0.25, radii: {topLeft: (size / 5), topRight: 0, bottomRight: 0, bottomLeft: (size / 5)}})	// left
+				drawRectangle(x + size          , y                 , size, size, {color: colors.white[4], shadow: colors.black[4], blur: 8, opacity: 0.25, radii: {topLeft: 0, topRight: 0, bottomRight: 0, bottomLeft: 0}}) 					// down
+				drawRectangle(x + size + size   , y                 , size, size, {color: colors.white[4], shadow: colors.black[4], blur: 8, opacity: 0.25, radii: {topLeft: 0, topRight: (size / 5), bottomRight: (size / 5), bottomLeft: 0}})	// right
+				drawRectangle(x + size          , y +      size     , size, size, {color: colors.white[4], shadow: colors.black[4], blur: 8, opacity: 0.25, radii: {topLeft: (size / 5), topRight: (size / 5), bottomRight: 0, bottomLeft: 0}})	// up
+				drawRectangle(x                 , y                 , size, size, {color: (pressed.includes("ArrowLeft" ) ? colors.black[4] : colors.black[3]), opacity: 0.75, radii: {topLeft: (size / 5), topRight: 0, bottomRight: 0, bottomLeft: (size / 5)}})	// left
+				drawRectangle(x + size          , y                 , size, size, {color: (pressed.includes("ArrowDown" ) ? colors.black[4] : colors.black[3]), opacity: 0.75, radii: {topLeft: 0, topRight: 0, bottomRight: 0, bottomLeft: 0}}) 					// down
+				drawRectangle(x + size + size   , y                 , size, size, {color: (pressed.includes("ArrowRight") ? colors.black[4] : colors.black[3]), opacity: 0.75, radii: {topLeft: 0, topRight: (size / 5), bottomRight: (size / 5), bottomLeft: 0}})	// right
+				drawRectangle(x + size          , y +      size     , size, size, {color: (pressed.includes("ArrowUp"   ) ? colors.black[4] : colors.black[3]), opacity: 0.75, radii: {topLeft: (size / 5), topRight: (size / 5), bottomRight: 0, bottomLeft: 0}})	// up
+
+			// label
+				drawText(     x +     (size / 2), y + (2 * size / 5), "change",   {color: colors.black[1], opacity: 0.75, size: (size / 5)}) // left
+				drawText(     x + (3 * size / 2), y + (2 * size / 5), "unselect", {color: colors.black[1], opacity: 0.75, size: (size / 5)}) // down
+				drawText(     x + (5 * size / 2), y + (2 * size / 5), "change",   {color: colors.black[1], opacity: 0.75, size: (size / 5)}) // right
+				drawText(     x + (3 * size / 2), y + (7 * size / 5), "select",   {color: colors.black[1], opacity: 0.75, size: (size / 5)}) // up
 		}
 
 	/* drawKeyboard */
 		function drawKeyboard(x, y, width, height, pressed) {
+			// offset center
+				x = x - (width / 2)
+				y = y - (height / 2)
+
 			// outline
-				drawRectangle(x, y, width, height, {color: colors.white[4], shadow: colors.black[4], blur: 8, opacity: 0.75, radii: {topLeft: 10, topRight: 10, bottomRight: 10, bottomLeft: 10}})
+				drawRectangle(x, y, width, height, {color: colors.white[4], shadow: colors.black[4], blur: 8, opacity: 0.25, radii: {topLeft: 10, topRight: 10, bottomRight: 10, bottomLeft: 10}})
 
 			// white keys
 				var noteKeys = Object.keys(keyNotes)
@@ -319,7 +334,7 @@
 					var letters = keyNotes[noteKeys[n]]
 					var color = (pressed.includes(letters[0]) || pressed.includes(letters[1]) || pressed.includes(letters[2])) ? colors.black[1] : colors.black[0]
 
-					drawRectangle(x + (n * width / notesLength), y, (width / notesLength), height, {color: color, opacity: 0.75, shadow: colors.black[4], blur: 2, radii: {topLeft: topLeft, topRight: topRight, bottomRight: 10, bottomLeft: 10}})
+					drawRectangle(x + (n * width / notesLength), y, (width / notesLength), height, {color: color, opacity: 0.5, shadow: colors.black[4], blur: 2, radii: {topLeft: topLeft, topRight: topRight, bottomRight: 10, bottomLeft: 10}})
 
 					for (var l = 0; l < letters.length; l++) {
 						var letter = letters[l].replace("Key","")
@@ -327,7 +342,7 @@
 							letter = letter.replace("Comma",",").replace("Period",".").replace("Semicolon",";").replace("Slash","/")
 						}
 
-						drawText(x + (n * width / notesLength) + (width / notesLength / 2), y + height - (l * height / 8) - (23 * height / 32), letter, {color: colors.black[2], opacity: 0.75, size: width / notesLength / 2})
+						drawText(x + (n * width / notesLength) + (width / notesLength / 2), y + height - (l * height / 4) - (3 * height / 8), letter, {color: colors.black[3], opacity: 0.5, size: width / notesLength / 2})
 					}
 				}
 
@@ -335,7 +350,7 @@
 				for (var n = 0; n < notesLength; n++) {
 					if (n !== 3 && n !== 6 && n !== 9) {
 						var xOffset = (n == 2) ? (width / notesLength) : 0
-						drawRectangle(x + (n * width / notesLength) + (3 * width / notesLength / 4) + xOffset, y + (3 * height / 8), (width / notesLength / 2), (5 * height / 8), {color: colors.black[4], opacity: 0.75, radii: {topLeft: 0, topRight: 0, bottomRight: 10, bottomLeft: 10}})
+						drawRectangle(x + (n * width / notesLength) + (7 * width / notesLength / 8) + xOffset, y + (3 * height / 8), (width / notesLength / 4), (5 * height / 8), {color: colors.black[4], opacity: 0.75, radii: {topLeft: 0, topRight: 0, bottomRight: 10, bottomLeft: 10}})
 					}
 				}
 		}
@@ -362,10 +377,10 @@
 
 			// name
 				if (isChosen) {
-					drawText(x + (width / 2), y + (5 * height / 4), theme.name, {opacity: 1, color: theme.terrainBackground, size: (width / 4), shadow: colors.red[2], blur: (width / 20)})   // name
+					drawText(x + (width / 2), y + (5 * height / 4), theme.name, {opacity: 1, color: theme.pitForeground, size: (width / 4), shadow: colors.red[2], blur: (width / 20)})   // name
 				}
 				else {
-					drawText(x + (width / 2), y + (5 * height / 4), theme.name, {opacity: 1, color: theme.terrainBackground, size: (width / 4)})   // name
+					drawText(x + (width / 2), y + (5 * height / 4), theme.name, {opacity: 1, color: theme.pitForeground, size: (width / 4)})   // name
 				}
 		}
 
@@ -388,7 +403,7 @@
 
 			// soundtrack
 				instruments.honeyharp = buildInstrument(getInstrument("honeyharp"))
-				instruments.honeyharp.setParameters({volume: 0.75})
+				instruments.honeyharp.setParameters({volume: 0.5})
 		}
 	
 	/* playMusic */
@@ -419,7 +434,7 @@
 					}
 
 				// get time
-					var section    = Math.floor(data.state.beat % 2048 / 512) // 4 sections
+					var section    = Math.floor(data.state.beat % 4096 / 512) // 8 sections
 					var measure    = Math.floor(data.state.beat % 512  / 32) // 16 measures
 					var quarter    = Math.floor(data.state.beat % 32   / 8) // 4 quarters
 					var sixteenth  = Math.floor(data.state.beat % 8    / 2) // 4 sixteenths
