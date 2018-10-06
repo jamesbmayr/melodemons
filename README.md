@@ -5,13 +5,13 @@ an asymmetrical multiplayer music-based tower defense platformer: http://melodem
 ---
 <pre>
   ____----____  
-//            \\\\
+//            \\
                 
-||\\\\  //\\\\  //||
+||\\  //\\  //||
 || \\//  \\// ||
-||  \\\\    //  ||
-||   \\\\  //   ||
-||    \\\\//    ||
+||  \\    //  ||
+||   \\  //   ||
+||    \\//    ||
 </pre>
 ---
 
