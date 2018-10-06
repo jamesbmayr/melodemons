@@ -28,7 +28,7 @@ With randomly generated maps, tons of unlockable spell songs, and a whole cast o
 The app is powered by nodeJS and websockets, written in 100% raw javascript. 
 
 ---
-
+<pre>
 melodemons
 |- package.json
 |- index.js (handleRequest, parseRequest, routeRequest, \_302, \_403, \_404; handleSocket, parseSocket, routeSocket, \_400)
@@ -62,3 +62,4 @@ melodemons
     |- index.html
     |- stylesheet.css
     |- script.js (createSocket, checkLoop, submitClick, submitKey, receivePost; drawMessage, drawMenu, drawDPad, drawKeyboard, drawTheme; setInstruments, playMusic, playSoundEffects, playSoundtrack, playAvatarSounds)
+</pre>
