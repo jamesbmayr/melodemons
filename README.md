@@ -3,16 +3,16 @@
 an asymmetrical multiplayer music-based tower defense platformer: http://melodemons.herokuapp.com
 
 ---
-
-  ____----____  \n
-//            \\\\\n
-                \n
-||\\\\  //\\\\  //||\n
-|| \\//  \\// ||\n
-||  \\\\    //  ||\n
-||   \\\\  //   ||\n
-||    \\\\//    ||\n
-
+<pre>
+  ____----____  
+//            \\\\
+                
+||\\\\  //\\\\  //||
+|| \\//  \\// ||
+||  \\\\    //  ||
+||   \\\\  //   ||
+||    \\\\//    ||
+</pre>
 ---
 
 ## Launch
