@@ -85,7 +85,7 @@
 		}
 
 		.content {
-			background: linear-gradient(var(--black-4), var(--black-3));
+			background-color: var(--black-4);
 			padding: 5%;
 			margin: 0px;
 			font-size: 100%;
@@ -94,6 +94,10 @@
 			text-align: center;
 			width: calc(100% - 10%);
 			box-shadow: 0px 0px 25px var(--black-4);
+		}
+
+		#songs ul {
+			text-align: left;
 		}
 
 	/* feedback */

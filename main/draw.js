@@ -332,8 +332,12 @@
 
 			// name & healthbar
 				if (avatar.state) {
-					drawText(x + (width / 2), y + (5 * height / 4), avatar.name.slice(0,4).toUpperCase() + avatar.name.slice(4), {opacity: opacity, color: avatar.colors[2],     size: (3 * width / 8)})   // name
-					drawLine(x              , y + (9 * height / 8), x + healthWidth, y + (9 * height / 8)                      , {opacity: opacity, color: healthColor, blur: 2, shadow: healthColor}) // health bar
+					drawText(x + (width / 2), y + (5  * height / 4), avatar.name.slice(0,4).toUpperCase() + avatar.name.slice(4), {opacity: opacity, color: avatar.colors[2],     size: (3 * width / 8)})	// name
+					drawLine(x              , y + (9  * height / 8), x + healthWidth, y + (9 * height / 8)                      , {opacity: opacity, color: healthColor, blur: 2, shadow: healthColor}) 	// health bar
+					
+					if ((admin && avatar.team == "demons" && avatar.state.selected)) {
+						drawText(x + (width / 2), y + (6 * height / 4), avatar.song                          					    , {opacity: opacity, color: avatar.colors[2],     size: (3 * width / 8)})   // song
+					}
 				}
 				else {
 					drawText(x + (width / 2), y + (5 * height / 4), avatar.name                          , {opacity: opacity, color: avatar.colors[2],     size: (width / 2)})   // name
@@ -410,7 +414,7 @@
 				var x2         = foreground ? ((canvasX + xOffset) * multiplier) : 1280 - ((canvasX + xOffset) * multiplier)
 
 			// draw
-				drawRectangle(x1, yOffset, 32 * multiplier, 16 * multiplier, {color: pitColor})
+				drawRectangle(Math.round(x1), yOffset, 32 * multiplier, 16 * multiplier, {color: pitColor})
 		}
 
 	/* drawSections */
@@ -427,7 +431,7 @@
 			for (var y = 0; y < 16; y++) {
 				if (y >= column[section].bottom && y <= column[section].top) {
 					if (section > 0) { // platforms
-						drawRectangle(xPlacement, ((y + 1) * height) - (8 * multiplier) + yOffset, height, 8 * multiplier,
+						drawRectangle(Math.round(xPlacement), ((y + 1) * height) - (8 * multiplier) + yOffset, height, 8 * multiplier,
 							{color: platformColor, radii: {topLeft: 5, topRight: 5, bottomRight: 5, bottomLeft: 5}}
 						)
 					}
@@ -451,12 +455,12 @@
 							tr = temp
 						}
 
-						drawRectangle(xPlacement, (y * height) + yOffset, height, height,
+						drawRectangle(Math.round(xPlacement), (y * height) + yOffset, height, height,
 							{color: terrainColor, radii: {topLeft: tl, topRight: tr, bottomRight: 0, bottomLeft: 0}}
 						)
 					}
 					else { // terrain
-						drawRectangle(xPlacement, (y * height) + yOffset, height, height, {color: terrainColor})
+						drawRectangle(Math.round(xPlacement), (y * height) + yOffset, height, height, {color: terrainColor})
 					}
 				}
 			}
@@ -476,22 +480,22 @@
 
 			// background
 				if (columnNumber % 64 == 0) {
-					drawRectangle(xPlacement, yOffset, (32 * multiplier), (32 * multiplier) * 13,
+					drawRectangle(Math.round(xPlacement), yOffset, (32 * multiplier), (32 * multiplier) * 13,
 						{color: towerColor, radii: {topLeft: foreground ? (8 * multiplier) : 0, topRight: foreground ? 0 : (8 * multiplier), bottomRight: 0, bottomLeft: 0}}
 					)
 				}
 				else if (columnNumber % 64 == 1) {
-					drawRectangle(xPlacement, yOffset, (32 * multiplier), (32 * multiplier) * 14,
+					drawRectangle(Math.round(xPlacement), yOffset, (32 * multiplier), (32 * multiplier) * 14,
 						{color: towerColor, radii: {topLeft: foreground ? (8 * multiplier) : 0, topRight: foreground ? 0 : (8 * multiplier), bottomRight: 0, bottomLeft: 0}}
 					)
 				}
 				else if (columnNumber % 64 == 2) {
-					drawRectangle(xPlacement, yOffset, (32 * multiplier), (32 * multiplier) * 14,
+					drawRectangle(Math.round(xPlacement), yOffset, (32 * multiplier), (32 * multiplier) * 14,
 						{color: towerColor, radii: {topLeft: foreground ? 0 : (8 * multiplier), topRight: foreground ? (8 * multiplier) : 0, bottomRight: 0, bottomLeft: 0}}
 					)
 				}
 				else if (columnNumber % 64 == 3) {
-					drawRectangle(xPlacement, yOffset, (32 * multiplier), (32 * multiplier) * 13,
+					drawRectangle(Math.round(xPlacement), yOffset, (32 * multiplier), (32 * multiplier) * 13,
 						{color: towerColor, radii: {topLeft: foreground ? 0 : (8 * multiplier), topRight: foreground ? (8 * multiplier) : 0, bottomRight: 0, bottomLeft: 0}}
 					)
 				}

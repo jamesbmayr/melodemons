@@ -22,20 +22,42 @@
 						Melodemons is an asymmetrical multiplayer music-based tower defense platformer.
 					</div>
 				</div>
-				<div id="rules" class="section">
-					<div class="header">Launch</div>
-					<div class="content">
-						Every game has a unique 4-character id. Go <a href="./" target="_blank" class="bluetext">home</a> to start a new one - or join a friend's!
-						<br><br>
-						On the settings screen, choose your <span class="greentext">heroes</span> and <span class="redtext">demons</span>, pick a <span class="purpletext">theme</span>, and start playing!
-					</div>
-				</div>
-				<div id="rules" class="section">
+				<div id="gameplay" class="section">
 					<div class="header">Gameplay</div>
 					<div class="content">
 						In this real-time game, <span class="redtext">demons</span> seek to control <span class="orangetext">towers</span> so they can play the song to end the world. The <span class="greentext">heroes</span> must work together to stop them, performing music to cast magic spells and control the <span class="orangetext">towers</span> themselves.
 						<br><br>
-						With randomly generated maps, tons of unlockable <span class="purpletext">spell songs</span>, and a whole cast of <span class="greentext">heroes</span> to choose from, Melodemons is an intense game that's different every time.
+						With randomly generated maps, eight magic <span class="purpletext">songs</span>, and a whole cast of characters, the game is different every time.
+					</div>
+				</div>
+				<div id="songs" class="section">
+					<div class="header">Songs</div>
+					<div class="content">
+						Each <span class="greentext">hero</span> and <span class="redtext">demon</span> can perform a <span class="purpletext">song</span> to cast an <span class="orangetext">aura</span>:
+						<script node>
+							var heroes = getAsset("heroes")
+							var demons = getAsset("demons")
+							var songs  = getAsset("songs" )
+							var keys   = Object.keys(songs)
+							var text   = "<ul>"
+
+							for (var i = 0; i < heroes.length; i++) {
+								text += "<li>" +
+									"<span class='greentext'>" + heroes[i].name + "</span> & <span class='redtext'>" + demons[i].name + "</span>: " +
+									"<b><span class='purpletext'>" + keys[i] + "</span></b><br>" +
+									" <span>" + songs[keys[i]].description + "</span><br><br>"
+								"</li>"
+							}
+
+							text + "</ul>"
+						</script>node>
+						Capture the magic <span class="orangetext">towers</span> to learn additional <span class="purpletext">songs</span>.
+					</div>
+				</div>
+				<div id="launch" class="section">
+					<div class="header">Launch</div>
+					<div class="content">
+						Every game has a unique 4-character id. Go <a href="./" target="_blank" class="bluetext">home</a> to start a new one - or join a friend's!
 					</div>
 				</div>
 				<div id="feedback" class="section">

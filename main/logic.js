@@ -157,8 +157,8 @@
 								name: "Edgar",
 								team: "heroes",
 								instrument: "triangle",
-								colors: [songs.negation.colors[0], songs.negation.colors[1], colors.blue[2]],
-								song: "negation"
+								colors: [songs.gravity.colors[0], songs.gravity.colors[1], colors.blue[2]],
+								song: "gravity"
 							},
 							{
 								name: "Aeden",
@@ -221,8 +221,8 @@
 								name: "Edganis",
 								team: "demons",
 								instrument: "chordstrum",
-								colors: [songs.negation.colors[0], songs.negation.colors[1], colors.red[2]],
-								song: "negation"
+								colors: [songs.gravity.colors[0], songs.gravity.colors[1], colors.red[2]],
+								song: "gravity"
 							},
 							{
 								name: "Aederos",
@@ -256,7 +256,7 @@
 								name: "healing",
 								description: "other heroes and demons within the aura regenerate health",
 								melody: "DEAC",
-								radius: 4,
+								radius: 7,
 								colors: [colors.green[3], colors.green[1]]
 							},
 							"flight": {
@@ -270,7 +270,7 @@
 								name: "protection",
 								description: "attacks from outside the aura dissipate on collision",
 								melody: "GADE",
-								radius: 5,
+								radius: 7,
 								colors: [colors.yellow[3], colors.yellow[1]]
 							},
 							"confusion": {
@@ -280,32 +280,32 @@
 								radius: 7,
 								colors: [colors.purple[3], colors.purple[1]]
 							},
-							"negation": {
-								name: "negation",
-								description: "prevents heroes and demons within the aura from casting other auras",
+							"gravity": {
+								name: "gravity",
+								description: "heroes and demons within the aura are pulled towards the center",
 								melody: "EDGA",
-								radius: 5,
+								radius: 7,
 								colors: [colors.cyan[3], colors.cyan[1]]
 							},
 							"strength": {
 								name: "strength",
 								description: "attacks fired from within the aura are twice as powerful",
 								melody: "AEDE",
-								radius: 6,
+								radius: 7,
 								colors: [colors.orange[3], colors.orange[1]]
 							},
 							"paralysis": {
 								name: "paralysis",
 								description: "other heroes and demons within the aura are nearly unable to move",
 								melody: "ADAG",
-								radius: 6,
+								radius: 7,
 								colors: [colors.browngray[3], colors.browngray[1]]
 							},
 							"pain": {
 								name: "pain",
 								description: "other heroes and demons within the aura lose health",
 								melody: "CAGE",
-								radius: 4,
+								radius: 7,
 								colors: [colors.magenta[3], colors.magenta[1]]
 							}
 						}
@@ -347,9 +347,9 @@
 								platforms: [{x: 0, y: 11, color: colors.black[2], note: songs.confusion.melody[0]}, {x: 1, y: 10, color: colors.black[2], note: songs.confusion.melody[1]}, {x: 2, y: 8, color: colors.black[2], note: songs.confusion.melody[2]}, {x: 3, y: 8, color: colors.black[2], note: songs.confusion.melody[3]}, {x: 0, y: 7, color: colors.black[2], note: songs.confusion.melody[0]}, {x: 1, y: 6, color: colors.black[2], note: songs.confusion.melody[1]}, {x: 2, y: 4, color: colors.black[2], note: songs.confusion.melody[2]}, {x: 3, y: 4, color: colors.black[2], note: songs.confusion.melody[3]}]
 							},
 							{
-								name: "negation",
-								colors: [songs.negation.colors[0], songs.negation.colors[1], colors.black[2]],
-								platforms: [{x: 0, y: 11, color: colors.black[2], note: songs.negation.melody[0]}, {x: 1, y: 9, color: colors.black[2], note: songs.negation.melody[1]}, {x: 2, y: 9, color: colors.black[2], note: songs.negation.melody[2]}, {x: 3, y: 8, color: colors.black[2], note: songs.negation.melody[3]}, {x: 0, y: 7, color: colors.black[2], note: songs.negation.melody[0]}, {x: 1, y: 5, color: colors.black[2], note: songs.negation.melody[1]}, {x: 2, y: 5, color: colors.black[2], note: songs.negation.melody[2]}, {x: 3, y: 4, color: colors.black[2], note: songs.negation.melody[3]}]
+								name: "gravity",
+								colors: [songs.gravity.colors[0], songs.gravity.colors[1], colors.black[2]],
+								platforms: [{x: 0, y: 11, color: colors.black[2], note: songs.gravity.melody[0]}, {x: 1, y: 9, color: colors.black[2], note: songs.gravity.melody[1]}, {x: 2, y: 9, color: colors.black[2], note: songs.gravity.melody[2]}, {x: 3, y: 8, color: colors.black[2], note: songs.gravity.melody[3]}, {x: 0, y: 7, color: colors.black[2], note: songs.gravity.melody[0]}, {x: 1, y: 5, color: colors.black[2], note: songs.gravity.melody[1]}, {x: 2, y: 5, color: colors.black[2], note: songs.gravity.melody[2]}, {x: 3, y: 4, color: colors.black[2], note: songs.gravity.melody[3]}]
 							},
 							{
 								name: "pain",

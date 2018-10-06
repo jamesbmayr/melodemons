@@ -848,7 +848,7 @@
 						return false
 					}
 					else {
-						return true
+						return distance
 					}
 			}
 			catch (error) {main.logError(error)}
@@ -1009,6 +1009,39 @@
 					else {
 						avatar.state.vy = Math.max(-24, Math.min(24, avatar.state.vy - 4))
 						avatar.state.jumpable = false
+					}
+
+				// gravity
+					if (avatar.state.health && avatar.state.effects.includes("gravity")) {
+						var mapLength = request.game.data.map.length * 32
+						var distance = 1000000
+						var closestAura = null
+
+						for (var a in request.game.data.auras) {
+							var aura = request.game.data.auras[a]
+							if ((aura.name !== avatar.name) && (aura.song == "gravity") && getWithin(mapLength, aura.x, aura.y, aura.radius, avatar.state.x + 16, avatar.state.y + 32, 16) < distance) {
+								closestAura = aura
+							}
+						}
+
+						if (closestAura) {
+							if (closestAura.y > avatar.state.y) {
+								avatar.state.vy += 2
+							}
+							else {
+								avatar.state.vy += -1
+							}
+
+							if ((avatar.state.x + 16) < closestAura.radius && closestAura.x > (mapLength - closestAura.radius)) {
+								avatar.state.vx += -1
+							}
+							else if ((avatar.state.x + 16) > (mapLength - closestAura.radius) && closestAura.x < closestAura.radius) {
+								avatar.state.vx += 1
+							}
+							else {
+								avatar.state.vx += (closestAura.x > avatar.state.x + 16) ? 1 : -1
+							}
+						}
 					}
 			}
 			catch (error) {main.logError(error)}
@@ -1516,7 +1549,7 @@
 						if (aura.name !== avatar.name) {
 							continue
 						}
-						else if (!avatar.state.health || avatar.state.effects.includes("negation") || !getMatch(aura.melody, beats)) {
+						else if (!avatar.state.health || !getMatch(aura.melody, beats)) {
 							request.game.data.auras.splice(a, 1)
 							a--
 						}
@@ -1529,7 +1562,7 @@
 					}
 
 				// create new aura ?
-					if (!auraExists && avatar.state.health && !avatar.state.effects.includes("negation")) {
+					if (!auraExists && avatar.state.health) {
 						var songs = main.getAsset("songs")
 
 						var keys  = Object.keys(songs)

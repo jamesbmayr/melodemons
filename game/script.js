@@ -118,7 +118,7 @@
 					}
 
 				// prevent spamming notes
-					if (type == "Note" || !data.state || !data.state.start) {
+					if (type == "Note" || !data.state.start || (data.state.beat < 128)) {
 						if (data.pressed.includes(event.code)) {
 							if (press) {
 								type = null
@@ -193,11 +193,15 @@
 				}
 
 			// draw
-				if ((!data.state || !data.state.start) && data.clicked) {
+				if (!data.state.start && data.clicked) {
 					drawMenu()
 				}
-				else if (data.state && data.state.start && data.map) {
+				else if (data.state.start && data.map) {
 					drawMap(data.map, data.theme, data)
+					if (data.clicked && !data.state.end && data.state.beat <= 128) { // game launch
+						drawDPad((13 * canvas.width / 16), (canvas.height / 4), (canvas.height / 8), data.pressed)
+						drawKeyboard((5 * canvas.width / 16), (canvas.height / 4), (canvas.width / 2), (canvas.height / 4), data.pressed)
+					}
 				}
 				if (data.message) {
 					drawMessage()
@@ -205,12 +209,13 @@
 
 			// music
 				if (data.clicked && post.launch) {
+					data.pressed = []
 					setInstruments()
 				}
 				if (data.clicked && post.beat) {
 					playMusic()
 				}
-				if (data.clicked && (!data.state || !data.state.start) && (post.heroes[id] && !Object.keys(instruments).includes(post.heroes[id].instrument))) {
+				if (data.clicked && !data.state.start && post.heroes[id] && !Object.keys(instruments).includes(post.heroes[id].instrument)) {
 					setInstruments()
 				}
 
@@ -228,7 +233,7 @@
 /*** menu ***/
 	/* drawMessage */
 		function drawMessage() {
-			drawText(canvas.width / 2, 7 * canvas.height / 8, data.message, {color: colors.black[4]})
+			drawText(canvas.width / 2, (7 * canvas.height / 8), data.message, {color: colors.black[4]})
 		}
 
 	/* drawMenu */
@@ -310,10 +315,10 @@
 				drawRectangle(x + size          , y +      size     , size, size, {color: (pressed.includes("ArrowUp"   ) ? colors.black[4] : colors.black[3]), opacity: 0.75, radii: {topLeft: (size / 5), topRight: (size / 5), bottomRight: 0, bottomLeft: 0}})	// up
 
 			// label
-				drawText(     x +     (size / 2), y + (2 * size / 5), "change",   {color: colors.black[1], opacity: 0.75, size: (size / 5)}) // left
-				drawText(     x + (3 * size / 2), y + (2 * size / 5), "unselect", {color: colors.black[1], opacity: 0.75, size: (size / 5)}) // down
-				drawText(     x + (5 * size / 2), y + (2 * size / 5), "change",   {color: colors.black[1], opacity: 0.75, size: (size / 5)}) // right
-				drawText(     x + (3 * size / 2), y + (7 * size / 5), "select",   {color: colors.black[1], opacity: 0.75, size: (size / 5)}) // up
+				drawText(     x +     (size / 2), y + (2 * size / 5), (data.state.start ? "left"  : "change"  ), {color: colors.black[1], opacity: 0.75, size: (size / 5)}) // left
+				drawText(     x + (3 * size / 2), y + (2 * size / 5), (data.state.start ? "fall"  : "unselect"), {color: colors.black[1], opacity: 0.75, size: (size / 5)}) // down
+				drawText(     x + (5 * size / 2), y + (2 * size / 5), (data.state.start ? "right" : "change"  ), {color: colors.black[1], opacity: 0.75, size: (size / 5)}) // right
+				drawText(     x + (3 * size / 2), y + (7 * size / 5), (data.state.start ? "jump"  : "select"  ), {color: colors.black[1], opacity: 0.75, size: (size / 5)}) // up
 		}
 
 	/* drawKeyboard */
@@ -352,6 +357,11 @@
 						var xOffset = (n == 2) ? (width / notesLength) : 0
 						drawRectangle(x + (n * width / notesLength) + (7 * width / notesLength / 8) + xOffset, y + (3 * height / 8), (width / notesLength / 4), (5 * height / 8), {color: colors.black[4], opacity: 0.75, radii: {topLeft: 0, topRight: 0, bottomRight: 10, bottomLeft: 10}})
 					}
+				}
+
+			// instructions
+				if (data.state.start) {
+					drawText(x + (width / 2), y - (height / 4), "chords: arrows | melodies: auras", {color: colors.black[4], blur: 8, shadow: colors.white[4], opacity: 0.75, size: width / notesLength / 2})
 				}
 		}
 
@@ -440,7 +450,7 @@
 					var sixteenth  = Math.floor(data.state.beat % 8    / 2) // 4 sixteenths
 
 				// special sections
-					if (!data.state || !data.state.start || launchingSoon || data.state.end) {
+					if (!data.state.start || launchingSoon || data.state.end) {
 						var soundtrack = "menu"
 							section = 0
 					}
