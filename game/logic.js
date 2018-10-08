@@ -1262,11 +1262,11 @@
 
 									if      (notes.length && avatar.state.tower.platforms[0] && avatar.state.tower.platforms[0].team == avatar.team && notes.includes(avatar.state.tower.platforms[0].note)) {
 										avatar.state.health = 255
-										avatar.state.cooldown = 8
+										avatar.state.cooldown = 4
 									}
 									else if (notes.length && avatar.state.tower.platforms[1] && avatar.state.tower.platforms[1].team == avatar.team && notes.includes(avatar.state.tower.platforms[1].note)) {
 										avatar.state.health = 255
-										avatar.state.cooldown = 8
+										avatar.state.cooldown = 4
 									}
 								}
 							}
