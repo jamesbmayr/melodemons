@@ -107,10 +107,7 @@
 					var type  = null
 					var press = (event.type == "keydown") ? true : false
 
-					if ([1,2,3,4,5,6,7,8,9,10,11,12].includes(key)) {
-						type = "Number"
-					}
-					else if (["up","right","down","left"].includes(key)) {
+					if (["up","right","down","left"].includes(key)) {
 						type = "Arrow"
 					}
 					else if (key) {
@@ -148,39 +145,63 @@
 		}
 
 	/* submitClick */
-		document.addEventListener("click", submitClick)
 		function submitClick(event) {
-			if (!data.clicked) {
-				// overlay
-					data.clicked = true
-					if (document.getElementById("overlay")) {
-						document.getElementById("overlay").remove()
-					}
-					document.body.className = "clicked"
+			var firstClick = false
 
-				// audio
+			// picking a team
+				if (socket && event.target.id == "hero-button") {
+					socket.send(JSON.stringify({
+						action: "submitTeam",
+						team:   "heroes"
+					}))
+
+					document.getElementById("overlay").remove()
+					firstClick = true
+				}
+				else if (socket && event.target.id == "demon-button") {
+					socket.send(JSON.stringify({
+						action: "submitTeam",
+						team:   "demons"
+					}))
+
+					document.getElementById("overlay").remove()
+					firstClick = true
+				}
+
+			// rejoin
+				else if (event.target.id == "rejoin") {
+					event.target.remove()
+					firstClick = true
+				}
+
+			// save click & create audio
+				if (firstClick) {
+					data.clicked = true
+					document.body.className = "clicked"
+					
 					data.pressed = []
 					buildAudio()
 					setInstruments()
-			}
+				}
 		}
 
 	/* receivePost */
 		function receivePost(post) {
-			// redirects
+			// redirect or update info
 				if (post.location) {
 					window.location = post.location
 				}
-
-			// others
 				else {
 					for (var k in post) {
 						data[k] = post[k]
 					}
 				}
 
-			// message
-				if (post.message) {
+			// overlay or message
+				if (post.intro || post.rejoin) {
+					createOverlay(post)
+				}
+				else if (post.message) {
 					if (data.eraseTimer) {
 						clearInterval(eraseTimer) 
 					}
@@ -193,18 +214,18 @@
 				}
 
 			// draw
-				if (!data.state.start && data.clicked) {
+				if (!data.state.start && data.clicked && data.team) {
 					drawMenu()
+					drawMessage()
 				}
 				else if (data.state.start && data.map) {
 					drawMap(data.map, data.theme, data)
+					drawMessage()
+					
 					if (data.clicked && !data.state.end && data.state.beat <= 128) { // game launch
 						drawDPad((13 * canvas.width / 16), (canvas.height / 4), (canvas.height / 8), data.pressed)
 						drawKeyboard((5 * canvas.width / 16), (canvas.height / 4), (canvas.width / 2), (canvas.height / 4), data.pressed)
 					}
-				}
-				if (data.message) {
-					drawMessage()
 				}
 
 			// music
@@ -215,25 +236,59 @@
 				if (data.clicked && post.beat) {
 					playMusic()
 				}
-				if (data.clicked && !data.state.start && post.heroes[id] && !Object.keys(instruments).includes(post.heroes[id].instrument)) {
+				if (data.clicked && !data.state.start && ((post.heroes[id] && !Object.keys(instruments).includes(post.heroes[id].instrument)) || (post.demons[id] && !Object.keys(instruments).includes(post.demons[id].instrument)))) {
 					setInstruments()
-				}
-
-			// overlay
-				if (post.intro  && !data.clicked) {
-					document.getElementById("overlay").className = "intro"
-					document.getElementById("overlay").innerHTML = post.intro
-				}
-				if (post.rejoin && !data.clicked) {
-					document.getElementById("overlay").className = "rejoin"
-					document.getElementById("overlay").innerHTML = post.rejoin
 				}
 		}
 
-/*** menu ***/
+/*** menu ***/	
+	/* createOverlay */
+		function createOverlay(post) {
+			// intro
+				if (post.intro) {
+					var overlay = document.createElement("div")
+						overlay.id = "overlay"
+
+					var intro = document.createElement("div")
+						intro.id = "intro"
+						intro.innerHTML = post.intro
+					overlay.appendChild(intro)
+
+					var heroButton = document.createElement("button")
+						heroButton.id = "hero-button"
+						heroButton.innerText = "join the heroes"
+						heroButton.addEventListener("click", submitClick)
+					overlay.appendChild(heroButton)
+
+					var demonButton = document.createElement("button")
+						demonButton.id = "demon-button"
+						demonButton.innerText = "join the demons"
+						demonButton.addEventListener("click", submitClick)
+					overlay.appendChild(demonButton)
+
+					document.body.appendChild(overlay)
+				}
+
+			// rejoin
+				else if (post.rejoin) {
+					var rejoin = document.createElement("div")
+						rejoin.id = "rejoin"
+						rejoin.addEventListener("click", submitClick)
+
+					var inner = document.createElement("div")
+						inner.id = "rejoin-inner"
+						inner.innerText = post.rejoin
+					rejoin.append(inner)
+						
+					document.body.appendChild(rejoin)
+				}
+		}
+
 	/* drawMessage */
 		function drawMessage() {
-			drawText(canvas.width / 2, (7 * canvas.height / 8), data.message, {color: colors.black[4]})
+			if (data.message) {
+				drawText(canvas.width / 2, (7 * canvas.height / 8), data.message, {color: colors.black[4]})
+			}
 		}
 
 	/* drawMenu */
@@ -247,29 +302,36 @@
 				drawKeyboard((5 * canvas.width / 16), (canvas.height / 4), (canvas.width / 2), (canvas.height / 4), data.pressed)
 
 			// demons
-				if (data.admin) {
-					// chosen theme
-						var chosenTheme = data.theme
+				if (data.team == "demons") {
+					// chosen / taken
+						var chosenDemon = data.demons[id]
+						var takenDemons = []
+						for (var d in data.demons) {
+							if (data.demons[d]) {
+								takenDemons.push(data.demons[d].name)
+							}
+						}
 
 					// draw options
-						for (var o = 0; o < data.options.length; o++) {
+						var optionKeys = Object.keys(data.options)
+						for (var o = 0; o < optionKeys.length; o++) {
 							var shadow = (o == data.selection) ? colors.red[2] : colors.black[4] // shadow as selection tool
-							var x = (canvas.width  / 2) + 400 - ((data.options.length - o) * 100) + 50 - 40
+							var color = (chosenDemon && chosenDemon.name == data.options[optionKeys[o]].name) ? colors.red[1] : takenDemons.includes(data.options[optionKeys[o]].name) ? colors.black[4] : colors.white[4]
+							var x = (canvas.width  / 2) + 400 - ((optionKeys.length - o) * 100) + 50
 							var y = (canvas.height / 2)
-							var isChosen = (chosenTheme && chosenTheme.name == data.options[o].name) ? true : false
 
-							drawRectangle(x, y, 80, 80, {color: colors.white[4], shadow: shadow, blur: 32, radii: {topLeft: 8, topRight: 8, bottomRight: 8, bottomLeft: 8}})
-							drawTheme(    x, y, 80, 80, data.options[o], isChosen)
+							drawRectangle(x - 40, y    , 80, 80, {color: color, shadow: shadow, blur: 32, radii: {topLeft: 8, topRight: 8, bottomRight: 8, bottomLeft: 8}})
+							drawAvatar(   x - 16, y + 8, 32, 64, data.options[optionKeys[o]])
 						}
 
 					// melody
-						if (chosenTheme) {
-							drawText(canvas.width / 2, 13 * canvas.height / 16, "launch game?", {color: colors.red[4], size: 32, shadow: colors.red[2], blur: 16})
+						if (chosenDemon) {
+							drawText(canvas.width / 2, 13 * canvas.height / 16, "melody: " + chosenDemon.melody, {color: chosenDemon.colors[0], size: 32, shadow: colors.red[2], blur: 16})
 						}
 				}
 
 			// heroes
-				else {
+				else if (data.team == "heroes") {
 					// chosen / taken
 						var chosenHero = data.heroes[id]
 						var takenHeroes = []
@@ -283,7 +345,7 @@
 						var optionKeys = Object.keys(data.options)
 						for (var o = 0; o < optionKeys.length; o++) {
 							var shadow = (o == data.selection) ? colors.blue[2] : colors.black[4] // shadow as selection tool
-							var color = (chosenHero && chosenHero.name == data.options[optionKeys[o]].name) ? colors.blue[2] : takenHeroes.includes(data.options[optionKeys[o]].name) ? colors.black[4] : colors.white[4]
+							var color = (chosenHero && chosenHero.name == data.options[optionKeys[o]].name) ? colors.blue[1] : takenHeroes.includes(data.options[optionKeys[o]].name) ? colors.black[4] : colors.white[4]
 							var x = (canvas.width  / 2) + 400 - ((optionKeys.length - o) * 100) + 50
 							var y = (canvas.height / 2)
 
@@ -304,6 +366,26 @@
 				x = x - (3 * size / 2)
 				y = y - (size)
 
+			// words
+				if (data.state.start) {
+					var wordsUp    = "jump"
+					var wordsDown  = "fall"
+					var wordsLeft  = "move"
+					var wordsRight = "move"
+				}
+				else if (data.heroes[id] || data.demons[id]) {
+					var wordsUp    = "launch"
+					var wordsDown  = "unselect"
+					var wordsLeft  = ""
+					var wordsRight = ""
+				}
+				else {
+					var wordsUp    = "select"
+					var wordsDown  = ""
+					var wordsLeft  = "change"
+					var wordsRight = "change"
+				}
+
 			// draw squares
 				drawRectangle(x                 , y                 , size, size, {color: colors.white[4], shadow: colors.black[4], blur: 8, opacity: 0.25, radii: {topLeft: (size / 5), topRight: 0, bottomRight: 0, bottomLeft: (size / 5)}})	// left
 				drawRectangle(x + size          , y                 , size, size, {color: colors.white[4], shadow: colors.black[4], blur: 8, opacity: 0.25, radii: {topLeft: 0, topRight: 0, bottomRight: 0, bottomLeft: 0}}) 					// down
@@ -315,10 +397,10 @@
 				drawRectangle(x + size          , y +      size     , size, size, {color: (pressed.includes("ArrowUp"   ) ? colors.black[4] : colors.black[3]), opacity: 0.75, radii: {topLeft: (size / 5), topRight: (size / 5), bottomRight: 0, bottomLeft: 0}})	// up
 
 			// label
-				drawText(     x +     (size / 2), y + (2 * size / 5), (data.state.start ? "left"  : "change"  ), {color: colors.black[1], opacity: 0.75, size: (size / 5)}) // left
-				drawText(     x + (3 * size / 2), y + (2 * size / 5), (data.state.start ? "fall"  : "unselect"), {color: colors.black[1], opacity: 0.75, size: (size / 5)}) // down
-				drawText(     x + (5 * size / 2), y + (2 * size / 5), (data.state.start ? "right" : "change"  ), {color: colors.black[1], opacity: 0.75, size: (size / 5)}) // right
-				drawText(     x + (3 * size / 2), y + (7 * size / 5), (data.state.start ? "jump"  : "select"  ), {color: colors.black[1], opacity: 0.75, size: (size / 5)}) // up
+				drawText(     x +     (size / 2), y + (2 * size / 5), wordsLeft , {color: colors.black[1], opacity: 0.75, size: (size / 5)}) // left
+				drawText(     x + (3 * size / 2), y + (2 * size / 5), wordsDown , {color: colors.black[1], opacity: 0.75, size: (size / 5)}) // down
+				drawText(     x + (5 * size / 2), y + (2 * size / 5), wordsRight, {color: colors.black[1], opacity: 0.75, size: (size / 5)}) // right
+				drawText(     x + (3 * size / 2), y + (7 * size / 5), wordsUp   , {color: colors.black[1], opacity: 0.75, size: (size / 5)}) // up
 		}
 
 	/* drawKeyboard */
@@ -365,35 +447,6 @@
 				}
 		}
 
-	/* drawTheme */
-		function drawTheme(x, y, width, height, theme, isChosen) {
-			// variables
-				var terrainColor = (isChosen ? theme.terrainForeground : theme.terrainBackground)
-				var towerColor   = (isChosen ? theme.towerForeground   : theme.towerBackground)
-				var pitColor     = (isChosen ? theme.pitForeground     : theme.pitBackground)
-
-			// sky
-				drawRectangle(x, y, width, height, {gradient: {x1: x, y1: y, x2: x, y2: y + height, colors: {"0": theme.skyBottom, "1": theme.skyTop}}, radii: {topLeft: (width / 20), topRight: (width / 20), bottomRight: (width / 10), bottomLeft: (width / 10)}})
-
-			// tower
-				drawRectangle(x + (3 * width / 4), y, (width / 4), height, {color: towerColor,   radii: {topLeft: (width / 16), topRight: (width / 16), bottomRight: (width / 10), bottomLeft: 0}})
-
-			// terrain
-				drawRectangle(x     , y, (width / 4), (height / 2), {color: terrainColor, radii: {topLeft: (width / 16), topRight: (width / 16), bottomRight: 0, bottomLeft: (width / 20)}})
-				drawRectangle(x + (width / 2), y, (width / 2), (height / 4), {color: terrainColor, radii: {topLeft: (width / 16), topRight: 0, bottomRight: (width / 20), bottomLeft: 0}})
-
-			// pit
-				drawRectangle(x + (width / 4), y, (width / 4), (height / 8), {color: pitColor})
-
-			// name
-				if (isChosen) {
-					drawText(x + (width / 2), y + (5 * height / 4), theme.name, {opacity: 1, color: theme.pitForeground, size: (width / 4), shadow: colors.red[2], blur: (width / 20)})   // name
-				}
-				else {
-					drawText(x + (width / 2), y + (5 * height / 4), theme.name, {opacity: 1, color: theme.pitForeground, size: (width / 4)})   // name
-				}
-		}
-
 /*** music ***/
 	/* setInstruments */
 		function setInstruments() {
@@ -405,7 +458,7 @@
 			// avatar sounds
 				var keys = Object.keys(data.heroes).concat(Object.keys(data.demons))
 				for (var k in keys) {
-					var avatar = (keys[k] > -1) ? data.demons[keys[k]] : data.heroes[keys[k]]
+					var avatar = (data && data.heroes && data.heroes[id]) ? data.heroes[id] : (data && data.demons && data.demons[id]) ? data.demons[id] : null
 					if (avatar && avatar.instrument) {
 						instruments[avatar.instrument] = buildInstrument(getInstrument(avatar.instrument))
 					}
@@ -418,18 +471,18 @@
 	
 	/* playMusic */
 		function playMusic() {
-			var avatar = data.heroes[id] || data.demons.find(function(d) { return d.state.selected })
+			var avatar    = (data && data.heroes && data.heroes[id]) ? data.heroes[id] : (data && data.demons && data.demons[id]) ? data.demons[id] : null
 			playSoundEffects(avatar)
 			playAvatarSounds(avatar)
-			playSoundtrack(  avatar)			
+			playSoundtrack(  avatar)
 		}
 
 	/* playSoundEffects */
 		function playSoundEffects(avatar) {
-			if (avatar.state.collision) {
+			if (avatar && avatar.state.collision) {
 				instruments.honeyharp.press(frequencies.A[0])
 			}
-			if (avatar.state.shot) {
+			if (avatar && avatar.state.shot) {
 				instruments.honeyharp.press(frequences.A[0])
 			}
 		}
@@ -473,11 +526,11 @@
 
 	/* playAvatarSounds */
 		function playAvatarSounds(avatar) {
-			if (data.state.start && avatar.state.health) {
+			if (avatar && data.state.start && avatar.state.health) {
 				// heroes & demons
 					var keys = Object.keys(data.heroes).concat(Object.keys(data.demons))
 					for (var k = 0; k < keys.length; k++) {
-						var opponent = (keys[k] > -1) ? data.demons[keys[k]] : data.heroes[keys[k]]
+						var opponent = (data && data.heroes && data.heroes[id]) ? data.heroes[id] : (data && data.demons && data.demons[id]) ? data.demons[id] : null
 
 						var notes = opponent.state.keys[opponent.state.keys.length - 2]
 						for (var n in notes) {
@@ -485,7 +538,7 @@
 						}
 					}
 			}
-			else {
+			else if (avatar) {
 				var notes = avatar.state.keys[avatar.state.keys.length - 2]
 				for (var n in notes) {
 					instruments[avatar.instrument].press(frequencies[notes[n][0]][notes[n][1]])

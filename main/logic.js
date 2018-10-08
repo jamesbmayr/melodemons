@@ -64,12 +64,12 @@
 					break
 					case "meta":
 						return '<meta charset="UTF-8"/>\
-								<meta name="description" content="Melodemons is an asymmetrical multiplayer music-based tower defense platformer."/>\
+								<meta name="description" content="Melodemons is a real-time multiplayer music-based tower defense platformer."/>\
 								<meta name="keywords" content="game,word,guess,party,chaos,switch,swap,play"/>\
 								<meta name="author" content="James Mayr"/>\
-								<meta property="og:title" content="Melodemons: an asymmetrical multiplayer music-based tower defense platformer"/>\
+								<meta property="og:title" content="Melodemons: a real-time multiplayer music-based tower defense platformer"/>\
 								<meta property="og:url" content="https://melodemons.com"/>\
-								<meta property="og:description" content="Melodemons is an asymmetrical multiplayer music-based tower defense platformer."/>\
+								<meta property="og:description" content="Melodemons is a real-time multiplayer music-based tower defense platformer."/>\
 								<meta property="og:image" content="https://melodemons.herokuapp..com/banner.png"/>\
 								<meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>'
 					break
@@ -106,16 +106,11 @@
 
 					case "text":
 						return {
-							main:     "The sacred towers each protect a magic song. Control the tower to take its power.",
-							numbers:  " - Use NUMBER keys to select a demon.",
-							arrows:   " - Use ARROW keys to move.",
-							letters:  " - Use LETTER keys to play notes.",
-							towers:   " - Play the note of a tower platform to claim it, and resurrect there if you die.",
-							thirds:   " - Play chords - 3 simultaneous notes - to cast magic arrows.",
-							songs:    " - Play tower songs - or your name's first 4 letters - to create magic auras.",
-							heroes:   "As a hero of good, claim every tower to sound the Song of Salvation.",
-							demons:   "As the demons of evil, claim every tower to sound the Song of Desolation.",
-							begin:    "[ click to begin ]",
+							main:     "The sacred towers each protect a magic song. Control a tower to take its power.",
+							towers:   " - Play a tower platform's note to claim it - resurrect there when dead.",
+							thirds:   " - Play chords - three notes at the same time - to shoot a magic arrow.",
+							songs:    " - Play tower songs - or your name's first 4 letters - to create an aura.",
+							goal:     "Claim every tower to sound the song of victory",
 							rejoin:   "[ click to rejoin ]"
 						}
 					break
@@ -601,12 +596,12 @@
 									winning: {
 										team:      null,
 										color:     null,
-										countdown: 32
+										countdown: 512
 									}
 								},
 								theme:  null,
 								heroes: {},
-								demons: [],
+								demons: {},
 								towers: [],
 								map:    [],
 								arrows: [],
@@ -620,6 +615,7 @@
 							id:         null,
 							created:    (new Date().getTime()),
 							selection:  0,
+							team:       null,
 							connected:  false,
 							connection: null
 						}
@@ -640,7 +636,6 @@
 							rowUp:     0,
 							rowDown:   0,
 							facing:    ["left","right"][Math.floor(Math.random() * 2)],
-							selected:  true,
 							jumpable:  false,
 							surface:   false,
 							tower:     null,

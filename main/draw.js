@@ -154,7 +154,7 @@
 		window.drawBackground = drawBackground
 		function drawBackground(map, theme, data, isSample) {
 			// variables
-				var avatar    = (data && data.heroes) ? (data.heroes[id] || data.demons.find(function(d) { return d.state.selected }) || {state: {x: 0, y: 0}}) : (data.tracker || {state: {x: 0, y: 0}})
+				var avatar    = (data && data.heroes && data.heroes[id]) ? data.heroes[id] : (data && data.demons && data.demons[id]) ? data.demons[id] : (data.tracker || {state: {x: 0, y: 0}})
 				var mapLength = map.length * 32
 				var oppositeX = (avatar.state.x + (mapLength / 2)) % mapLength
 				var offsetX   = (oppositeX % 32)
@@ -210,8 +210,8 @@
 				if (!isSample) {
 					var keys = Object.keys(data.heroes).concat(Object.keys(data.demons))
 					for (var k in keys) {
-						var avatar = (keys[k] > -1) ? data.demons[keys[k]] : data.heroes[keys[k]]
-						drawAvatar(1280 - ((avatar.state.x - startX + mapLength + 20) % mapLength - 20) / 1.6, (avatar.state.y / 1.6) + 40, 20, 40, avatar, data.admin)
+						var avatar = (data && data.heroes && data.heroes[keys[k]]) ? data.heroes[keys[k]] : (data && data.demons && data.demons[keys[k]]) ? data.demons[keys[k]] : null
+						drawAvatar(1280 - ((avatar.state.x - startX + mapLength + 20) % mapLength - 20) / 1.6, (avatar.state.y / 1.6) + 40, 20, 40, avatar)
 					}
 				}
 
@@ -231,7 +231,7 @@
 		function drawForeground(map, theme, data, isSample) {
 			// variables
 				var towers    = []
-				var avatar    = (data && data.heroes) ? (data.heroes[id] || data.demons.find(function(d) { return d.state.selected })|| {state: {x: 0, y: 0}}) : (data.tracker || {state: {x: 0, y: 0}})
+				var avatar    = (data && data.heroes && data.heroes[id]) ? data.heroes[id] : (data && data.demons && data.demons[id]) ? data.demons[id] : (data.tracker || {state: {x: 0, y: 0}})
 				var mapLength = map.length * 32
 				var offsetX   = avatar.state.x  % 32
 				
@@ -286,8 +286,8 @@
 				if (!isSample) {
 					var keys = Object.keys(data.heroes).concat(Object.keys(data.demons))
 					for (var k in keys) {
-						var avatar = (keys[k] > -1) ? data.demons[keys[k]] : data.heroes[keys[k]]
-						drawAvatar((avatar.state.x - startX + mapLength + 32) % mapLength - 32, avatar.state.y, 32, 64, avatar, data.admin)
+						var avatar = (data && data.heroes && data.heroes[keys[k]]) ? data.heroes[keys[k]] : (data && data.demons && data.demons[keys[k]]) ? data.demons[keys[k]] : null
+						drawAvatar((avatar.state.x - startX + mapLength + 32) % mapLength - 32, avatar.state.y, 32, 64, avatar)
 					}
 				}
 
@@ -314,7 +314,7 @@
 
 	/* drawAvatar */
 		window.drawAvatar = drawAvatar
-		function drawAvatar(x, y, width, height, avatar, admin) {
+		function drawAvatar(x, y, width, height, avatar) {
 			// variables
 				if (avatar.state) {
 					var healthColor = avatar.state.health ? ("rgb(128, " + avatar.state.health + ", 000)") : "rgb(255,255,255)"
@@ -334,10 +334,6 @@
 				if (avatar.state) {
 					drawText(x + (width / 2), y + (5  * height / 4), avatar.name.slice(0,4).toUpperCase() + avatar.name.slice(4), {opacity: opacity, color: avatar.colors[2],     size: (3 * width / 8)})	// name
 					drawLine(x              , y + (9  * height / 8), x + healthWidth, y + (9 * height / 8)                      , {opacity: opacity, color: healthColor, blur: 2, shadow: healthColor}) 	// health bar
-					
-					if ((admin && avatar.team == "demons" && avatar.state.selected)) {
-						drawText(x + (width / 2), y + (6 * height / 4), avatar.song                          					    , {opacity: opacity, color: avatar.colors[2],     size: (3 * width / 8)})   // song
-					}
 				}
 				else {
 					drawText(x + (width / 2), y + (5 * height / 4), avatar.name                          , {opacity: opacity, color: avatar.colors[2],     size: (width / 2)})   // name
@@ -359,10 +355,6 @@
 					drawTriangle(x -      (width / 16) + xOffset, y +     (height / 2) + (height / 16) * Math.max(0, yOffset), x +  (3 * width / 16) + xOffset, y + (height / 2) + (height / 16) * Math.max(0, yOffset), x +     (width / 4), y + (height / 4) + (height / 16) * Math.max(0, yOffset), {opacity: opacity, color: avatar.colors[2], shadow: avatar.colors[2], blur: 2}) // left hand
 					drawTriangle(x + (13 * width / 16) + xOffset, y +     (height / 2) + (height / 16) * Math.max(0, yOffset), x + (17 * width / 16) + xOffset, y + (height / 2) + (height / 16) * Math.max(0, yOffset), x + (3 * width / 4), y + (height / 4) + (height / 16) * Math.max(0, yOffset), {opacity: opacity, color: avatar.colors[2], shadow: avatar.colors[2], blur: 2}) // right hand
 					drawTriangle(x +      (width / 2)           , y + (7 * height / 8)                                       , x                              , y + (height / 8)                                       , x +      width     , y + (height / 8)                                       , {opacity: opacity, color: avatar.colors[0], shadow: avatar.colors[2], blur: 8}) // body
-
-					if (admin) {
-						drawText(x + (width / 2), y + (height / 4), avatar.number, {opacity: opacity, color: avatar.colors[1], size: (width / 2)}) // demon number
-					}
 				}
 
 			// head

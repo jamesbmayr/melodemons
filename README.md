@@ -1,6 +1,6 @@
 # Melodemons
 
-an asymmetrical multiplayer music-based tower defense platformer: http://melodemons.herokuapp.com
+a real-time multiplayer music-based tower defense platformer: http://www.melodemons.com
 
 ---
 <pre>

@@ -553,7 +553,7 @@
 							"delay":0.21428571428571427,
 							"feedback":0.2748267474475922
 						},
-						"volume": 0.75
+						"volume": 0.5
 					}
 				break
 				case "buzzorgan":

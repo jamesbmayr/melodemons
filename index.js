@@ -451,9 +451,9 @@
 										catch (error) {_400(error)}
 									break
 
-									case "submitNumber":
+									case "submitTeam":
 										try {
-											game.submitNumber(request, function(recipients, data) {
+											game.submitTeam(request, function(recipients, data) {
 												data = JSON.stringify(data)
 												for (var r in recipients) {
 													try {
@@ -470,6 +470,7 @@
 
 									default:
 										_400("invalid action")
+									break
 								}
 							}
 						})
@@ -491,9 +492,7 @@
 							}, 50)
 						}
 				}
-				catch (error) {
-					_400("unable to route socket")
-				}
+				catch (error) {_400("unable to route socket")}
 			}
 
 		/* _400 */
