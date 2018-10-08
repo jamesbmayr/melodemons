@@ -110,7 +110,7 @@
 							towers:   " - Play a tower platform's note to claim it - resurrect there when dead.",
 							thirds:   " - Play chords - three notes at the same time - to shoot a magic arrow.",
 							songs:    " - Play tower songs - or your name's first 4 letters - to create an aura.",
-							goal:     "Claim every tower to sound the song of victory",
+							goal:     "Claim every tower to sound the song of victory.",
 							rejoin:   "[ click to rejoin ]"
 						}
 					break
