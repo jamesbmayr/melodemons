@@ -166,78 +166,46 @@
 		function changeSelection(request, callback) {
 			try {
 				var player = request.game.players[request.session.id] || {}
+				if (player.team == "heroes" || player.team == "demons") {
+					// get all
+						var options = main.getAsset(player.team)
 
-				if (player.team == "demons") {
-					// get demons
-						var demons = main.getAsset("demons")
-
-					// set demon
-						if (!request.game.data.demons[request.session.id]) {
+					// not yet selected
+						if (!request.game.data[player.team][request.session.id]) {
 							if (request.post.key == "left") {
 								player.selection = player.selection - 1
-								if (player.selection < 0) { player.selection = demons.length - 1 } // wrap around
+								if (player.selection < 0) { player.selection = options.length - 1 } // wrap around
 								callback([request.session.id], {success: true, selection: player.selection})
 							}
 							else if (request.post.key == "right") {
 								player.selection = player.selection + 1
-								if (player.selection > demons.length - 1) { player.selection = 0 } // wrap around
-								callback([request.session.id], {success: true, selection: player.selection})
-							}
-							else if (request.post.key == "up") {
-								var demon = createDemon(request, demons[player.selection])
-								if (!demon) {
-									callback([request.session.id], {success: false, message: "demon already taken"})
-								}
-								else {
-									request.game.data.demons[request.session.id] = demons[player.selection]
+									if (player.selection > options.length - 1) { player.selection = 0 } // wrap around
 									callback([request.session.id], {success: true, selection: player.selection})
-								}
-							}
-						}	
-
-					// unset demon
-						else {
-							if (request.post.key == "down") {
-								delete request.game.data.demons[request.session.id]
-								callback([request.session.id], {success: true, selection: player.selection})
 							}
 							else if (request.post.key == "up") {
-								launchGame(request, callback)
-							}
-						}
-				}
-				else if (player.team == "heroes") {
-					// get heroes
-						var heroes = main.getAsset("heroes")
-
-					// set hero
-						if (!request.game.data.heroes[request.session.id]) {
-							if (request.post.key == "left") {
-								player.selection = player.selection - 1
-								if (player.selection < 0) { player.selection = heroes.length - 1 } // wrap around
-								callback([request.session.id], {success: true, selection: player.selection})
-							}
-							else if (request.post.key == "right") {
-								player.selection = player.selection + 1
-								if (player.selection > heroes.length - 1) { player.selection = 0 } // wrap around
-								callback([request.session.id], {success: true, selection: player.selection})
-							}
-							else if (request.post.key == "up") {
-								var hero = createHero(request, heroes[player.selection])
-								if (!hero) {
-									callback([request.session.id], {success: false, message: "hero already taken"})
+								if (player.team == "heroes") {
+									var type = "hero"
+									var avatar = createHero( request, options[player.selection])
 								}
 								else {
-									request.game.data.heroes[request.session.id] = heroes[player.selection]
+									var type = "demon"
+									var avatar = createDemon(request, options[player.selection])
+								}
+
+								if (!avatar) {
+									callback([request.session.id], {success: false, message: type + " already taken"})
+								}
+								else {
+									request.game.data[player.team][request.session.id] = options[player.selection]
 									callback([request.session.id], {success: true, selection: player.selection})
 								}
 							}
 						}
 
-					// unset hero
+					// already selected
 						else {
 							if (request.post.key == "down") {
-								delete request.game.data.heroes[request.session.id]
+								delete request.game.data[player.team][request.session.id]
 								callback([request.session.id], {success: true, selection: player.selection})
 							}
 							else if (request.post.key == "up") {
@@ -278,8 +246,10 @@
 				// begin
 					else {
 						// towers
-							while (request.game.data.towers.length < 3) {
-								request.game.data.towers.push(createTower(request))
+							var towerCount = 3
+							while (request.game.data.towers.length < towerCount) {
+								var team = (request.game.data.towers.length == 0) ? "heroes" : (request.game.data.towers.length == Math.ceil(towerCount / 2)) ? "demons" : null
+								request.game.data.towers.push(createTower(request, team))
 							}
 
 						// map
@@ -379,7 +349,7 @@
 
 	/* createTower */
 		module.exports.createTower = createTower
-		function createTower(request) {
+		function createTower(request, team) {
 			try {
 				// get existing towers
 					var currentTowers = request.game.data.towers.map(function(t) {
@@ -394,10 +364,9 @@
 					var tower  = main.chooseRandom(allTowers)
 
 				// set team
-					var players = Object.keys(request.game.players)
 					var colors = main.getAsset("colors")
 
-					if (currentTowers.length == 0) {
+					if (team == "heroes") {
 						tower.team = "heroes"
 						tower.colors[2] = colors.blue[2]
 						tower.platforms.forEach(function(p) {
@@ -405,7 +374,7 @@
 							p.color = colors.blue[2]
 						})
 					}
-					else if (currentTowers.length == 2) {
+					else if (team == "demons") {
 						tower.team = "demons"
 						tower.colors[2] = colors.red[2]
 						tower.platforms.forEach(function(p) {
@@ -565,13 +534,13 @@
 
 				// demons
 					else {
-						var tower       = request.game.data.towers[2]
+						var tower       = request.game.data.towers[Math.ceil(request.game.data.towers.length / 2)]
 						var keys  = Object.keys(request.game.data.demons)
 
 						do {
 							var platform   = main.chooseRandom(tower.platforms)
-							avatar.state.x = (platform.x + (64 * 2)) * 32
-							avatar.state.y = (platform.y + 1)        * 32 + 16
+							avatar.state.x = (platform.x + (64 * Math.ceil(request.game.data.towers.length / 2))) * 32
+							avatar.state.y = (platform.y + 1)                                                     * 32 + 16
 						}
 						while (keys.find(function(k) {
 							return ((request.game.data.demons[k].name   !== avatar.name)
@@ -898,45 +867,38 @@
 
 						// aura effects
 							for (var t in towers) {
-								updateTowerAuras(request, towers[t], t)
+								updateTowerAuras(request, towers[t], keys, t)
 							}
 
 							for (var k in keys) {
 								var avatar = request.game.data.demons[keys[k]] || request.game.data.heroes[keys[k]]
-								updateSoundEffects(request, avatar)
-								updateAuras(       request, avatar)
+								updateSoundEffects(request, avatar, keys)
+								updateAuras(       request, avatar, keys)
 							}
 
 						// heroes & demons
 							for (var k in keys) {
 								var avatar = request.game.data.demons[keys[k]] || request.game.data.heroes[keys[k]]
-								updateVelocity(  request, avatar)
-								updateCollisions(request, avatar)
+								updateVelocity(  request, avatar, keys)
+								updateCollisions(request, avatar, keys)
 							}
 
 							for (var k in keys) {
 								var avatar = request.game.data.demons[keys[k]] || request.game.data.heroes[keys[k]]
-								updatePosition(  request, avatar)
-								updateHealth(    request, avatar)
-								updateTower(     request, avatar)
+								updatePosition(  request, avatar, keys)
+								updateHealth(    request, avatar, keys)
+								updateTower(     request, avatar, keys)
 							}
 
 							for (var k in keys) {
 								var avatar = request.game.data.demons[keys[k]] || request.game.data.heroes[keys[k]]
-								updateArrows(    request, avatar)
-								updateEffects(   request, avatar)
-								updateKeys(      request, avatar)
+								updateArrows(    request, avatar, keys)
+								updateEffects(   request, avatar, keys)
+								updateKeys(      request, avatar, keys)
 							}
 
 						// winning ?
-							if (request.game.data.state.winning.team) {
-								request.game.data.state.winning.countdown--
-
-								if (request.game.data.state.winning.countdown <= 0) {
-									request.game.data.state.end = new Date().getTime()
-									request.game.data.state.beat = 0
-								}
-							}
+							updateWinning(       request,         keys)
 
 						callback(Object.keys(request.game.players), {
 							state:  request.game.data.state,
@@ -953,7 +915,7 @@
 
 	/* updateVelocity */
 		module.exports.updateVelocity = updateVelocity
-		function updateVelocity(request, avatar) {
+		function updateVelocity(request, avatar, keys) {
 			try {
 				// adjust vx
 					var minVX = avatar.state.effects.includes("paralysis") ? -5 : -10
@@ -1023,7 +985,7 @@
 
 	/* updatePosition */
 		module.exports.updatePosition = updatePosition
-		function updatePosition(request, avatar) {
+		function updatePosition(request, avatar, keys) {
 			try {
 				// adjust x & y
 					var map            = request.game.data.map
@@ -1144,11 +1106,10 @@
 
 	/* updateCollisions */
 		module.exports.updateCollisions = updateCollisions
-		function updateCollisions(request, avatar) {
+		function updateCollisions(request, avatar, keys) {
 			try {
 				// player - player
 					if (avatar.state.health) {
-						var keys = Object.keys(request.game.data.heroes).concat(Object.keys(request.game.data.demons))
 						var mapLength = request.game.data.map.length * 32
 
 						for (var k in keys) {
@@ -1238,7 +1199,7 @@
 
 	/* updateHealth */
 		module.exports.updateHealth = updateHealth
-		function updateHealth(request, avatar) {
+		function updateHealth(request, avatar, keys) {
 			try {
 				// screen bottom
 					if (avatar.state.y <= 0) {
@@ -1262,11 +1223,11 @@
 
 									if      (notes.length && avatar.state.tower.platforms[0] && avatar.state.tower.platforms[0].team == avatar.team && notes.includes(avatar.state.tower.platforms[0].note)) {
 										avatar.state.health = 255
-										avatar.state.cooldown = 4
+										avatar.state.cooldown = 8
 									}
 									else if (notes.length && avatar.state.tower.platforms[1] && avatar.state.tower.platforms[1].team == avatar.team && notes.includes(avatar.state.tower.platforms[1].note)) {
 										avatar.state.health = 255
-										avatar.state.cooldown = 4
+										avatar.state.cooldown = 8
 									}
 								}
 							}
@@ -1313,7 +1274,7 @@
 
 	/* updateTower */
 		module.exports.updateTower = updateTower
-		function updateTower(request, avatar) {
+		function updateTower(request, avatar, keys) {
 			try {
 				if (avatar.state.health && !avatar.state.cooldown) {
 					// get notes
@@ -1334,7 +1295,7 @@
 								platform.team  = (platform.team ? null : avatar.team)
 								platform.color = (platform.team ? avatar.colors[2] : main.getAsset("colors").black[2])
 								changePlatform = true
-								avatar.state.cooldown = 8
+								avatar.state.cooldown = 4
 							}
 							else if (avatar.state.tower.platforms[1] && avatar.state.tower.platforms[1].team !== avatar.team && notes.includes(avatar.state.tower.platforms[1].note)) {
 								var platform = tower.platforms.find(function (p) {
@@ -1343,7 +1304,7 @@
 								platform.team  = (platform.team ? null : avatar.team)
 								platform.color = (platform.team ? avatar.colors[2] : main.getAsset("colors").black[2])
 								changePlatform = true
-								avatar.state.cooldown = 8
+								avatar.state.cooldown = 4
 							}
 						}
 
@@ -1364,21 +1325,9 @@
 
 							tower.team = heroControl ? "heroes" : demonControl ? "demons" : null
 							if (tower.team !== previousTeam) { // change?
-								if (tower.team == avatar.team) {
-									tower.colors[2] = avatar.colors[2]
-								}
-								else {
-									tower.colors[2] = main.getAsset("colors").black[2]
-								}
-
-								changeTower = true
-								updateSongs(request, tower)
+								tower.colors[2] = (tower.team == avatar.team) ? avatar.colors[2] : main.getAsset("colors").black[2]
+								updateSongs(request, tower, keys)
 							}
-						}
-
-					// countdown ?
-						if (changeTower) {
-							updateWinning(request)
 						}
 				}
 			}
@@ -1387,37 +1336,86 @@
 
 	/* updateWinning */
 		module.exports.updateWinning = updateWinning
-		function updateWinning(request) {
+		function updateWinning(request, keys) {
 			try {
-				var heroWinning     = true
-				var demonWinning    = true
-				var previousWinning = request.game.data.state.winning.team
+				// get tower count
+					var heroTowerCount  = 0
+					var demonTowerCount = 0
 
-				for (var t in request.game.data.towers) {
-					if (request.game.data.towers[t].team !== "heroes") {
-						heroWinning = false
+					for (var t in request.game.data.towers) {
+						if (request.game.data.towers[t].team == "heroes") {
+							heroTowerCount++
+						}
+						if (request.game.data.towers[t].team == "demons") {
+							demonTowerCount++
+						}
 					}
-					if (request.game.data.towers[t].team !== "demons") {
-						demonWinning = false
+
+				// get live player count
+					var heroLiveCount   = 0
+					var demonLiveCount  = 0
+
+					for (var h in request.game.data.heroes) {
+						if (request.game.data.heroes[h].state.health) {
+							heroLiveCount++
+						}
 					}
-				}
 
-				request.game.data.state.winning.team = heroWinning ? "heroes" : demonWinning ? "demons" : null
-				if (request.game.data.state.winning.team !== previousWinning) {
-					var colors = main.getAsset("colors")
+					for (var d in request.game.data.demons) {
+						if (request.game.data.demons[d].state.health) {
+							demonLiveCount++
+						}
+					}
 
-					request.game.data.state.winning.color = heroWinning ? colors.blue[2] : demonWinning ? colors.red[2] : null
-					request.game.data.state.winning.countdown = (8 * 32) + 128 - (request.game.data.state.beat % 128)
-				}
+				// no one's winning yet
+					var previouslyWinning = request.game.data.state.winning.team
+					if (!previouslyWinning) {
+						if (heroTowerCount == request.game.data.towers.length) {
+							request.game.data.state.winning.team = "heroes"
+						}
+						else if (demonTowerCount == request.game.data.towers.length) {
+							request.game.data.state.winning.team = "demons"
+						}
+						else if (!heroTowerCount && !heroLiveCount) {
+							request.game.data.state.winning.team = "demons"
+						}
+						else if (!demonTowerCount && !demonLiveCount) {
+							request.game.data.state.winning.team = "heroes"
+						}
+					}
+
+				// someone's winning
+					else if (previouslyWinning == "heroes" && ( heroTowerCount !== request.game.data.towers.length) && (demonLiveCount || demonTowerCount)) {
+						request.game.data.state.winning.team = null
+					}
+					else if (previouslyWinning == "demons" && (demonTowerCount !== request.game.data.towers.length) && ( heroLiveCount ||  heroTowerCount)) {
+						request.game.data.state.winning.team = null
+					}
+
+				// change ?
+					if (request.game.data.state.winning.team !== previouslyWinning) {
+						var colors = main.getAsset("colors")
+						request.game.data.state.winning.color = (request.game.data.state.winning.team == "heroes") ? colors.blue[2] : (request.game.data.state.winning.team == "demons") ? colors.red[2] : null
+						request.game.data.state.winning.countdown = (8 * 32) + 128 - (request.game.data.state.beat % 128)
+					}
+
+				// countdown
+					else if (request.game.data.state.winning.team) {
+						request.game.data.state.winning.countdown--
+
+						if (request.game.data.state.winning.countdown <= 0) {
+							request.game.data.state.end = new Date().getTime()
+							request.game.data.state.beat = 0
+						}
+					}
 			}
 			catch (error) {main.logError(error)}
 		}
 
 	/* updateSongs */
 		module.exports.updateSongs = updateSongs
-		function updateSongs(request, tower) {
+		function updateSongs(request, tower, keys) {
 			try {
-				var keys = Object.keys(request.game.data.heroes).concat(Object.keys(request.game.data.demons))
 				for (var k in keys) {
 					var avatar = request.game.data.demons[keys[k]] || request.game.data.heroes[keys[k]]
 
@@ -1436,7 +1434,7 @@
 
 	/* updateArrows */
 		module.exports.updateArrows = updateArrows
-		function updateArrows(request, avatar) {
+		function updateArrows(request, avatar, keys) {
 			try {
 				// create new arrows
 					if (avatar.state.health && !avatar.state.cooldown) {
@@ -1500,7 +1498,7 @@
 
 	/* updateAuras */
 		module.exports.updateAuras = updateAuras
-		function updateAuras(request, avatar) {
+		function updateAuras(request, avatar, keys) {
 			try {
 				// last 4 beats
 					var beats = [
@@ -1534,10 +1532,10 @@
 					if (!auraExists && avatar.state.health) {
 						var songs = main.getAsset("songs")
 
-						var keys  = Object.keys(songs)
-						for (var k in keys) {
-							if ((avatar.song == keys[k] || avatar.state.songs.includes(keys[k])) && getMatch(songs[keys[k]].melody, beats)) {
-								var aura = createAura(request, avatar, songs[keys[k]])
+						var songKeys  = Object.keys(songs)
+						for (var k in songKeys) {
+							if ((avatar.song == songKeys[k] || avatar.state.songs.includes(songKeys[k])) && getMatch(songs[songKeys[k]].melody, beats)) {
+								var aura = createAura(request, avatar, songs[songKeys[k]])
 								request.game.data.auras.push(aura)
 
 								avatar.state.cooldown = 8
@@ -1550,7 +1548,6 @@
 				// collision detection
 					if (auraExists && aura) {
 						var mapLength = request.game.data.map.length * 32
-						var keys = Object.keys(request.game.data.heroes).concat(Object.keys(request.game.data.demons))
 						for (var k in keys) {
 							var opponent = request.game.data.demons[keys[k]] || request.game.data.heroes[keys[k]]
 							if ((aura.name == opponent.name) || (!opponent.state.health)) {
@@ -1569,7 +1566,7 @@
 
 	/* updateTowerAuras */
 		module.exports.updateTowerAuras = updateTowerAuras
-		function updateTowerAuras(request, tower, towerIndex) {
+		function updateTowerAuras(request, tower, keys, towerIndex) {
 			try {
 				// variables
 					var auraExists = true
@@ -1609,7 +1606,6 @@
 				// collision detection
 					if (auraExists && aura) {
 						var mapLength = request.game.data.map.length * 32
-						var keys = Object.keys(request.game.data.heroes).concat(Object.keys(request.game.data.demons))
 						for (var k in keys) {
 							var opponent = request.game.data.demons[keys[k]] || request.game.data.heroes[keys[k]]
 							if ((aura.name == opponent.name) || (!opponent.state.health)) {
@@ -1628,7 +1624,7 @@
 
 	/* updateEffects */
 		module.exports.updateEffects = updateEffects
-		function updateEffects(request, avatar) {
+		function updateEffects(request, avatar, keys) {
 			try {
 				avatar.state.effects = []
 			}
@@ -1637,7 +1633,7 @@
 
 	/* updateSoundEffects */
 		module.exports.updateSoundEffects = updateSoundEffects
-		function updateSoundEffects(request, avatar) {
+		function updateSoundEffects(request, avatar, keys) {
 			try {
 				avatar.state.collision = false
 				avatar.state.shot      = false
@@ -1647,7 +1643,7 @@
 
 	/* updateKeys */
 		module.exports.updateKeys = updateKeys
-		function updateKeys(request, avatar) {
+		function updateKeys(request, avatar, keys) {
 			try {
 				// cycle beats
 					avatar.state.keys.shift()

@@ -58,8 +58,8 @@ melodemons
 |   |- script.js (sanitizeString, sendPost, displayError; submitFeedback; drawLoop)
 |
 |- game
-    |- logic.js (addPlayer, removePlayer; submitArrow, submitNote, submitNumber; changeSelection, launchGame; createHero, createDemon, createTower, createColumn, createStartPosition, createAura, createArrow; triggerMove, triggerNote, triggerNumber; getAngle, getScalar, getCells, getAvatar, getTower, getMatch, getWithin, getBeatAgo; updateState, updateVelocity, updatePosition, updateCollisions, updateHealth, updateTower, updateSongs, updateArrows, updateAuras, updateTowerAuras, updateEffects, updateSoundEffects, updateKeys)
+    |- logic.js (addPlayer, removePlayer; submitArrow, submitNote, submitTeam; changeSelection, launchGame; createHero, createDemon, createTower, createColumn, createStartPosition, createAura, createArrow; triggerMove, triggerNote; getAngle, getScalar, getCells, getAvatar, getTower, getMatch, getWithin, getBeatAgo; updateState, updateVelocity, updatePosition, updateCollisions, updateHealth, updateTower, updateSongs, updateArrows, updateAuras, updateTowerAuras, updateEffects, updateSoundEffects, updateKeys)
     |- index.html
     |- stylesheet.css
-    |- script.js (createSocket, checkLoop, submitClick, submitKey, receivePost; drawMessage, drawMenu, drawDPad, drawKeyboard, drawTheme; setInstruments, playMusic, playSoundEffects, playSoundtrack, playAvatarSounds)
+    |- script.js (createSocket, checkLoop, submitClick, submitKey, receivePost; drawMessage, drawMenu, drawDPad, drawKeyboard; setInstruments, playMusic, playSoundEffects, playSoundtrack, playAvatarSounds)
 </pre>

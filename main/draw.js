@@ -96,12 +96,13 @@
 		function drawText(x, y, text, options) {
 			// variables
 				options = options || {}
-				context.font = (options.size || 32) + "px " + (options.font || font)
+				context.font = (options.style ? options.style + " " : "") + (options.size || 32) + "px " + (options.font || font)
 				context.fillStyle   = options.gradient ? drawGradient(options) : (options.color || "transparent")
 				context.textAlign   = options.alignment || "center"
 				context.shadowBlur  = options.blur ? options.blur : 0
 				context.shadowColor = options.shadow ? options.shadow : "transparent"
 				context.globalAlpha = options.opacity || 1
+
 
 			// draw
 				context.fillText((text || ""), x, canvas.height - y)
@@ -515,13 +516,15 @@
 				var platform = tower.platforms[columnNumber % 64]
 				drawText(xPlacement, (platform.y * 32 * multiplier) + (4 * multiplier) + yOffset, platform.note, {
 					size:   32 * multiplier,
-					color:  platform.color
+					color:  platform.color,
+					style: "bold"
 				})
 
 			// low platform
 				var platform = tower.platforms[columnNumber % 64 + 4]
 				drawText(xPlacement, (platform.y * 32 * multiplier) + (4 * multiplier) + yOffset, platform.note, {
 					size:   32 * multiplier,
-					color:  platform.color
+					color:  platform.color,
+					style: "bold"
 				})
 		}

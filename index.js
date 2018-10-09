@@ -477,7 +477,9 @@
 
 					// loop
 						if (request.game && !request.game.loop) {
-							request.game.loop = setInterval(function() {								
+							request.game.loop = setInterval(function() {
+								var timeBefore = new Date().getTime()
+								
 								game.updateState(request, function(recipients, data) {
 									data = JSON.stringify(data).replace('{', '{"beat": true, ')
 									for (var r in recipients) {
@@ -489,6 +491,9 @@
 										catch (error) {main.logError(error)}
 									}
 								})
+
+								var timeAfter = new Date().getTime()
+								if (timeAfter - timeBefore > 4) { main.logMessage(timeAfter - timeBefore + "ms") }
 							}, 50)
 						}
 				}
