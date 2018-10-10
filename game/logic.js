@@ -1233,14 +1233,14 @@
 							}
 
 						// neutral / enemy tower
-							else {
+							/* else {
 								if      (avatar.state.tower.platforms[0] && avatar.state.tower.platforms[0].team && avatar.state.tower.platforms[0].team !== avatar.team) {
 									avatar.state.health = Math.max(0, Math.min(255, avatar.state.health - 1))
 								}
 								else if (avatar.state.tower.platforms[1] && avatar.state.tower.platforms[1].team && avatar.state.tower.platforms[1].team !== avatar.team) {
 									avatar.state.health = Math.max(0, Math.min(255, avatar.state.health - 1))
 								}
-							}
+							} */
 					}
 
 				// arrows
