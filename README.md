@@ -1,6 +1,6 @@
 # Melodemons
 
-a real-time multiplayer music-based tower defense platformer: http://www.melodemons.com
+a real-time multiplayer music-based post-capturing platformer: http://www.melodemons.com
 
 ---
 <pre>
@@ -58,7 +58,7 @@ melodemons
 |   |- script.js (sanitizeString, sendPost, displayError; submitFeedback; drawLoop)
 |
 |- game
-    |- logic.js (addPlayer, removePlayer; submitArrow, submitNote, submitTeam; changeSelection, launchGame; createHero, createDemon, createTower, createColumn, createStartPosition, createAura, createArrow; triggerMove, triggerNote; getAngle, getScalar, getCells, getAvatar, getTower, getMatch, getWithin, getBeatAgo; updateState, updateVelocity, updatePosition, updateCollisions, updateHealth, updateTower, updateSongs, updateArrows, updateAuras, updateTowerAuras, updateEffects, updateSoundEffects, updateKeys)
+    |- logic.js (addPlayer, removePlayer; submitArrow, submitNote, submitTeam; changeSelection, launchGame; createAvatar, createTower, createColumn, createStartPosition, createAura, createArrow; triggerMove, triggerNote; getAngle, getScalar, getCells, getAvatar, getTower, getMatch, getWithin, getBeatAgo; updateState, updateVelocity, updatePosition, updateCollisions, updateHealth, updateTower, updateSongs, updateArrows, updateAuras, updateTowerAuras, updateEffects, updateSoundEffects, updateKeys)
     |- index.html
     |- stylesheet.css
     |- script.js (createSocket, checkLoop, submitClick, submitKey, receivePost; drawMessage, drawMenu, drawDPad, drawKeyboard; setInstruments, playMusic, playSoundEffects, playSoundtrack, playAvatarSounds)

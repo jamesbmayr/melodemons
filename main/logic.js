@@ -64,12 +64,12 @@
 					break
 					case "meta":
 						return '<meta charset="UTF-8"/>\
-								<meta name="description" content="Melodemons is a real-time multiplayer music-based tower defense platformer."/>\
+								<meta name="description" content="Melodemons is a real-time multiplayer music-based post-capturing platformer."/>\
 								<meta name="keywords" content="game,word,guess,party,chaos,switch,swap,play"/>\
 								<meta name="author" content="James Mayr"/>\
-								<meta property="og:title" content="Melodemons: a real-time multiplayer music-based tower defense platformer"/>\
+								<meta property="og:title" content="Melodemons: a real-time multiplayer music-based post-capturing platformer"/>\
 								<meta property="og:url" content="https://melodemons.com"/>\
-								<meta property="og:description" content="Melodemons is a real-time multiplayer music-based tower defense platformer."/>\
+								<meta property="og:description" content="Melodemons is a real-time multiplayer music-based post-capturing platformer."/>\
 								<meta property="og:image" content="https://melodemons.herokuapp..com/banner.png"/>\
 								<meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>'
 					break
@@ -106,12 +106,12 @@
 
 					case "text":
 						return {
-							main:     "The sacred towers each protect a magic song. Control a tower to take its power.",
-							towers:   " - Play a tower platform's note to claim it - resurrect there when dead.",
-							thirds:   " - Play chords - three notes at the same time - to shoot a magic arrow.",
-							songs:    " - Play tower songs - or your name's first 4 letters - to create an aura.",
-							goal:     "Claim every tower to sound the song of victory.",
-							rejoin:   "[ click to rejoin ]"
+							main:   "Control a sacred tower to learn its magic song.",
+							towers: "TOWERS - play a platform's note to capture it",
+							auras:  "AURAS - play your avatar or tower melodies",
+							arrows: "ARROWS - play three-note chords to attack",							
+							goal:   "Claim every tower to sound the song of victory.",
+							rejoin: "[ click to rejoin ]"
 						}
 					break
 
@@ -166,8 +166,8 @@
 								name: "Adagio",
 								team: "heroes",
 								instrument: "buzzorgan",
-								colors: [songs.paralysis.colors[0], songs.paralysis.colors[1], colors.blue[2]],
-								song: "paralysis"
+								colors: [songs.slow.colors[0], songs.slow.colors[1], colors.blue[2]],
+								song: "slow"
 							},
 							{
 								name: "Cager",
@@ -230,8 +230,8 @@
 								name: "Adaglun",
 								team: "demons",
 								instrument: "swello",
-								colors: [songs.paralysis.colors[0], songs.paralysis.colors[1], colors.red[2]],
-								song: "paralysis"
+								colors: [songs.slow.colors[0], songs.slow.colors[1], colors.red[2]],
+								song: "slow"
 							},
 							{
 								name: "Cagelth",
@@ -251,6 +251,7 @@
 								name: "healing",
 								description: "other heroes and demons within the aura regenerate health",
 								melody: "DEAC",
+								numbers: "2361",
 								radius: 7,
 								colors: [colors.green[3], colors.green[1]]
 							},
@@ -258,6 +259,7 @@
 								name: "flight",
 								description: "other heroes and demons within the aura can fly without landing",
 								melody: "ACAD",
+								numbers: "6162",
 								radius: 7,
 								colors: [colors.cerulean[3], colors.cerulean[1]]
 							},
@@ -265,6 +267,7 @@
 								name: "protection",
 								description: "attacks from outside the aura dissipate on collision",
 								melody: "GADE",
+								numbers: "5623",
 								radius: 7,
 								colors: [colors.yellow[3], colors.yellow[1]]
 							},
@@ -272,6 +275,7 @@
 								name: "confusion",
 								description: "left and right controls are reversed within the aura",
 								melody: "CADE",
+								numbers: "1623",
 								radius: 7,
 								colors: [colors.purple[3], colors.purple[1]]
 							},
@@ -279,6 +283,7 @@
 								name: "gravity",
 								description: "heroes and demons within the aura are pulled towards the center",
 								melody: "EDGA",
+								numbers: "3256",
 								radius: 7,
 								colors: [colors.cyan[3], colors.cyan[1]]
 							},
@@ -286,13 +291,15 @@
 								name: "strength",
 								description: "attacks fired from within the aura are twice as powerful",
 								melody: "AEDE",
+								numbers: "6323",
 								radius: 7,
 								colors: [colors.orange[3], colors.orange[1]]
 							},
-							"paralysis": {
-								name: "paralysis",
+							"slow": {
+								name: "slow",
 								description: "other heroes and demons within the aura are nearly unable to move",
 								melody: "ADAG",
+								numbers: "6265",
 								radius: 7,
 								colors: [colors.browngray[3], colors.browngray[1]]
 							},
@@ -300,6 +307,7 @@
 								name: "pain",
 								description: "other heroes and demons within the aura lose health",
 								melody: "CAGE",
+								numbers: "1653",
 								radius: 7,
 								colors: [colors.magenta[3], colors.magenta[1]]
 							}
@@ -314,42 +322,42 @@
 							{
 								name: "healing",
 								colors: [songs.healing.colors[0], songs.healing.colors[1], colors.black[2]],
-								platforms: [{x: 0, y: 11, color: colors.black[2], note: songs.healing.melody[0]}, {x: 1, y: 11, color: colors.black[2], note: songs.healing.melody[1]}, {x: 2, y: 11, color: colors.black[2], note: songs.healing.melody[2]}, {x: 3, y: 8, color: colors.black[2], note: songs.healing.melody[3]}, {x: 0, y: 7, color: colors.black[2], note: songs.healing.melody[0]}, {x: 1, y: 7, color: colors.black[2], note: songs.healing.melody[1]}, {x: 2, y: 7, color: colors.black[2], note: songs.healing.melody[2]}, {x: 3, y: 4, color: colors.black[2], note: songs.healing.melody[3]}]
+								platforms: [{x: 0, y: 11, color: colors.black[2], note: songs.healing.melody[0], number: songs.healing.numbers[0]}, {x: 1, y: 11, color: colors.black[2], note: songs.healing.melody[1], number: songs.healing.numbers[1]}, {x: 2, y: 11, color: colors.black[2], note: songs.healing.melody[2], number: songs.healing.numbers[2]}, {x: 3, y: 8, color: colors.black[2], note: songs.healing.melody[3], number: songs.healing.numbers[3]}, {x: 0, y: 7, color: colors.black[2], note: songs.healing.melody[0], number: songs.healing.numbers[0]}, {x: 1, y: 7, color: colors.black[2], note: songs.healing.melody[1], number: songs.healing.numbers[1]}, {x: 2, y: 7, color: colors.black[2], note: songs.healing.melody[2], number: songs.healing.numbers[2]}, {x: 3, y: 4, color: colors.black[2], note: songs.healing.melody[3], number: songs.healing.numbers[3]}]
 							},
 							{
 								name: "protection",
 								colors: [songs.protection.colors[0], songs.protection.colors[1], colors.black[2]],
-								platforms: [{x: 0, y: 11, color: colors.black[2], note: songs.protection.melody[0]}, {x: 1, y: 11, color: colors.black[2], note: songs.protection.melody[1]}, {x: 2, y: 10, color: colors.black[2], note: songs.protection.melody[2]}, {x: 3, y: 8, color: colors.black[2], note: songs.protection.melody[3]}, {x: 0, y: 7, color: colors.black[2], note: songs.protection.melody[0]}, {x: 1, y: 7, color: colors.black[2], note: songs.protection.melody[1]}, {x: 2, y: 6, color: colors.black[2], note: songs.protection.melody[2]}, {x: 3, y: 4, color: colors.black[2], note: songs.protection.melody[3]}]
+								platforms: [{x: 0, y: 11, color: colors.black[2], note: songs.protection.melody[0], number: songs.protection.numbers[0]}, {x: 1, y: 11, color: colors.black[2], note: songs.protection.melody[1], number: songs.protection.numbers[1]}, {x: 2, y: 10, color: colors.black[2], note: songs.protection.melody[2], number: songs.protection.numbers[2]}, {x: 3, y: 8, color: colors.black[2], note: songs.protection.melody[3], number: songs.protection.numbers[3]}, {x: 0, y: 7, color: colors.black[2], note: songs.protection.melody[0], number: songs.protection.numbers[0]}, {x: 1, y: 7, color: colors.black[2], note: songs.protection.melody[1], number: songs.protection.numbers[1]}, {x: 2, y: 6, color: colors.black[2], note: songs.protection.melody[2], number: songs.protection.numbers[2]}, {x: 3, y: 4, color: colors.black[2], note: songs.protection.melody[3], number: songs.protection.numbers[3]}]
 							},
 							{
 								name: "strength",
 								colors: [songs.strength.colors[0], songs.strength.colors[1], colors.black[2]],
-								platforms: [{x: 0, y: 11, color: colors.black[2], note: songs.strength.melody[0]}, {x: 1, y: 11, color: colors.black[2], note: songs.strength.melody[1]}, {x: 2, y: 9, color: colors.black[2], note: songs.strength.melody[2]}, {x: 3, y: 8, color: colors.black[2], note: songs.strength.melody[3]}, {x: 0, y: 7, color: colors.black[2], note: songs.strength.melody[0]}, {x: 1, y: 7, color: colors.black[2], note: songs.strength.melody[1]}, {x: 2, y: 5, color: colors.black[2], note: songs.strength.melody[2]}, {x: 3, y: 4, color: colors.black[2], note: songs.strength.melody[3]}]
+								platforms: [{x: 0, y: 11, color: colors.black[2], note: songs.strength.melody[0], number: songs.strength.numbers[0]}, {x: 1, y: 11, color: colors.black[2], note: songs.strength.melody[1], number: songs.strength.numbers[1]}, {x: 2, y: 9, color: colors.black[2], note: songs.strength.melody[2], number: songs.strength.numbers[2]}, {x: 3, y: 8, color: colors.black[2], note: songs.strength.melody[3], number: songs.strength.numbers[3]}, {x: 0, y: 7, color: colors.black[2], note: songs.strength.melody[0], number: songs.strength.numbers[0]}, {x: 1, y: 7, color: colors.black[2], note: songs.strength.melody[1], number: songs.strength.numbers[1]}, {x: 2, y: 5, color: colors.black[2], note: songs.strength.melody[2], number: songs.strength.numbers[2]}, {x: 3, y: 4, color: colors.black[2], note: songs.strength.melody[3], number: songs.strength.numbers[3]}]
 							},
 							{
 								name: "flight",
 								colors: [songs.flight.colors[0], songs.flight.colors[1], colors.black[2]],
-								platforms: [{x: 0, y: 11, color: colors.black[2], note: songs.flight.melody[0]}, {x: 1, y: 10, color: colors.black[2], note: songs.flight.melody[1]}, {x: 2, y: 10, color: colors.black[2], note: songs.flight.melody[2]}, {x: 3, y: 8, color: colors.black[2], note: songs.flight.melody[3]}, {x: 0, y: 7, color: colors.black[2], note: songs.flight.melody[0]}, {x: 1, y: 6, color: colors.black[2], note: songs.flight.melody[1]}, {x: 2, y: 6, color: colors.black[2], note: songs.flight.melody[2]}, {x: 3, y: 4, color: colors.black[2], note: songs.flight.melody[3]}]
+								platforms: [{x: 0, y: 11, color: colors.black[2], note: songs.flight.melody[0], number: songs.flight.numbers[0]}, {x: 1, y: 10, color: colors.black[2], note: songs.flight.melody[1], number: songs.flight.numbers[1]}, {x: 2, y: 10, color: colors.black[2], note: songs.flight.melody[2], number: songs.flight.numbers[2]}, {x: 3, y: 8, color: colors.black[2], note: songs.flight.melody[3], number: songs.flight.numbers[3]}, {x: 0, y: 7, color: colors.black[2], note: songs.flight.melody[0], number: songs.flight.numbers[0]}, {x: 1, y: 6, color: colors.black[2], note: songs.flight.melody[1], number: songs.flight.numbers[1]}, {x: 2, y: 6, color: colors.black[2], note: songs.flight.melody[2], number: songs.flight.numbers[2]}, {x: 3, y: 4, color: colors.black[2], note: songs.flight.melody[3], number: songs.flight.numbers[3]}]
 							},
 							{
-								name: "paralysis",
-								colors: [songs.paralysis.colors[0], songs.paralysis.colors[1], colors.black[2]],
-								platforms: [{x: 0, y: 11, color: colors.black[2], note: songs.paralysis.melody[0]}, {x: 1, y: 10, color: colors.black[2], note: songs.paralysis.melody[1]}, {x: 2, y: 9, color: colors.black[2], note: songs.paralysis.melody[2]}, {x: 3, y: 8, color: colors.black[2], note: songs.paralysis.melody[3]}, {x: 0, y: 7, color: colors.black[2], note: songs.paralysis.melody[0]}, {x: 1, y: 6, color: colors.black[2], note: songs.paralysis.melody[1]}, {x: 2, y: 5, color: colors.black[2], note: songs.paralysis.melody[2]}, {x: 3, y: 4, color: colors.black[2], note: songs.paralysis.melody[3]}]
+								name: "slow",
+								colors: [songs.slow.colors[0], songs.slow.colors[1], colors.black[2]],
+								platforms: [{x: 0, y: 11, color: colors.black[2], note: songs.slow.melody[0], number: songs.slow.numbers[0]}, {x: 1, y: 10, color: colors.black[2], note: songs.slow.melody[1], number: songs.slow.numbers[1]}, {x: 2, y: 9, color: colors.black[2], note: songs.slow.melody[2], number: songs.slow.numbers[2]}, {x: 3, y: 8, color: colors.black[2], note: songs.slow.melody[3], number: songs.slow.numbers[3]}, {x: 0, y: 7, color: colors.black[2], note: songs.slow.melody[0], number: songs.slow.numbers[0]}, {x: 1, y: 6, color: colors.black[2], note: songs.slow.melody[1], number: songs.slow.numbers[1]}, {x: 2, y: 5, color: colors.black[2], note: songs.slow.melody[2], number: songs.slow.numbers[2]}, {x: 3, y: 4, color: colors.black[2], note: songs.slow.melody[3], number: songs.slow.numbers[3]}]
 							},
 							{
 								name: "confusion",
 								colors: [songs.confusion.colors[0], songs.confusion.colors[1], colors.black[2]],
-								platforms: [{x: 0, y: 11, color: colors.black[2], note: songs.confusion.melody[0]}, {x: 1, y: 10, color: colors.black[2], note: songs.confusion.melody[1]}, {x: 2, y: 8, color: colors.black[2], note: songs.confusion.melody[2]}, {x: 3, y: 8, color: colors.black[2], note: songs.confusion.melody[3]}, {x: 0, y: 7, color: colors.black[2], note: songs.confusion.melody[0]}, {x: 1, y: 6, color: colors.black[2], note: songs.confusion.melody[1]}, {x: 2, y: 4, color: colors.black[2], note: songs.confusion.melody[2]}, {x: 3, y: 4, color: colors.black[2], note: songs.confusion.melody[3]}]
+								platforms: [{x: 0, y: 11, color: colors.black[2], note: songs.confusion.melody[0], number: songs.confusion.numbers[0]}, {x: 1, y: 10, color: colors.black[2], note: songs.confusion.melody[1], number: songs.confusion.numbers[1]}, {x: 2, y: 8, color: colors.black[2], note: songs.confusion.melody[2], number: songs.confusion.numbers[2]}, {x: 3, y: 8, color: colors.black[2], note: songs.confusion.melody[3], number: songs.confusion.numbers[3]}, {x: 0, y: 7, color: colors.black[2], note: songs.confusion.melody[0], number: songs.confusion.numbers[0]}, {x: 1, y: 6, color: colors.black[2], note: songs.confusion.melody[1], number: songs.confusion.numbers[1]}, {x: 2, y: 4, color: colors.black[2], note: songs.confusion.melody[2], number: songs.confusion.numbers[2]}, {x: 3, y: 4, color: colors.black[2], note: songs.confusion.melody[3], number: songs.confusion.numbers[3]}]
 							},
 							{
 								name: "gravity",
 								colors: [songs.gravity.colors[0], songs.gravity.colors[1], colors.black[2]],
-								platforms: [{x: 0, y: 11, color: colors.black[2], note: songs.gravity.melody[0]}, {x: 1, y: 9, color: colors.black[2], note: songs.gravity.melody[1]}, {x: 2, y: 9, color: colors.black[2], note: songs.gravity.melody[2]}, {x: 3, y: 8, color: colors.black[2], note: songs.gravity.melody[3]}, {x: 0, y: 7, color: colors.black[2], note: songs.gravity.melody[0]}, {x: 1, y: 5, color: colors.black[2], note: songs.gravity.melody[1]}, {x: 2, y: 5, color: colors.black[2], note: songs.gravity.melody[2]}, {x: 3, y: 4, color: colors.black[2], note: songs.gravity.melody[3]}]
+								platforms: [{x: 0, y: 11, color: colors.black[2], note: songs.gravity.melody[0], number: songs.gravity.numbers[0]}, {x: 1, y: 9, color: colors.black[2], note: songs.gravity.melody[1], number: songs.gravity.numbers[1]}, {x: 2, y: 9, color: colors.black[2], note: songs.gravity.melody[2], number: songs.gravity.numbers[2]}, {x: 3, y: 8, color: colors.black[2], note: songs.gravity.melody[3], number: songs.gravity.numbers[3]}, {x: 0, y: 7, color: colors.black[2], note: songs.gravity.melody[0], number: songs.gravity.numbers[0]}, {x: 1, y: 5, color: colors.black[2], note: songs.gravity.melody[1], number: songs.gravity.numbers[1]}, {x: 2, y: 5, color: colors.black[2], note: songs.gravity.melody[2], number: songs.gravity.numbers[2]}, {x: 3, y: 4, color: colors.black[2], note: songs.gravity.melody[3], number: songs.gravity.numbers[3]}]
 							},
 							{
 								name: "pain",
 								colors: [songs.pain.colors[0], songs.pain.colors[1], colors.black[2]],
-								platforms: [{x: 0, y: 11, color: colors.black[2], note: songs.pain.melody[0]}, {x: 1, y: 9, color: colors.black[2], note: songs.pain.melody[1]}, {x: 2, y: 8, color: colors.black[2], note: songs.pain.melody[2]}, {x: 3, y: 8, color: colors.black[2], note: songs.pain.melody[3]}, {x: 0, y: 7, color: colors.black[2], note: songs.pain.melody[0]}, {x: 1, y: 5, color: colors.black[2], note: songs.pain.melody[1]}, {x: 2, y: 4, color: colors.black[2], note: songs.pain.melody[2]}, {x: 3, y: 4, color: colors.black[2], note: songs.pain.melody[3]}]
+								platforms: [{x: 0, y: 11, color: colors.black[2], note: songs.pain.melody[0], number: songs.pain.numbers[0]}, {x: 1, y: 9, color: colors.black[2], note: songs.pain.melody[1], number: songs.pain.numbers[1]}, {x: 2, y: 8, color: colors.black[2], note: songs.pain.melody[2], number: songs.pain.numbers[2]}, {x: 3, y: 8, color: colors.black[2], note: songs.pain.melody[3], number: songs.pain.numbers[3]}, {x: 0, y: 7, color: colors.black[2], note: songs.pain.melody[0], number: songs.pain.numbers[0]}, {x: 1, y: 5, color: colors.black[2], note: songs.pain.melody[1], number: songs.pain.numbers[1]}, {x: 2, y: 4, color: colors.black[2], note: songs.pain.melody[2], number: songs.pain.numbers[2]}, {x: 3, y: 4, color: colors.black[2], note: songs.pain.melody[3], number: songs.pain.numbers[3]}]
 							}
 						]
 					break									
@@ -373,8 +381,8 @@
 							},
 							{
 								name: "mountain",
-								terrainForeground:  colors.black[4],
-								terrainBackground:  colors.black[2],
+								terrainForeground:  colors.bluegray[4],
+								terrainBackground:  colors.bluegray[2],
 								platformForeground: colors.black[3],
 								platformBackground: colors.black[1],
 								pitForeground:      colors.bluegray[3],
@@ -444,8 +452,8 @@
 								platformBackground: colors.blue[1],
 								pitForeground:      colors.bluegray[3],
 								pitBackground:      colors.bluegray[2],
-								towerForeground:    colors.purple[1],
-								towerBackground:    colors.purple[0],
+								towerForeground:    colors.greengray[1],
+								towerBackground:    colors.greengray[0],
 								skyTop:             colors.blue[0],
 								skyBottom:          colors.blue[1]
 							},

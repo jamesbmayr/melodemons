@@ -134,9 +134,27 @@
 	/* drawMap */
 		window.drawMap = drawMap
 		function drawMap(  map, theme, data, isSample) {
-			drawSky(            theme)
-			drawBackground(map, theme, data, isSample)
-			drawForeground(map, theme, data, isSample)
+			// variables
+				var avatar    = (data && data.heroes && data.heroes[id]) ? data.heroes[id] : (data && data.demons && data.demons[id]) ? data.demons[id] : (data.tracker || {state: {x: 0, y: 0, health: 1}})
+				if (!isSample && !avatar.state.health) {
+					theme = {
+						terrainForeground:  colors.black[4],
+						terrainBackground:  colors.black[3],
+						platformForeground: colors.black[4],
+						platformBackground: colors.black[3],
+						pitForeground:      colors.black[2],
+						pitBackground:      colors.black[1],
+						towerForeground:    colors.black[2],
+						towerBackground:    colors.black[1],
+						skyTop:             colors.white[4],
+						skyBottom:          colors.white[3]
+					}
+				}
+
+			// draw
+				drawSky(                    theme)
+				drawBackground(avatar, map, theme, data, isSample)
+				drawForeground(avatar, map, theme, data, isSample)
 		}
 
 	/* drawSky */
@@ -146,16 +164,15 @@
 				context.clearRect(0, 0, canvas.width, canvas.height)
 			
 			// draw
-				var skyBottom = theme ? theme.skyBottom : colors.white[3]
 				var skyTop    = theme ? theme.skyTop    : colors.white[4]
-				drawRectangle(    0, 0, canvas.width, canvas.height, {gradient: {x1: 0, y1: 0, x2: 0, y2: canvas.height, colors: {"0": skyBottom, "1": skyTop}}})
+				var skyBottom = theme ? theme.skyBottom : colors.white[3]
+				drawRectangle(0, 0, canvas.width, canvas.height, {gradient: {x1: 0, y1: 0, x2: 0, y2: canvas.height, colors: {"0": skyBottom, "1": skyTop}}})
 		}
 
 	/* drawBackground */
 		window.drawBackground = drawBackground
-		function drawBackground(map, theme, data, isSample) {
+		function drawBackground(avatar, map, theme, data, isSample) {
 			// variables
-				var avatar    = (data && data.heroes && data.heroes[id]) ? data.heroes[id] : (data && data.demons && data.demons[id]) ? data.demons[id] : (data.tracker || {state: {x: 0, y: 0}})
 				var mapLength = map.length * 32
 				var oppositeX = (avatar.state.x + (mapLength / 2)) % mapLength
 				var offsetX   = (oppositeX % 32)
@@ -203,7 +220,7 @@
 			// arrows
 				if (!isSample) {
 					for (var a in data.arrows) {
-						drawArrow(1280 - ((data.arrows[a].x - startX + mapLength + 20) % mapLength - 20) / 1.6, (data.arrows[a].y / 1.6) + 40, 0.625, data.arrows[a])
+						drawArrow(1280 - ((data.arrows[a].x - startX + mapLength + 20) % mapLength - 20) / 1.6, (data.arrows[a].y / 1.6) + 40, 0.625, data.arrows[a], false)
 					}
 				}
 
@@ -219,20 +236,19 @@
 			// auras
 				if (!isSample) {
 					for (var a in data.auras) {
-						drawAura(1280 - ((data.auras[a].x - 32 - startX + mapLength + 200) % mapLength - 200) / 1.6, (data.auras[a].y / 1.6) + 40, 0.625, data.auras[a])
+						drawAura(1280 - ((data.auras[a].x - 32 - startX + mapLength + 200) % mapLength - 200) / 1.6, (data.auras[a].y / 1.6) + 40, 0.625, data.auras[a], false)
 					}
 				}
 
 			// pit
-				drawRectangle(0, 0, canvas.width, 40, {color: (theme ? theme.pitBackground : colors.black[2])})
+				drawRectangle(0, 0, canvas.width, 40, {color: (theme ? theme.pitBackground : colors.black[1])})
 		}
 
 	/* drawForeground */
 		window.drawForeground = drawForeground
-		function drawForeground(map, theme, data, isSample) {
+		function drawForeground(avatar, map, theme, data, isSample) {
 			// variables
 				var towers    = []
-				var avatar    = (data && data.heroes && data.heroes[id]) ? data.heroes[id] : (data && data.demons && data.demons[id]) ? data.demons[id] : (data.tracker || {state: {x: 0, y: 0}})
 				var mapLength = map.length * 32
 				var offsetX   = avatar.state.x  % 32
 				
@@ -279,7 +295,7 @@
 			// arrows
 				if (!isSample) {
 					for (var a in data.arrows) {
-						drawArrow((data.arrows[a].x - startX + mapLength + 32) % mapLength - 32, data.arrows[a].y, 1, data.arrows[a])
+						drawArrow((data.arrows[a].x - startX + mapLength + 32) % mapLength - 32, data.arrows[a].y, 1, data.arrows[a], true)
 					}
 				}
 
@@ -295,7 +311,7 @@
 			// auras
 				if (!isSample) {
 					for (var a in data.auras) {
-						drawAura((data.auras[a].x - startX + mapLength + 256) % mapLength - 256, data.auras[a].y, 1, data.auras[a])
+						drawAura((data.auras[a].x - startX + mapLength + 256) % mapLength - 256, data.auras[a].y, 1, data.auras[a], true)
 					}
 				}
 
@@ -318,55 +334,57 @@
 		function drawAvatar(x, y, width, height, avatar) {
 			// variables
 				if (avatar.state) {
-					var healthColor = avatar.state.health ? ("rgb(128, " + avatar.state.health + ", 000)") : "rgb(255,255,255)"
+					var healthColor = avatar.state.health ? avatar.colors[2] : colors.white[4]
 					var healthWidth = avatar.state.health ? Math.floor((avatar.state.health + 1) * width / 256) : width
 					var opacity     = avatar.state.health ? 1 : 0.25
 						opacity     = opacity * (width == 32 ? 1 : 0.25)
 					var xOffset     = avatar.state.right  ? 2 : avatar.state.left   ? -2 : 0
 					var yOffset     = avatar.state.vy > 0 ? 2 : avatar.state.vy < 0 ? -2 : 0
+					var shadowColor = avatar.state.health ? (avatar.state.shot ? colors.white[4] : avatar.colors[2]) : colors.white[4]
 				}
 				else {
-					var xOffset = 0
-					var yOffset = 0
-					var opacity = 1
+					var xOffset     = 0
+					var yOffset     = 0
+					var opacity     = 1
+					var shadowColor = avatar.colors[2]
 				}
 
 			// name & healthbar
 				if (avatar.state) {
-					drawText(x + (width / 2), y + (5  * height / 4), avatar.name.slice(0,4).toUpperCase() + avatar.name.slice(4), {opacity: opacity, color: avatar.colors[2],     size: (3 * width / 8)})	// name
-					drawLine(x              , y + (9  * height / 8), x + healthWidth, y + (9 * height / 8)                      , {opacity: opacity, color: healthColor, blur: 4, shadow: colors.black[2]}) // health bar
+					drawText(x + (width / 2), y + (5  * height / 4), avatar.name                          , {opacity: opacity, color: avatar.colors[2],     size: (3 * width / 8)})	  // name
+					drawLine(x              , y + (9  * height / 8), x + healthWidth, y + (9 * height / 8), {opacity: opacity, color: healthColor, blur: 8, shadow: colors.black[4]}) // health bar
 				}
 				else {
-					drawText(x + (width / 2), y + (5 * height / 4), avatar.name                          , {opacity: opacity, color: avatar.colors[2],     size: (width / 2)})   // name
-					drawText(x + (width / 2), y - (2 * height / 4), avatar.song                          , {opacity: opacity, color: avatar.colors[2],     size: (width / 2)})   // song
+					drawText(x + (width / 2), y + (5 * height / 4), avatar.name                           , {opacity: opacity, color: avatar.colors[2],     size: (width / 2)})   // name
+					drawText(x + (width / 2), y - (2 * height / 4), avatar.song                           , {opacity: opacity, color: avatar.colors[2],     size: (width / 2)})   // song
 				}
 
 			// body
 				if (avatar.team == "heroes") {
-					drawCircle(   x +      (width / 4)           , y +     (height / 16)                                           ,      width / 8 ,                   {opacity: opacity, color: avatar.colors[1], shadow: avatar.colors[2], blur: 2})                                                                    // left foot
-					drawCircle(   x +  (3 * width / 4)           , y +     (height / 16)                                           ,      width / 8 ,                   {opacity: opacity, color: avatar.colors[1], shadow: avatar.colors[2], blur: 2})                                                                    // right foot
-					drawRectangle(x +      (width / 32)          , y +     (height / 16)                                           , 15 * width / 16, 15 * height / 32, {opacity: opacity, color: avatar.colors[0], shadow: avatar.colors[2], blur: 8, radii: {topLeft: 10, topRight: 10, bottomRight: 7, bottomLeft: 7}}) // body
-					drawRectangle(x -      (width / 16) + xOffset, y + (5 * height / 16) + (3 * height / 32) * Math.max(0, yOffset),  5 * width / 16,  5 * height / 32, {opacity: opacity, color: avatar.colors[1], shadow: avatar.colors[2], blur: 2, radii: {topLeft:  5, topRight:  5, bottomRight: 2, bottomLeft: 2}}) // left hand
-					drawRectangle(x + (13 * width / 16) + xOffset, y + (5 * height / 16) + (3 * height / 32) * Math.max(0, yOffset),  5 * width / 16,  5 * height / 32, {opacity: opacity, color: avatar.colors[1], shadow: avatar.colors[2], blur: 2, radii: {topLeft:  5, topRight:  5, bottomRight: 2, bottomLeft: 2}}) // right hand
+					drawCircle(   x +      (width / 4)           , y +     (height / 16)                                           ,      width / 8 ,                   {opacity: opacity, color: avatar.colors[1], shadow: shadowColor, blur: 2})                                                                    // left foot
+					drawCircle(   x +  (3 * width / 4)           , y +     (height / 16)                                           ,      width / 8 ,                   {opacity: opacity, color: avatar.colors[1], shadow: shadowColor, blur: 2})                                                                    // right foot
+					drawRectangle(x +      (width / 32)          , y +     (height / 16)                                           , 15 * width / 16, 15 * height / 32, {opacity: opacity, color: avatar.colors[0], shadow: shadowColor, blur: 8, radii: {topLeft: 10, topRight: 10, bottomRight: 7, bottomLeft: 7}}) // body
+					drawRectangle(x -      (width / 16) + xOffset, y + (5 * height / 16) + (3 * height / 32) * Math.max(0, yOffset),  5 * width / 16,  5 * height / 32, {opacity: opacity, color: avatar.colors[1], shadow: shadowColor, blur: 2, radii: {topLeft:  5, topRight:  5, bottomRight: 2, bottomLeft: 2}}) // left hand
+					drawRectangle(x + (13 * width / 16) + xOffset, y + (5 * height / 16) + (3 * height / 32) * Math.max(0, yOffset),  5 * width / 16,  5 * height / 32, {opacity: opacity, color: avatar.colors[1], shadow: shadowColor, blur: 2, radii: {topLeft:  5, topRight:  5, bottomRight: 2, bottomLeft: 2}}) // right hand
 				}
 				else if (avatar.team == "demons") {
-					drawTriangle(x +  (3 * width / 8)           , y + (3 * height / 16)                                      , x +  (5 * width / 8)           , y +            (3 * height / 16)                       , x +     (width / 2) - (10 * xOffset), y + (3 * height / 8)                  , {opacity: opacity, color: avatar.colors[2], shadow: avatar.colors[2], blur: 2}) // tail
-					drawTriangle(x +      (width / 4)           , y +     (height / 4)                                       , x +      (width / 8)           , y                                                      , x + (3 * width / 8), y                                                      , {opacity: opacity, color: avatar.colors[2], shadow: avatar.colors[2], blur: 2}) // left foot
-					drawTriangle(x +  (3 * width / 4)           , y +     (height / 4)                                       , x +  (7 * width / 8)           , y                                                      , x + (5 * width / 8), y                                                      , {opacity: opacity, color: avatar.colors[2], shadow: avatar.colors[2], blur: 2}) // right foot
-					drawTriangle(x -      (width / 16) + xOffset, y +     (height / 2) + (height / 16) * Math.max(0, yOffset), x +  (3 * width / 16) + xOffset, y + (height / 2) + (height / 16) * Math.max(0, yOffset), x +     (width / 4), y + (height / 4) + (height / 16) * Math.max(0, yOffset), {opacity: opacity, color: avatar.colors[2], shadow: avatar.colors[2], blur: 2}) // left hand
-					drawTriangle(x + (13 * width / 16) + xOffset, y +     (height / 2) + (height / 16) * Math.max(0, yOffset), x + (17 * width / 16) + xOffset, y + (height / 2) + (height / 16) * Math.max(0, yOffset), x + (3 * width / 4), y + (height / 4) + (height / 16) * Math.max(0, yOffset), {opacity: opacity, color: avatar.colors[2], shadow: avatar.colors[2], blur: 2}) // right hand
-					drawTriangle(x +      (width / 2)           , y + (7 * height / 8)                                       , x                              , y + (height / 8)                                       , x +      width     , y + (height / 8)                                       , {opacity: opacity, color: avatar.colors[0], shadow: avatar.colors[2], blur: 8}) // body
+					drawTriangle(x +  (3 * width / 8)           , y + (3 * height / 16)                                      , x +  (5 * width / 8)           , y +            (3 * height / 16)                       , x +     (width / 2) - (10 * xOffset), y + (3 * height / 8)                  , {opacity: opacity, color: avatar.colors[2], shadow: shadowColor, blur: 2}) // tail
+					drawTriangle(x +      (width / 4)           , y +     (height / 4)                                       , x +      (width / 8)           , y                                                      , x + (3 * width / 8), y                                                      , {opacity: opacity, color: avatar.colors[2], shadow: shadowColor, blur: 2}) // left foot
+					drawTriangle(x +  (3 * width / 4)           , y +     (height / 4)                                       , x +  (7 * width / 8)           , y                                                      , x + (5 * width / 8), y                                                      , {opacity: opacity, color: avatar.colors[2], shadow: shadowColor, blur: 2}) // right foot
+					drawTriangle(x -      (width / 16) + xOffset, y +     (height / 2) + (height / 16) * Math.max(0, yOffset), x +  (3 * width / 16) + xOffset, y + (height / 2) + (height / 16) * Math.max(0, yOffset), x +     (width / 4), y + (height / 4) + (height / 16) * Math.max(0, yOffset), {opacity: opacity, color: avatar.colors[2], shadow: shadowColor, blur: 2}) // left hand
+					drawTriangle(x + (13 * width / 16) + xOffset, y +     (height / 2) + (height / 16) * Math.max(0, yOffset), x + (17 * width / 16) + xOffset, y + (height / 2) + (height / 16) * Math.max(0, yOffset), x + (3 * width / 4), y + (height / 4) + (height / 16) * Math.max(0, yOffset), {opacity: opacity, color: avatar.colors[2], shadow: shadowColor, blur: 2}) // right hand
+					drawTriangle(x +      (width / 2)           , y + (7 * height / 8)                                       , x                              , y + (height / 8)                                       , x +      width     , y + (height / 8)                                       , {opacity: opacity, color: avatar.colors[0], shadow: shadowColor, blur: 8}) // body
 				}
 
 			// head
 				if (avatar.team == "heroes") {
-					drawCircle(x + (width / 2), y + (3 * height / 4), (width / 2), {opacity: opacity, color: avatar.colors[1], shadow: avatar.colors[2], blur: 8}) // head
+					drawCircle(x + (width / 2), y + (3 * height / 4), (width / 2), {opacity: opacity, color: avatar.colors[1], shadow: shadowColor, blur: 8}) // head
 				}
 				else if (avatar.team == "demons") {
-					drawTriangle(x              , y + (17 * height / 16), x                  , y + (7 * height / 8), x + (width / 2), y + (7 * height / 8), {opacity: opacity, color: avatar.colors[0], shadow: avatar.colors[2], blur: 8}) // left horn
-					drawTriangle(x +  width     , y + (17 * height / 16), x + width          , y + (7 * height / 8), x + (width / 2), y + (7 * height / 8), {opacity: opacity, color: avatar.colors[0], shadow: avatar.colors[2], blur: 8}) // right horn
-					drawTriangle(x + (width / 2), y + (17 * height / 16), x + (3 * width / 4), y + (7 * height / 8), x + (width / 4), y + (7 * height / 8), {opacity: opacity, color: avatar.colors[0], shadow: avatar.colors[2], blur: 8}) // center horn
-					drawTriangle(x + (width / 2), y +      (height / 2 ), x                  , y + (7 * height / 8), x +  width     , y + (7 * height / 8), {opacity: opacity, color: avatar.colors[0], shadow: avatar.colors[2], blur: 8}) // face
+					drawTriangle(x              , y + (17 * height / 16), x                  , y + (7 * height / 8), x + (width / 2), y + (7 * height / 8), {opacity: opacity, color: avatar.colors[0], shadow: shadowColor, blur: 8}) // left horn
+					drawTriangle(x +  width     , y + (17 * height / 16), x + width          , y + (7 * height / 8), x + (width / 2), y + (7 * height / 8), {opacity: opacity, color: avatar.colors[0], shadow: shadowColor, blur: 8}) // right horn
+					drawTriangle(x + (width / 2), y + (17 * height / 16), x + (3 * width / 4), y + (7 * height / 8), x + (width / 4), y + (7 * height / 8), {opacity: opacity, color: avatar.colors[0], shadow: shadowColor, blur: 8}) // center horn
+					drawTriangle(x + (width / 2), y +      (height / 2 ), x                  , y + (7 * height / 8), x +  width     , y + (7 * height / 8), {opacity: opacity, color: avatar.colors[0], shadow: shadowColor, blur: 8}) // face
 				}
 
 			// eyes
@@ -376,23 +394,27 @@
 
 	/* drawArrow */
 		window.drawArrow = drawArrow
-		function drawArrow(x, y, multiplier, arrow) {
+		function drawArrow(x, y, multiplier, arrow, foreground) {
 			// variables
 				var radius = arrow.radius * multiplier * Math.sign(arrow.vx)
 				if (multiplier < 1) {
 					radius = radius * -1
 				}
+				var opacity = foreground ? 1 : 0.5
 
 			// draw
-				drawTriangle(x, y + radius, x, y - radius, x - (3 * radius), y, {opacity: 0.5, color: arrow.colors[0], shadow: arrow.colors[1], blur: 4, border: 4})
-				drawCircle(  x, y,                            Math.abs(radius), {opacity:   1, color: arrow.colors[0], shadow: arrow.colors[1], blur: 4, border: 4})
+				drawTriangle(x, y + radius, x, y - radius, x - (3 * radius), y, {opacity: opacity * 0.5, color: arrow.colors[0], shadow: arrow.colors[1], blur: 4, border: 4})
+				drawCircle(  x, y,                            Math.abs(radius), {opacity: opacity *   1, color: arrow.colors[0], shadow: arrow.colors[1], blur: 4, border: 4})
 		}
 
 	/* drawAura */
 		window.drawAura = drawAura
-		function drawAura(x, y, multiplier, aura) {
+		function drawAura(x, y, multiplier, aura, foreground) {
+			// variables
+				var opacity = foreground ? 0.25 : 0.125
+
 			// draw
-				drawCircle(x, y, aura.radius * multiplier, {opacity: 0.25, color: aura.colors[1], shadow: aura.colors[0], blur: 4, border: 4})
+				drawCircle(x, y, aura.radius * multiplier, {opacity: opacity, color: aura.colors[1], shadow: aura.colors[0], blur: 4, border: 4})
 		}
 
 	/* drawPit */
@@ -514,7 +536,7 @@
 				
 			// high platform
 				var platform = tower.platforms[columnNumber % 64]
-				drawText(xPlacement, (platform.y * 32 * multiplier) + (4 * multiplier) + yOffset, platform.note, {
+				drawText(xPlacement, (platform.y * 32 * multiplier) + (4 * multiplier) + yOffset, platform.number, {
 					size:   32 * multiplier,
 					color:  platform.color,
 					style: "bold"
@@ -522,7 +544,7 @@
 
 			// low platform
 				var platform = tower.platforms[columnNumber % 64 + 4]
-				drawText(xPlacement, (platform.y * 32 * multiplier) + (4 * multiplier) + yOffset, platform.note, {
+				drawText(xPlacement, (platform.y * 32 * multiplier) + (4 * multiplier) + yOffset, platform.number, {
 					size:   32 * multiplier,
 					color:  platform.color,
 					style: "bold"

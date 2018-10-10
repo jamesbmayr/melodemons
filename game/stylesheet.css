@@ -28,6 +28,17 @@
 			line-height: 1.35;
 		}
 
+		#gameid {
+			margin: 20px;
+			font-size: 40px;
+			font-weight: bold;
+		}
+
+		#intro {
+			text-align: center;
+			font-weight: normal;
+		}
+
 		#hero-button {
 			font-size: 30px;
 			color: var(--blue-1);
