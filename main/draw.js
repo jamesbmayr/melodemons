@@ -320,8 +320,8 @@
 				if (avatar.state) {
 					var healthColor = avatar.state.health ? ("rgb(128, " + avatar.state.health + ", 000)") : "rgb(255,255,255)"
 					var healthWidth = avatar.state.health ? Math.floor((avatar.state.health + 1) * width / 256) : width
-					var opacity     = avatar.state.health ? 1 : 0.5
-						opacity     = opacity * (width == 32 ? 1 : 0.5)
+					var opacity     = avatar.state.health ? 1 : 0.25
+						opacity     = opacity * (width == 32 ? 1 : 0.25)
 					var xOffset     = avatar.state.right  ? 2 : avatar.state.left   ? -2 : 0
 					var yOffset     = avatar.state.vy > 0 ? 2 : avatar.state.vy < 0 ? -2 : 0
 				}
@@ -334,7 +334,7 @@
 			// name & healthbar
 				if (avatar.state) {
 					drawText(x + (width / 2), y + (5  * height / 4), avatar.name.slice(0,4).toUpperCase() + avatar.name.slice(4), {opacity: opacity, color: avatar.colors[2],     size: (3 * width / 8)})	// name
-					drawLine(x              , y + (9  * height / 8), x + healthWidth, y + (9 * height / 8)                      , {opacity: opacity, color: healthColor, blur: 2, shadow: healthColor}) 	// health bar
+					drawLine(x              , y + (9  * height / 8), x + healthWidth, y + (9 * height / 8)                      , {opacity: opacity, color: healthColor, blur: 4, shadow: colors.black[2]}) // health bar
 				}
 				else {
 					drawText(x + (width / 2), y + (5 * height / 4), avatar.name                          , {opacity: opacity, color: avatar.colors[2],     size: (width / 2)})   // name
