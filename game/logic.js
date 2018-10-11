@@ -942,22 +942,19 @@
 						}
 
 						if (closestAura) {
-							if (closestAura.y > avatar.state.y) {
-								avatar.state.vy += 2
-							}
-							else {
-								avatar.state.vy += -1
-							}
+							// y
+								avatar.state.vy += (closestAura.y > avatar.state.y) ? 2 : -1
 
-							if ((avatar.state.x + 16) < closestAura.radius && closestAura.x > (mapLength - closestAura.radius)) {
-								avatar.state.vx += -1
-							}
-							else if ((avatar.state.x + 16) > (mapLength - closestAura.radius) && closestAura.x < closestAura.radius) {
-								avatar.state.vx += 1
-							}
-							else {
-								avatar.state.vx += (closestAura.x > avatar.state.x + 16) ? 1 : -1
-							}
+							// x
+								if ((avatar.state.x + 16) < closestAura.radius && closestAura.x > (mapLength - closestAura.radius)) {
+									avatar.state.vx += -1
+								}
+								else if ((avatar.state.x + 16) > (mapLength - closestAura.radius) && closestAura.x < closestAura.radius) {
+									avatar.state.vx += 1
+								}
+								else {
+									avatar.state.vx += (closestAura.x > avatar.state.x + 16) ? 1 : -1
+								}
 						}
 					}
 			}

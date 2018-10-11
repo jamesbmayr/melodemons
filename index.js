@@ -490,10 +490,15 @@
 										}
 										catch (error) {main.logError(error)}
 									}
+
+									if (!recipients.length) {
+										clearInterval(request.game.loop)
+										delete db[request.game.id]
+									}
 								})
 
 								var timeAfter = new Date().getTime()
-								if (timeAfter - timeBefore > 4) { main.logMessage(timeAfter - timeBefore + "ms") }
+								if (timeAfter - timeBefore > 5) { main.logMessage(timeAfter - timeBefore + "ms") }
 							}, 50)
 						}
 				}

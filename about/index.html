@@ -25,7 +25,7 @@
 				<div id="gameplay" class="section">
 					<div class="header">Gameplay</div>
 					<div class="content">
-						In this real-time game, <span class="redtext">demons</span> seek to control <span class="orangetext">towers</span> so they can play the song to end the world. The <span class="greentext">heroes</span> must work together to stop them, performing music to cast magic spells and control the <span class="orangetext">towers</span> themselves.
+						In this real-time game, <span class="redtext">demons</span> seek to control <span class="orangetext">towers</span> so they can play the song to end the world. The <span class="bluetext">heroes</span> must work together to stop them, performing music to cast magic spells and control the <span class="orangetext">towers</span> themselves.
 						<br><br>
 						With randomly generated maps, eight magic <span class="purpletext">songs</span>, and a whole cast of characters, the game is different every time.
 					</div>
@@ -33,18 +33,16 @@
 				<div id="songs" class="section">
 					<div class="header">Songs</div>
 					<div class="content">
-						Each <span class="greentext">hero</span> and <span class="redtext">demon</span> can perform a <span class="purpletext">song</span> to cast an <span class="orangetext">aura</span>:
+						Each <span class="bluetext">hero</span> and <span class="redtext">demon</span> can perform a <span class="purpletext">song</span> to cast an <span class="greentext">aura</span>:
 						<script node>
-							var heroes = getAsset("heroes")
-							var demons = getAsset("demons")
 							var songs  = getAsset("songs" )
 							var keys   = Object.keys(songs)
 							var text   = "<ul>"
 
-							for (var i = 0; i < heroes.length; i++) {
+							for (var i = 0; i < keys.length; i++) {
 								text += "<li>" +
-									"<span class='greentext'>" + heroes[i].name + "</span> & <span class='redtext'>" + demons[i].name + "</span>: " +
-									"<b><span class='purpletext'>" + keys[i] + "</span></b><br>" +
+									"<span class='purpletext'>" + songs[keys[i]].numbers + "</span>: " +
+									"<b><span class='greentext'>" + keys[i] + "</span></b><br>" +
 									" <span>" + songs[keys[i]].description + "</span><br><br>"
 								"</li>"
 							}
@@ -57,7 +55,7 @@
 				<div id="launch" class="section">
 					<div class="header">Launch</div>
 					<div class="content">
-						Every game has a unique 4-character id. Go <a href="./" target="_blank" class="bluetext">home</a> to start a new one - or join a friend's!
+						Every game has a unique 4-character id. Go <a href="./" class="bluetext">home</a> to start a new one - or join a friend's!
 					</div>
 				</div>
 				<div id="feedback" class="section">

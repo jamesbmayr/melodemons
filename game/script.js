@@ -1,4 +1,13 @@
 /*** onload ***/
+	/* defaults */
+		document.addEventListener("dblclick", function(event) {
+			event.preventDefault()
+		})
+
+		document.addEventListener("contextmenu", function(event) {
+			event.preventDefault()
+		})
+
 	/* globals */
 		var data        = window.data = {}
 		var instruments = window.instruments = {}
@@ -115,7 +124,7 @@
 						data.showControls = data.showControls ? false : true
 					}
 
-				// prevent spamming notes
+				// prevent spamming
 					if (key && data.pressed.includes(event.code)) {
 						if (press) {
 							type = null
@@ -181,7 +190,26 @@
 					data.pressed = []
 					buildAudio()
 					setInstruments()
+
+					if ((/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i).test(navigator.userAgent)) {
+						buildMobileControls()
+					}
+					else {
+						data.showControls = true
+					}
 				}
+		}
+
+	/* submitTouch */
+		function submitTouch(event) {
+			// adjust parameters
+				var keyEvent = {
+					code: event.target.id,
+					type: (event.type == "touchstart") ? "keydown" : "keyup"
+				}
+
+			// send along
+				submitKey(keyEvent)
 		}
 
 	/* receivePost */
@@ -214,31 +242,30 @@
 
 			// draw
 				if (!data.state.start && data.clicked && data.team) {
+					drawMap(data.sample, data.theme, data, true)
 					drawMenu()
 					drawMessage()
 				}
 				else if (data.state.start && data.map) {
 					drawMap(data.map, data.theme, data)
 					drawMessage()
-					
-					if (data.clicked && !data.state.end && data.showControls) { // show controls
-						drawDPad((13 * canvas.width / 16), (canvas.height / 4), (canvas.height / 8), data.pressed)
-						drawKeyboard((5 * canvas.width / 16), (canvas.height / 4), (canvas.width / 2), (canvas.height / 4), data.pressed)
-						drawEscape(80, canvas.height - 50, 30)
-					}
+				}
+				if (data.clicked && !data.state.end && data.showControls) { // show controls
+					drawDPad((13 * canvas.width / 16), (canvas.height / 4), (canvas.height / 8), data.pressed)
+					drawKeyboard((5 * canvas.width / 16), (canvas.height / 4), (canvas.width / 2), (canvas.height / 4), data.pressed)
+					drawEscape(80, canvas.height - 50, 30)
 				}
 
 			// music
+				if (data.clicked && !data.state.start && ((post.heroes[id] && !Object.keys(instruments).includes(post.heroes[id].instrument)) || (post.demons[id] && !Object.keys(instruments).includes(post.demons[id].instrument)))) {
+					setInstruments()
+				}
 				if (data.clicked && post.launch) {
 					data.pressed = []
-					data.showControls = true
 					setInstruments()
 				}
 				if (data.clicked && post.beat) {
 					playMusic()
-				}
-				if (data.clicked && !data.state.start && ((post.heroes[id] && !Object.keys(instruments).includes(post.heroes[id].instrument)) || (post.demons[id] && !Object.keys(instruments).includes(post.demons[id].instrument)))) {
-					setInstruments()
 				}
 		}
 
@@ -299,14 +326,6 @@
 
 	/* drawMenu */
 		function drawMenu() {
-			// clear
-				context.clearRect(0, 0, canvas.width, canvas.height)
-
-			// background
-				drawMap(data.sample, data.theme, data, true)
-				drawDPad((13 * canvas.width / 16), (canvas.height / 4), (canvas.height / 8), data.pressed, true)
-				drawKeyboard((5 * canvas.width / 16), (canvas.height / 4), (canvas.width / 2), (canvas.height / 4), data.pressed, true)
-
 			// chosen / taken
 				var chosenAvatar = data[data.team][id]
 				var takenAvatars = []
@@ -334,12 +353,13 @@
 				}
 		}
 
+/*** controls ***/
 	/* drawDPad */
-		function drawDPad(x, y, size, pressed, isMenu) {
+		function drawDPad(x, y, size, pressed) {
 			// offset center
 				x = x - (3 * size / 2)
 				y = y - (size)
-				var opacity = isMenu ? 0.5 : 0.25
+				var opacity = (data.state && data.state.start) ? 0.25 : 0.5
 
 			// words
 				if (data.state.start) {
@@ -383,11 +403,11 @@
 		}
 
 	/* drawKeyboard */
-		function drawKeyboard(x, y, width, height, pressed, isMenu) {
+		function drawKeyboard(x, y, width, height, pressed) {
 			// offset center
 				x = x - (width / 2)
 				y = y - (height / 2)
-				var opacity = isMenu ? 0.5 : 0.25
+				var opacity = (data.state && data.state.start) ? 0.25 : 0.5
 
 			// outline
 				drawRectangle(x, y, width, height, {color: colors.white[4], shadow: colors.black[4], blur: 8, opacity: opacity, radii: {topLeft: 10, topRight: 10, bottomRight: 10, bottomLeft: 10}})
@@ -422,7 +442,7 @@
 				}
 
 			// instructions
-				if (!isMenu) {
+				if (data.state && data.state.start) {
 					drawText(x + (width / 2), y - (height / 4), "chords: arrows | melodies: auras", {color: colors.black[4], blur: 8, shadow: colors.white[4], opacity: opacity * 1.5, size: width / notesLength / 2})
 				}
 		}
@@ -434,6 +454,47 @@
 			drawRectangle(x - (width / 2), y - (height / 2), width, height, {color: colors.white[4], shadow: colors.black[4], blur: 8, opacity: 0.25, radii: {topLeft: (size / 5), topRight: (size / 5), bottomRight: (size / 5), bottomLeft: (size / 5)}})
 			drawRectangle(x - (width / 2), y - (height / 2), width, height, {color: colors.black[3],                                   opacity: 0.75, radii: {topLeft: (size / 5), topRight: (size / 5), bottomRight: (size / 5), bottomLeft: (size / 5)}})
 			drawText(     x              , y - (height / 5), "hide",        {color: colors.black[1], opacity: 0.75, size: (size / 2)})
+		}
+
+	/* buildMobileControls */
+		function buildMobileControls() {
+			// controls
+				var controls = document.createElement("div")
+					controls.id = "controls"
+				document.body.appendChild(controls)
+
+			// keyboard
+				var keyboard = document.createElement("div")
+					keyboard.id = "keyboard"
+				controls.appendChild(keyboard)
+
+				for (var i = 1; i <= 6; i++) {
+					if (i !== 4) {
+						var key = document.createElement("button")
+							key.className = "key"
+							key.id = "Digit" + i
+							key.innerText = i
+							key.addEventListener("touchstart", submitTouch)
+							key.addEventListener("touchend",   submitTouch)
+						keyboard.appendChild(key)
+					}
+				}
+
+			// dpad
+				var dpad = document.createElement("div")
+					dpad.id = "dpad"
+				controls.appendChild(dpad)
+
+				var directions = ["Up", "Left", "Down", "Right"]
+				for (var d in directions) {
+					var arrow = document.createElement("button")
+						arrow.className = "arrow"
+						arrow.id = "Arrow" + directions[d]
+						arrow.innerText = directions[d].toLowerCase()
+						arrow.addEventListener("touchstart", submitTouch)
+						arrow.addEventListener("touchend",   submitTouch)
+					dpad.appendChild(arrow)
+				}
 		}
 
 /*** music ***/
