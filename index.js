@@ -498,7 +498,7 @@
 								})
 
 								var timeAfter = new Date().getTime()
-								if (timeAfter - timeBefore > 5) { main.logMessage(request.game.id + ": " + timeAfter - timeBefore + "ms") }
+								if (timeAfter - timeBefore > 5) { main.logMessage(request.game.id + ": " + (timeAfter - timeBefore) + "ms") }
 							}, 50)
 						}
 				}
