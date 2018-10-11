@@ -77,15 +77,18 @@
 								avatar.state.down  = false
 								avatar.state.left  = false
 						}
-						else {
+						else if (request.game.players[request.session.id]) {
 							if (request.game.players[request.session.id].team == "heroes") {
-								request.game.players[request.session.id].connected = false
 								delete request.game.data.heroes[request.session.id]
 							}
 							else if (request.game.players[request.session.id].team == "demons") {
-								request.game.players[request.session.id].connected = false
 								delete request.game.data.demons[request.session.id]
 							}
+							else {
+								request.game.players[request.session.id].connected = false
+							}
+
+							delete request.game.players[request.session.id]
 						}
 
 					// delete game ?

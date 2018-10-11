@@ -490,7 +490,7 @@
 										}
 										catch (error) {main.logError(error)}
 									}
-
+									
 									if (!recipients.length) {
 										clearInterval(request.game.loop)
 										delete db[request.game.id]
