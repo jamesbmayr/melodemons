@@ -219,9 +219,6 @@
 					window.location = post.location
 				}
 				else {
-					if (data.state && post.state && (post.state.beat - data.state.beat !== 1)) {
-						console.log(post.state.beat, data.state.beat)
-					}
 					for (var k in post) {
 						data[k] = post[k]
 					}
@@ -550,29 +547,37 @@
 					}
 
 				// get time
-					var section    = Math.floor(data.state.beat % 4096 / 512) // 8 sections
-					var measure    = Math.floor(data.state.beat % 512  / 32) // 16 measures
-					var quarter    = Math.floor(data.state.beat % 32   / 8) // 4 quarters
-					var sixteenth  = Math.floor(data.state.beat % 8    / 2) // 4 sixteenths
+					if (data.state.beat % 2 == 0) {
+						var section    = Math.floor(data.state.beat % 4096 / 512) // 8 sections
+						var measure    = Math.floor(data.state.beat % 512  / 32) // 16 measures
+						var quarter    = Math.floor(data.state.beat % 32   / 8) // 4 quarters
+						var sixteenth  = Math.floor(data.state.beat % 8    / 2) // 4 sixteenths
 
-				// special sections
-					if (!data.state.start || launchingSoon || data.state.end) {
-						var soundtrack = "menu"
+					// special sections
+						if (!data.state.start || launchingSoon || data.state.end) {
+							var soundtrack = "menu"
 							section = 0
-					}
-					else if (data.state.winning.team && data.state.winning.countdown < 256) {
-						var soundtrack = data.state.winning.team
-							section = 0
-							measure = Math.floor((256 - data.state.winning.countdown) / 32) // 8 measures
-					}
-					else {
-						var soundtrack = "game"
-					}
+						}
+						else if (data.state.winning.team && data.state.winning.countdown <= 256) {
+							if (data.state.winning.countdown < 2) {
+								var soundtrack = "menu"
+								section = 0
+							}
+							else {
+								var soundtrack = data.state.winning.team
+								section = 0
+								measure = Math.floor((256 - data.state.winning.countdown + 1) / 32) // 8 measures
+							}
+						}
+						else {
+							var soundtrack = "game"
+						}
 
-				// play beat
-					var notes = data.soundtracks[soundtrack][section][measure][quarter][sixteenth]
-					for (var n in notes) {
-						instruments.honeyharp.press(frequencies[notes[n][0]][notes[n][1]])
+					// play beat
+						var notes = data.soundtracks[soundtrack][section][measure][quarter][sixteenth]
+						for (var n in notes) {
+							instruments.honeyharp.press(frequencies[notes[n][0]][notes[n][1]])
+						}
 					}
 			}
 		}
@@ -585,14 +590,14 @@
 					for (var k = 0; k < keys.length; k++) {
 						var opponent = data.heroes[keys[k]] || data.demons[keys[k]]
 
-						var notes = opponent.state.keys[opponent.state.keys.length - 2]
+						var notes = opponent.state.keys[opponent.state.keys.length - 1]
 						for (var n in notes) {
 							instruments[opponent.instrument].press(frequencies[notes[n][0]][notes[n][1]])
 						}
 					}
 			}
 			else if (avatar) {
-				var notes = avatar.state.keys[avatar.state.keys.length - 2]
+				var notes = avatar.state.keys[avatar.state.keys.length - 1]
 				for (var n in notes) {
 					instruments[avatar.instrument].press(frequencies[notes[n][0]][notes[n][1]])
 				}
