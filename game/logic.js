@@ -16,6 +16,7 @@
 				else {
 					request.game.players[request.session.id].connected  = true
 					request.game.players[request.session.id].connection = request.connection
+					request.game.keys = Object.keys(request.game.players)
 
 					if (!request.game.data.state.start) {
 						// intro text
@@ -26,6 +27,7 @@
 
 						callback([request.session.id], {success: true,
 							id:          request.game.id,
+							keys:        request.game.keys,
 							intro:       intro,
 							selection:   request.game.players[request.session.id].selection,
 							state:       request.game.data.state,
@@ -39,6 +41,7 @@
 					else {
 						callback([request.session.id], {success: true,
 							id:          request.game.id,
+							keys:        request.game.keys,
 							rejoin:      (request.game.data.state.end ? null : main.getAsset("text").rejoin),
 							state:       request.game.data.state,
 							theme:       request.game.data.theme,
@@ -68,8 +71,9 @@
 					// remove player or connection?
 						if (request.game.data.state.end) {
 							delete request.game.players[request.session.id]
+							request.game.keys = Object.keys(request.game.players)
 						}
-						else if (request.game.data.state.start) {
+						else if (request.game.data.state.start && request.game.players[request.session.id]) {
 							request.game.players[request.session.id].connected = false
 							var avatar = getAvatar(request)
 								avatar.state.up    = false
@@ -89,10 +93,11 @@
 							}
 
 							delete request.game.players[request.session.id]
+							request.game.keys = Object.keys(request.game.players)
 						}
 
 					// delete game ?
-						var others = Object.keys(request.game.players).filter(function (p) {
+						var others = request.game.keys.filter(function (p) {
 							return request.game.players[p].connected
 						}) || []
 
@@ -256,7 +261,7 @@
 							}
 
 						// heroes & demons - positions
-							var keys = Object.keys(request.game.data.heroes).concat(Object.keys(request.game.data.demons))
+							var keys = request.game.keys
 							for (var k in keys) {
 								var avatar = request.game.data.demons[keys[k]] || request.game.data.heroes[keys[k]]
 								createStartPosition(request, avatar)
@@ -296,7 +301,7 @@
 					var currentAvatars = []
 					for (var k in currentKeys) {
 						if (request.game.data[avatar.team][currentKeys[k]]) {
-							currentHeroes.push(request.game.data[avatar.team][currentKeys[k]].name)
+							currentAvatars.push(request.game.data[avatar.team][currentKeys[k]].name)
 						}
 					}
 
@@ -809,43 +814,50 @@
 		}
 
 /* updates */
-	/* updateState */
-		module.exports.updateState = updateState
-		function updateState(request, callback) {
+	/* updateBeat */
+		module.exports.updateBeat = updateBeat
+		function updateBeat(request, callback) {
 			try {
 				// beat
 					request.game.data.state.beat++
 
+				// data
+					callback(request.game.keys, {
+						beat:   true,
+						keys:   request.game.keys,
+						state:  request.game.data.state,
+						heroes: request.game.data.heroes,
+						demons: request.game.data.demons,
+						towers: request.game.data.towers,
+						arrows: request.game.data.arrows,
+						auras:  request.game.data.auras
+					})
+
+			}
+			catch (error) {main.logError(error)}
+		}
+	/* updateState */
+		module.exports.updateState = updateState
+		function updateState(request, callback) {
+			try {
 				// menu
 					if (!request.game.data.state.start) {
 						// sounds
-							var keys   = Object.keys(request.game.data.heroes).concat(Object.keys(request.game.data.demons))
+							var keys   = request.game.keys
 							for (var k in keys) {
-								var avatar = request.game.data.demons[keys[k]] || request.game.data.heroes[keys[k]]
+								var avatar = request.game.data.demons[keys[k]] || request.game.data.heroes[keys[k]] || null
 								updateKeys(request, avatar)
 							}
-
-						callback(Object.keys(request.game.players), {
-							state:  request.game.data.state,
-							theme:  request.game.data.theme,
-							heroes: request.game.data.heroes,
-							demons: request.game.data.demons
-						})
-					}
-
-				// victory
-					else if (request.game.data.state.end) {
-						callback(Object.keys(request.game.players), {state: request.game.data.state})
 					}
 
 				// gameplay
-					else {
+					else if (!request.game.data.state.end) {
 						// map
 							var map    = request.game.data.map
 							var towers = request.game.data.towers
 							var arrows = request.game.data.arrows
 							var auras  = request.game.data.auras
-							var keys   = Object.keys(request.game.data.heroes).concat(Object.keys(request.game.data.demons))
+							var keys   = request.game.keys
 
 						// aura effects
 							if (request.game.data.state.beat > 128) {
@@ -883,15 +895,6 @@
 
 						// winning ?
 							updateWinning(       request,         keys)
-
-						callback(Object.keys(request.game.players), {
-							state:  request.game.data.state,
-							heroes: request.game.data.heroes,
-							demons: request.game.data.demons,
-							towers: request.game.data.towers,
-							arrows: request.game.data.arrows,
-							auras:  request.game.data.auras
-						})
 					}
 			}
 			catch (error) {main.logError(error)}
@@ -1566,16 +1569,18 @@
 		module.exports.updateKeys = updateKeys
 		function updateKeys(request, avatar, keys) {
 			try {
-				// cycle beats
-					avatar.state.keys.shift()
-					while (avatar.state.keys.length < 64) {
-						avatar.state.keys.push([])
-					}
+				if (avatar) {
+					// cycle beats
+						avatar.state.keys.shift()
+						while (avatar.state.keys.length < 64) {
+							avatar.state.keys.push([])
+						}
 
-				// update cooldown
-					if (avatar.state.cooldown > 0) {
-						avatar.state.cooldown = avatar.state.cooldown - 1
-					}
+					// update cooldown
+						if (avatar.state.cooldown > 0) {
+							avatar.state.cooldown = avatar.state.cooldown - 1
+						}
+				}
 			}
 			catch (error) {main.logError(error)}
 		}

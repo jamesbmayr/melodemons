@@ -1,6 +1,7 @@
 /*** modules ***/
 	var http = require("http")
 	var fs   = require("fs")
+	var util = require("util")
 	var qs   = require("querystring")
 	var ws   = require("websocket").server
 
@@ -244,6 +245,19 @@
 										catch (error) {_404(error)}
 									break
 
+								// data
+									case (/^\/data\/?$/).test(request.url):
+										try {
+											if (main.getEnvironment("debug")) {
+												response.end("<pre>" + util.inspect(db) + "</pre>")
+											}
+											else {
+												_404()
+											}
+										}
+										catch (error) {_404(error)}
+									break
+
 								// others
 									default:
 										_404()
@@ -414,8 +428,6 @@
 								catch (error) {main.logError(error)}
 
 							if (request.post && request.post.action) {
-								// main.logStatus(request.session.id + " @ " + request.ip + "\n[WEBSOCKET] " + request.path.join("/") + "\n" + message.utf8Data)
-								
 								switch (request.post.action) {
 									case "submitArrow":
 										try {
@@ -475,30 +487,34 @@
 							}
 						})
 
-					// loop
-						if (request.game && !request.game.loop) {
-							request.game.loop = setInterval(function() {
-								var timeBefore = new Date().getTime()
-								
-								game.updateState(request, function(recipients, data) {
-									data = JSON.stringify(data).replace('{', '{"beat": true, ')
-									for (var r in recipients) {
-										try {
-											if (request.game.players[recipients[r]].connected) {
-												request.game.players[recipients[r]].connection.sendUTF(data)
+					// loops
+						if (request.game && !request.game.beatLoop) {
+							request.game.beatLoop = setInterval(function() {
+								main.logTime(request.game.id + ":b ", function() {
+									game.updateBeat(request, function(recipients, data) {
+										data = JSON.stringify(data)
+										for (var r in recipients) {
+											try {
+												if (request.game.players[recipients[r]].connected) {
+													request.game.players[recipients[r]].connection.sendUTF(data)
+												}
 											}
+											catch (error) {main.logError(error)}
 										}
-										catch (error) {main.logError(error)}
-									}
-									
-									if (!recipients.length) {
-										clearInterval(request.game.loop)
-										delete db[request.game.id]
-									}
-								})
 
-								var timeAfter = new Date().getTime()
-								if (timeAfter - timeBefore > 5) { main.logMessage(request.game.id + ": " + (timeAfter - timeBefore) + "ms") }
+										if (!recipients.length) {
+											clearInterval(request.game.beatLoop)
+											clearInterval(request.game.stateLoop)
+											delete db[request.game.id]
+										}
+									})
+								})
+							}, 50)
+
+							request.game.stateLoop = setInterval(function() {
+								main.logTime(request.game.id + ":s ", function() {
+									game.updateState(request)
+								})
 							}, 50)
 						}
 				}

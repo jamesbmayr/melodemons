@@ -29,6 +29,12 @@
 		line-height: 1.35;
 	}
 
+	@-moz-document url-prefix() {
+		#overlay {
+			overflow-y: hidden;
+		}
+	}
+
 	/* text */
 		#gameid {
 			margin: 20px;

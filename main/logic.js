@@ -1,28 +1,53 @@
 /*** modules ***/
 	var http       = require("http")
 	var fs         = require("fs")
+	var debug      = getEnvironment("debug")
 	module.exports = {}
 
 /*** logs ***/
 	/* logError */
 		module.exports.logError = logError
 		function logError(error) {
-			console.log("\n*** ERROR @ " + new Date().toLocaleString() + " ***")
-			console.log(" - " + error)
-			console.dir(arguments)
+			if (debug) {
+				console.log("\n*** ERROR @ " + new Date().toLocaleString() + " ***")
+				console.log(" - " + error)
+				console.dir(arguments)
+			}
 		}
 
 	/* logStatus */
 		module.exports.logStatus = logStatus
 		function logStatus(status) {
-			console.log("\n--- STATUS @ " + new Date().toLocaleString() + " ---")
-			console.log(" - " + status)
+			if (debug) {
+				console.log("\n--- STATUS @ " + new Date().toLocaleString() + " ---")
+				console.log(" - " + status)
+
+			}
 		}
 
 	/* logMessage */
 		module.exports.logMessage = logMessage
 		function logMessage(message) {
-			console.log(" - " + new Date().toLocaleString() + ": " + message)
+			if (debug) {
+				console.log(" - " + new Date().toLocaleString() + ": " + message)
+			}
+		}
+
+	/* logTime */
+		module.exports.logTime = logTime
+		function logTime(flag, callback) {
+			if (debug) {
+				var before = process.hrtime()
+				callback()
+				
+				var after = process.hrtime(before)[1] / 1e6
+				if (after > 5) {
+					logMessage(flag + " " + after)
+				}
+			}
+			else {
+				callback()
+			}
 		}
 
 /*** maps ***/
@@ -32,14 +57,16 @@
 			try {
 				if (process.env.DOMAIN !== undefined) {
 					var environment = {
-						port:              process.env.PORT,
-						domain:            process.env.DOMAIN,
+						port:   process.env.PORT,
+						domain: process.env.DOMAIN,
+						debug:  (process.env.DEBUG || false)
 					}
 				}
 				else {
 					var environment = {
-						port:              3000,
-						domain:            "localhost",
+						port:   3000,
+						domain: "localhost",
+						debug:  true
 					}
 				}
 

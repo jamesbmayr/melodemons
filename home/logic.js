@@ -46,7 +46,7 @@
 				if (request.game.data.state.end) {
 					callback({success: false, message: "game already ended"})
 				}
-				else if (!request.game.players[request.session.id] && (Object.keys(request.game.players).length >= 6)) {
+				else if (!request.game.players[request.session.id] && (Object.keys(request.game.players).length >= 8)) {
 					callback({success: false, message: "game is at capacity"})
 				}
 				else if (!request.game.players[request.session.id] && request.game.data.state.start) {

@@ -104,18 +104,22 @@
 	/* scrollbars */
 		::-webkit-scrollbar {
 			width: 0 !important;
+			height: 0 !important;
 		}
 
 		::-moz-scrollbar {
 			width: 0 !important;
+			height: 0 !important;
 		}
 
 		::-ms-scrollbar {
 			width: 0 !important;
+			height: 0 !important;
 		}
 
 		::-o-scrollbar {
 			width: 0 !important;
+			height: 0 !important;
 		}
 
 	/* placeholders */
