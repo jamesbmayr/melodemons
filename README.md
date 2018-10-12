@@ -36,10 +36,10 @@ melodemons
 |   |- websocket
 |
 |- main
-|   |- logic.js (logError, logStatus, logMessage; getEnvironment, getAsset, getSchema; isNumLet, isBot; renderHTML, sanitizeString, duplicateObject; generateRandom, chooseRandom, sortRandom; determineSession, cleanDatabase)
+|   |- logic.js (logError, logStatus, logMessage, logTime; getEnvironment, getAsset, getSchema; isNumLet, isBot; renderHTML, sanitizeString, duplicateObject; generateRandom, chooseRandom, sortRandom; determineSession, cleanDatabase)
 |   |- stylesheet.css
 |   |- audio.js (buildAudio; buildInstrument, getInstruments)
-|   |- draw.js (drawLine, drawCircle, drawTriangle, drawRectangle, drawText, drawGradient; drawMap, drawSky, drawBackground, drawForeground; drawAvatar, drawArrow, drawAura, drawPit, drawSections, drawPit, drawTower, drawTowerLetters)
+|   |- draw.js (drawLine, drawCircle, drawTriangle, drawRectangle, drawText, drawGradient; drawMap, drawSky, drawBackground, drawForeground; drawAvatar, drawArrow, drawAura, drawPit, drawSections, drawTower, drawTowerLetters)
 |   |- icon.png
 |   |- logo.png
 |   |- banner.png
@@ -58,8 +58,8 @@ melodemons
 |   |- script.js (sanitizeString, sendPost, displayError; submitFeedback; drawLoop)
 |
 |- game
-    |- logic.js (addPlayer, removePlayer; submitArrow, submitNote, submitTeam; changeSelection, launchGame; createAvatar, createTower, createColumn, createStartPosition, createAura, createArrow; triggerMove, triggerNote; getAngle, getScalar, getCells, getAvatar, getTower, getMatch, getWithin, getBeatAgo; updateState, updateVelocity, updatePosition, updateCollisions, updateHealth, updateTower, updateSongs, updateArrows, updateAuras, updateTowerAuras, updateEffects, updateSoundEffects, updateKeys)
+    |- logic.js (addPlayer, removePlayer; submitArrow, submitNote, submitTeam; changeSelection, launchGame; createAvatar, createTower, createColumn, createStartPosition, createAura, createArrow; triggerMove, triggerNote; getAngle, getScalar, getCells, getAvatar, getTower, getMatch, getWithin, getBeatAgo; updateBeat, updateState, updateEffects, updateAura, updateArrow, updateTower, updateVelocity, updateCollisions, updatePosition, updateHealth, updateMusic, updateWinning)
     |- index.html
     |- stylesheet.css
-    |- script.js (createSocket, checkLoop, submitClick, submitKey, receivePost; drawMessage, drawMenu, drawDPad, drawKeyboard; setInstruments, playMusic, playSoundEffects, playSoundtrack, playAvatarSounds)
+    |- script.js (createSocket, checkLoop; submitClick, submitKey, submitTouch; receivePost; createOverlay, drawMessage, drawMenu; drawDPad, drawKeyboard, drawEscape, buildMobileControls; setInstruments, playMusic, playSoundEffects, playSoundtrack, playAvatarSounds)
 </pre>

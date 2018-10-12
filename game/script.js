@@ -104,6 +104,7 @@
 			}
 		}, 5000)
 
+/*** submit ***/
 	/* submitKey */
 		document.addEventListener("keydown", submitKey)
 		document.addEventListener("keyup",   submitKey)
@@ -212,6 +213,7 @@
 				submitKey(keyEvent)
 		}
 
+/*** receive ***/
 	/* receivePost */
 		function receivePost(post) {
 			// redirect or update info
