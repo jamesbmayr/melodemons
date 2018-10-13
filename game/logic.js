@@ -1054,13 +1054,13 @@
 						avatar.state.vx = Math.max(minVX, Math.min(maxVX, avatar.state.vx))
 					}
 					else if ((avatar.state.left  && !avatar.state.effects.includes("confusion")) || (avatar.state.right && avatar.state.effects.includes("confusion"))) {
-						avatar.state.vx = Math.max(minVX, Math.min(maxVX, avatar.state.vx - 1))
+						avatar.state.vx = Math.max(minVX, Math.min(maxVX, avatar.state.vx - 2))
 					}
 					else if ((avatar.state.right && !avatar.state.effects.includes("confusion")) || (avatar.state.left  && avatar.state.effects.includes("confusion"))) {
-						avatar.state.vx = Math.max(minVX, Math.min(maxVX, avatar.state.vx + 1))
+						avatar.state.vx = Math.max(minVX, Math.min(maxVX, avatar.state.vx + 2))
 					}
 					else {
-						avatar.state.vx = Math.max(minVX, Math.min(maxVX, Math.sign(avatar.state.vx) * (Math.abs(avatar.state.vx) - 1)))
+						avatar.state.vx = Math.max(minVX, Math.min(maxVX, Math.sign(avatar.state.vx) * (Math.abs(avatar.state.vx) - 2)))
 					}
 
 				// adjust vy
