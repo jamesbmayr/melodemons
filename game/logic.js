@@ -1360,7 +1360,7 @@
 
 				// healing & pain
 					if (avatar.state.health && avatar.state.effects.includes("healing")) {
-						avatar.state.health = Math.max(0, Math.min(255, avatar.state.health + 2))
+						avatar.state.health = Math.max(0, Math.min(255, avatar.state.health + 8))
 					}
 					if (avatar.state.health && avatar.state.effects.includes("pain")) {
 						avatar.state.health = Math.max(0, Math.min(255, avatar.state.health - 2))
@@ -1415,7 +1415,7 @@
 					// arrows
 						else if (beats[4].length == 3) {
 							request.game.data.arrows.push(createArrow(request, avatar, mapLength))
-							avatar.state.cooldown = 8
+							avatar.state.cooldown = 16
 						}
 
 					// auras
