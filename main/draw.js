@@ -352,7 +352,7 @@
 			// name & healthbar
 				if (avatar.state) {
 					// drawText(x + (width / 2), y + (5  * height / 4), avatar.name                          , {opacity: opacity, color: avatar.colors[2],     size: (3 * width / 8)})	  // name
-					drawLine(x              , y + (9  * height / 8), x + healthWidth, y + (9 * height / 8), {opacity: opacity, color: healthColor, blur: 8, shadow: colors.black[4]}) // health bar
+					drawLine(x              , y + (9  * height / 8), x + healthWidth, y + (9 * height / 8), {opacity: opacity, color: healthColor, blur: 8, shadow: colors.black[4], border: 4}) // health bar
 
 					if ((data.heroes[id] && data.heroes[id].name == avatar.name) || (data.demons[id] && data.demons[id].name == avatar.name)) {
 						drawText(x + (width / 2), y + (5  * height / 4), avatar.numbers, {opacity: opacity, color: colors.white[4], blur: 4, shadow: colors.black[4], size: (3 * width / 8)}) // melody
