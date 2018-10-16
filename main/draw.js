@@ -150,11 +150,16 @@
 						skyBottom:          colors.white[3]
 					}
 				}
+				var flash = (data.state && !data.state.end && (data.state.beat % 8 < 4) && avatar.state.health) ? true : false
 
 			// draw
 				drawSky(                    theme)
-				drawBackground(avatar, map, theme, data, isSample)
-				drawForeground(avatar, map, theme, data, isSample)
+				drawBackground(avatar, map, theme, data, isSample, flash)
+				drawForeground(avatar, map, theme, data, isSample, flash)
+
+				if (avatar.state && avatar.state.health && avatar.state.auras && (avatar.state.auras.darkness.radius || avatar.state.auras.darkness.tower)) {
+					drawRectangle(0, 0, canvas.width, canvas.height, {color: colors.black[4], opacity: 0.95})
+				}
 		}
 
 	/* drawSky */
@@ -162,7 +167,7 @@
 		function drawSky(theme) {
 			// clear
 				context.clearRect(0, 0, canvas.width, canvas.height)
-			
+
 			// draw
 				var skyTop    = theme ? theme.skyTop    : colors.white[4]
 				var skyBottom = theme ? theme.skyBottom : colors.white[3]
@@ -171,7 +176,7 @@
 
 	/* drawBackground */
 		window.drawBackground = drawBackground
-		function drawBackground(avatar, map, theme, data, isSample) {
+		function drawBackground(avatar, map, theme, data, isSample, flash) {
 			// variables
 				var mapLength = map.length * 32
 				var oppositeX = (avatar.state.x + (mapLength / 2)) % mapLength
@@ -189,9 +194,9 @@
 					var columnNumber = Math.floor(mapX / 32)
 
 					// tower ?
-						if (columnNumber % 64 < 4) {
-							var tower = (data && data.towers) ? data.towers[Math.floor(columnNumber / 64)] : null
-						 	drawTower(theme, tower, columnNumber, canvasX, false)
+						if (columnNumber % 32 < 4) {
+							var tower = (data && data.towers) ? data.towers[Math.floor(columnNumber / 32)] : null
+						 	drawTower(theme, tower, columnNumber, canvasX, false, flash)
 						}
 						else {
 							var tower = false
@@ -233,20 +238,13 @@
 					}
 				}
 
-			// auras
-				if (!isSample) {
-					for (var a in data.auras) {
-						drawAura(1280 - ((data.auras[a].x - 32 - startX + mapLength + 200) % mapLength - 200) / 1.6, (data.auras[a].y / 1.6) + 40, 0.625, data.auras[a], false)
-					}
-				}
-
 			// pit
 				drawRectangle(0, 0, canvas.width, 40, {color: (theme ? theme.pitBackground : colors.black[1])})
 		}
 
 	/* drawForeground */
 		window.drawForeground = drawForeground
-		function drawForeground(avatar, map, theme, data, isSample) {
+		function drawForeground(avatar, map, theme, data, isSample, flash) {
 			// variables
 				var towers    = []
 				var mapLength = map.length * 32
@@ -264,9 +262,9 @@
 					var columnNumber = Math.floor(mapX / 32)
 
 					// tower ?
-						if (columnNumber % 64 < 4) {
-							var tower = (data && data.towers) ? data.towers[Math.floor(columnNumber / 64)] : null
-							drawTower(theme, tower, columnNumber, canvasX, true)
+						if (columnNumber % 32 < 4) {
+							var tower = (data && data.towers) ? data.towers[Math.floor(columnNumber / 32)] : null
+							drawTower(theme, tower, columnNumber, canvasX, true, flash)
 						}
 						else {
 							tower = false
@@ -307,26 +305,6 @@
 						drawAvatar((avatar.state.x - startX + mapLength + 32) % mapLength - 32, avatar.state.y, 32, 64, avatar)
 					}
 				}
-
-			// auras
-				if (!isSample) {
-					for (var a in data.auras) {
-						drawAura((data.auras[a].x - startX + mapLength + 256) % mapLength - 256, data.auras[a].y, 1, data.auras[a], true)
-					}
-				}
-
-			// countdown ?
-				if (!isSample) {
-					if (!data.state.end && data.state.beat <= 128) { // game launch
-						drawText(canvas.width / 2, 3 * canvas.height / 4, 8 - Math.floor(data.state.beat / 16)            ,  {color: colors.black[4], size: 64, blur: 8})
-					}
-					else if (data.state.winning.team && data.state.end) { // game over
-						drawText(canvas.width / 2,     canvas.height / 2, (data.state.winning.team.toUpperCase() + " WIN"),  {color: data.state.winning.color, size: 64, blur: 8, shadow: data.state.winning.color})
-					}
-					else if (data.state.winning.team && data.state.winning.countdown < 256) { // win countdown
-						drawText(canvas.width / 2, 3 * canvas.height / 4, Math.ceil(data.state.winning.countdown / 16)    , {color: data.state.winning.color, size: 64})
-					}
-				}
 		}
 
 	/* drawAvatar */
@@ -351,7 +329,6 @@
 
 			// name & healthbar
 				if (avatar.state) {
-					// drawText(x + (width / 2), y + (5  * height / 4), avatar.name                          , {opacity: opacity, color: avatar.colors[2],     size: (3 * width / 8)})	  // name
 					drawLine(x              , y + (9  * height / 8), x + healthWidth, y + (9 * height / 8), {opacity: opacity, color: healthColor, blur: 8, shadow: colors.black[4], border: 4}) // health bar
 
 					if ((data.heroes[id] && data.heroes[id].name == avatar.name) || (data.demons[id] && data.demons[id].name == avatar.name)) {
@@ -359,8 +336,7 @@
 					}
 				}
 				else {
-					// drawText(x + (width / 2), y + (5 * height / 4), avatar.name                           , {opacity: opacity, color: avatar.colors[2],     size: (width / 2)})   // name
-					drawText(x + (width / 2), y - (2 * height / 4), avatar.song                           , {opacity: opacity, color: avatar.colors[2],     size: (width / 2)})   // song
+					drawText(x + (width / 2), y - (2 * height / 4), avatar.song, {opacity: opacity, color: avatar.colors[2], size: (width / 2), style: "bold"})   // song
 				}
 
 			// body
@@ -394,6 +370,18 @@
 			// eyes
 				drawCircle(x +     (width / 4) + xOffset, y + (13 * height / 16) + yOffset, width / 8, {opacity: opacity, color: avatar.colors[2]}) // left eye
 				drawCircle(x + (3 * width / 4) + xOffset, y + (13 * height / 16) + yOffset, width / 8, {opacity: opacity, color: avatar.colors[2]}) // right eye
+
+			// aura
+				if (avatar.state) {
+					for (var a in avatar.state.auras) {
+						if (avatar.state.auras[a].tower) {
+							drawCircle(x + (width / 2), y + (height / 2), width,                                      {opacity: opacity * 0.25, color: avatar.state.auras[a].colors[1], shadow: avatar.state.auras[a].colors[0], blur: 4, border: 4})
+						}
+						else if (avatar.state.auras[a].radius) {
+							drawCircle(x + (width / 2), y + (height / 2), avatar.state.auras[a].radius * height / 64, {opacity: opacity * 0.25, color: avatar.state.auras[a].colors[1], shadow: avatar.state.auras[a].colors[0], blur: 4, border: 4})	
+						}
+					}
+				}
 		}
 
 	/* drawArrow */
@@ -409,16 +397,6 @@
 			// draw
 				drawTriangle(x, y + radius, x, y - radius, x - (3 * radius), y, {opacity: opacity * 0.5, color: arrow.colors[0], shadow: arrow.colors[1], blur: 4, border: 4})
 				drawCircle(  x, y,                            Math.abs(radius), {opacity: opacity *   1, color: arrow.colors[0], shadow: arrow.colors[1], blur: 4, border: 4})
-		}
-
-	/* drawAura */
-		window.drawAura = drawAura
-		function drawAura(x, y, multiplier, aura, foreground) {
-			// variables
-				var opacity = foreground ? 0.25 : 0.125
-
-			// draw
-				drawCircle(x, y, aura.radius * multiplier, {opacity: opacity, color: aura.colors[1], shadow: aura.colors[0], blur: 4, border: 4})
 		}
 
 	/* drawPit */
@@ -487,33 +465,33 @@
 
 	/* drawTower */
 		window.drawTower = drawTower
-		function drawTower(theme, tower, columnNumber, canvasX, foreground) {
+		function drawTower(theme, tower, columnNumber, canvasX, foreground, flash) {
 			// variables
 				var multiplier  = foreground ? 1 : 0.625
 				var yOffset     = foreground ? 0 : 40
 				var xOffset     = foreground ? 0 : -1 * (60 * multiplier)
 				var xPlacement  = foreground ? (canvasX * multiplier) : 1280 - (canvasX * multiplier)
 				var towerColor  = foreground ? (theme ? theme.towerForeground : colors.black[2]) : (theme ? theme.towerBackground : colors.black[1])
-				var centerDelta = foreground ? (2 - (columnNumber % 64)) * (32 * multiplier) : ((columnNumber % 64) - 1) * (32 * multiplier) * -1
+				var centerDelta = foreground ? (2 - (columnNumber % 32)) * (32 * multiplier) : ((columnNumber % 32) - 1) * (32 * multiplier) * -1
 				var flagColor   = tower ? tower.colors[2] : colors.black[0]
 
 			// background
-				if (columnNumber % 64 == 0) {
+				if (columnNumber % 32 == 0) {
 					drawRectangle(Math.round(xPlacement), yOffset, (32 * multiplier), (32 * multiplier) * 13,
 						{color: towerColor, radii: {topLeft: foreground ? (8 * multiplier) : 0, topRight: foreground ? 0 : (8 * multiplier), bottomRight: 0, bottomLeft: 0}}
 					)
 				}
-				else if (columnNumber % 64 == 1) {
+				else if (columnNumber % 32 == 1) {
 					drawRectangle(Math.round(xPlacement), yOffset, (32 * multiplier), (32 * multiplier) * 14,
 						{color: towerColor, radii: {topLeft: foreground ? (8 * multiplier) : 0, topRight: foreground ? 0 : (8 * multiplier), bottomRight: 0, bottomLeft: 0}}
 					)
 				}
-				else if (columnNumber % 64 == 2) {
+				else if (columnNumber % 32 == 2) {
 					drawRectangle(Math.round(xPlacement), yOffset, (32 * multiplier), (32 * multiplier) * 14,
 						{color: towerColor, radii: {topLeft: foreground ? 0 : (8 * multiplier), topRight: foreground ? (8 * multiplier) : 0, bottomRight: 0, bottomLeft: 0}}
 					)
 				}
-				else if (columnNumber % 64 == 3) {
+				else if (columnNumber % 32 == 3) {
 					drawRectangle(Math.round(xPlacement), yOffset, (32 * multiplier), (32 * multiplier) * 13,
 						{color: towerColor, radii: {topLeft: foreground ? 0 : (8 * multiplier), topRight: foreground ? (8 * multiplier) : 0, bottomRight: 0, bottomLeft: 0}}
 					)
@@ -522,8 +500,8 @@
 			// name & flag
 				xPlacement = foreground ? (canvasX * multiplier) + centerDelta : 1280 - ((canvasX * multiplier) + centerDelta)
 
-				drawLine(     xPlacement          , (32 * multiplier * 14)                     + yOffset,        xPlacement, (32 * multiplier * 16) + yOffset, {color:  flagColor, shadow: flagColor, blur: 1})
-				drawRectangle(xPlacement + xOffset, (32 * multiplier * 14) + (20 * multiplier) + yOffset, (60 * multiplier), (40 * multiplier)               , {color:  flagColor, shadow: flagColor, blur: 2, radii: {topLeft: 4, topRight: 4, bottomRight: 4, bottomLeft: 4}})
+				drawLine(     xPlacement          , (32 * multiplier * 14)                     + yOffset,        xPlacement, (32 * multiplier * 16) + yOffset, {color:  flagColor, shadow: flagColor, blur: flash ? 1 : 0})
+				drawRectangle(xPlacement + xOffset, (32 * multiplier * 14) + (20 * multiplier) + yOffset, (60 * multiplier), (40 * multiplier)               , {color:  flagColor, shadow: flagColor, blur: flash ? 1 : 0, radii: {topLeft: 4, topRight: 4, bottomRight: 4, bottomLeft: 4}})
 				if (tower) {
 					drawText(     xPlacement + xOffset + (30 * multiplier), (32 * multiplier * 14) + (35 * multiplier) + yOffset,                      tower.name, {color:  colors.white[4], size:   10 * multiplier})
 				}
@@ -539,7 +517,7 @@
 				var xPlacement = foreground ? ((canvasX * multiplier) + xOffset) : 1280 - ((canvasX * multiplier) + xOffset)
 				
 			// high platform
-				var platform = tower.platforms[columnNumber % 64]
+				var platform = tower.platforms[columnNumber % 32]
 				drawText(xPlacement, (platform.y * 32 * multiplier) + (4 * multiplier) + yOffset, platform.number, {
 					size:   32 * multiplier,
 					color:  platform.color,
@@ -547,7 +525,7 @@
 				})
 
 			// low platform
-				var platform = tower.platforms[columnNumber % 64 + 4]
+				var platform = tower.platforms[columnNumber % 32 + 4]
 				drawText(xPlacement, (platform.y * 32 * multiplier) + (4 * multiplier) + yOffset, platform.number, {
 					size:   32 * multiplier,
 					color:  platform.color,

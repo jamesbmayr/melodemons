@@ -137,7 +137,7 @@
 							towers: "TOWERS - play a platform's note to capture it",
 							auras:  "AURAS - play your avatar or tower melodies",
 							arrows: "ARROWS - play three-note chords to attack",							
-							goal:   "Claim every tower to sound the song of victory.",
+							goal:   "Claim the 4 towers to sound the song of victory.",
 							rejoin: "[ click to rejoin ]"
 						}
 					break
@@ -148,11 +148,11 @@
 
 						return [
 							{
-								name: "Deacon",
+								name: "Gaden",
 								team: "heroes",
-								instrument: "glassical",
-								colors: [songs.healing.colors[0], songs.healing.colors[1], colors.blue[2]],
-								song: "healing"
+								instrument: "clarinaut",
+								colors: [songs.protection.colors[0], songs.protection.colors[1], colors.blue[2]],
+								song: "protection"
 							},
 							{
 								name: "Acadia",
@@ -162,25 +162,11 @@
 								song: "flight"
 							},
 							{
-								name: "Gaden",
+								name: "Deacon",
 								team: "heroes",
-								instrument: "clarinaut",
-								colors: [songs.protection.colors[0], songs.protection.colors[1], colors.blue[2]],
-								song: "protection"
-							},
-							{
-								name: "Cadence",
-								team: "heroes",
-								instrument: "sine",
-								colors: [songs.confusion.colors[0], songs.confusion.colors[1], colors.blue[2]],
-								song: "confusion"
-							},
-							{
-								name: "Edgar",
-								team: "heroes",
-								instrument: "triangle",
-								colors: [songs.gravity.colors[0], songs.gravity.colors[1], colors.blue[2]],
-								song: "gravity"
+								instrument: "glassical",
+								colors: [songs.rapidfire.colors[0], songs.rapidfire.colors[1], colors.blue[2]],
+								song: "rapidfire"
 							},
 							{
 								name: "Aeden",
@@ -197,11 +183,25 @@
 								song: "slow"
 							},
 							{
+								name: "Cadence",
+								team: "heroes",
+								instrument: "sine",
+								colors: [songs.confusion.colors[0], songs.confusion.colors[1], colors.blue[2]],
+								song: "confusion"
+							},
+							{
+								name: "Edgar",
+								team: "heroes",
+								instrument: "triangle",
+								colors: [songs.sliding.colors[0], songs.sliding.colors[1], colors.blue[2]],
+								song: "sliding"
+							},							
+							{
 								name: "Cager",
 								team: "heroes",
 								instrument: "qube",
-								colors: [songs.pain.colors[0], songs.pain.colors[1], colors.blue[2]],
-								song: "pain"
+								colors: [songs.darkness.colors[0], songs.darkness.colors[1], colors.blue[2]],
+								song: "darkness"
 							}
 						]
 					break
@@ -212,11 +212,11 @@
 
 						return [
 							{
-								name: "Deacrog",
+								name: "Gademur",
 								team: "demons",
-								instrument: "square",
-								colors: [songs.healing.colors[0], songs.healing.colors[1], colors.red[2]],
-								song: "healing"
+								instrument: "lazerz",
+								colors: [songs.protection.colors[0], songs.protection.colors[1], colors.red[2]],
+								song: "protection"
 							},
 							{
 								name: "Acadrus",
@@ -226,25 +226,11 @@
 								song: "flight"
 							},
 							{
-								name: "Gademur",
+								name: "Deacrog",
 								team: "demons",
-								instrument: "lazerz",
-								colors: [songs.protection.colors[0], songs.protection.colors[1], colors.red[2]],
-								song: "protection"
-							},
-							{
-								name: "Cadelfo",
-								team: "demons",
-								instrument: "reedles",
-								colors: [songs.confusion.colors[0], songs.confusion.colors[1], colors.red[2]],
-								song: "confusion"
-							},
-							{
-								name: "Edganis",
-								team: "demons",
-								instrument: "chordstrum",
-								colors: [songs.gravity.colors[0], songs.gravity.colors[1], colors.red[2]],
-								song: "gravity"
+								instrument: "square",
+								colors: [songs.rapidfire.colors[0], songs.rapidfire.colors[1], colors.red[2]],
+								song: "rapidfire"
 							},
 							{
 								name: "Aederos",
@@ -261,11 +247,25 @@
 								song: "slow"
 							},
 							{
+								name: "Cadelfo",
+								team: "demons",
+								instrument: "reedles",
+								colors: [songs.confusion.colors[0], songs.confusion.colors[1], colors.red[2]],
+								song: "confusion"
+							},
+							{
+								name: "Edganis",
+								team: "demons",
+								instrument: "chordstrum",
+								colors: [songs.sliding.colors[0], songs.sliding.colors[1], colors.red[2]],
+								song: "sliding"
+							},
+							{
 								name: "Cagelth",
 								team: "demons",
 								instrument: "accordienne",
-								colors: [songs.pain.colors[0], songs.pain.colors[1], colors.red[2]],
-								song: "pain"
+								colors: [songs.darkness.colors[0], songs.darkness.colors[1], colors.red[2]],
+								song: "darkness"
 							}
 						]
 					break
@@ -274,69 +274,69 @@
 						var colors = getAsset("colors")
 
 						return {
-							"healing": {
-								name: "healing",
-								description: "other heroes and demons within the aura regenerate health",
-								melody: "DEAC",
-								numbers: "2361",
-								radius: 7,
+							"protection": {
+								name: "protection",
+								affects: "allies",
+								description: "your team is immune to magic arrows",
+								melody: "GADE",
+								numbers: "5623",
 								colors: [colors.green[3], colors.green[1]]
 							},
 							"flight": {
 								name: "flight",
-								description: "other heroes and demons within the aura can fly without landing",
+								affects: "allies",
+								description: "your team can fly without landing",
 								melody: "ACAD",
 								numbers: "6162",
-								radius: 7,
 								colors: [colors.cerulean[3], colors.cerulean[1]]
 							},
-							"protection": {
-								name: "protection",
-								description: "attacks from outside the aura dissipate on collision",
-								melody: "GADE",
-								numbers: "5623",
-								radius: 7,
-								colors: [colors.yellow[3], colors.yellow[1]]
-							},
-							"confusion": {
-								name: "confusion",
-								description: "left and right controls are reversed within the aura",
-								melody: "CADE",
-								numbers: "1623",
-								radius: 7,
-								colors: [colors.purple[3], colors.purple[1]]
-							},
-							"gravity": {
-								name: "gravity",
-								description: "heroes and demons within the aura are pulled towards the center",
-								melody: "EDGA",
-								numbers: "3256",
-								radius: 7,
-								colors: [colors.cyan[3], colors.cyan[1]]
+							"rapidfire": {
+								name: "rapidfire",
+								affects: "allies",
+								description: "your team can shoot arrows at a faster rate",
+								melody: "DEAC",
+								numbers: "2361",
+								colors: [colors.magenta[3], colors.magenta[1]]
 							},
 							"strength": {
 								name: "strength",
-								description: "attacks fired from within the aura are twice as powerful",
+								affects: "allies",
+								description: "your team's arrows are twice as powerful",
 								melody: "AEDE",
 								numbers: "6323",
-								radius: 7,
 								colors: [colors.orange[3], colors.orange[1]]
 							},
 							"slow": {
 								name: "slow",
-								description: "other heroes and demons within the aura are nearly unable to move",
+								affects: "opponents",
+								description: "opponents move at a reduced rate",
 								melody: "ADAG",
 								numbers: "6265",
-								radius: 7,
-								colors: [colors.browngray[3], colors.browngray[1]]
+								colors: [colors.yellow[3], colors.yellow[1]]
 							},
-							"pain": {
-								name: "pain",
-								description: "other heroes and demons within the aura lose health",
+							"confusion": {
+								name: "confusion",
+								affects: "opponents",
+								description: "opponents' left and right controls are reversed",
+								melody: "CADE",
+								numbers: "1623",
+								colors: [colors.purple[3], colors.purple[1]]
+							},
+							"sliding": {
+								name: "sliding",
+								affects: "opponents",
+								description: "opponents have no friction when moving",
+								melody: "EDGA",
+								numbers: "3256",
+								colors: [colors.cyan[3], colors.cyan[1]]
+							},
+							"darkness": {
+								name: "darkness",
+								affects: "opponents",
+								description: "opponents can barely see the world",
 								melody: "CAGE",
 								numbers: "1653",
-								radius: 7,
-								colors: [colors.magenta[3], colors.magenta[1]]
+								colors: [colors.browngray[3], colors.browngray[1]]
 							}
 						}
 					break
@@ -347,9 +347,9 @@
 
 						return [
 							{
-								name: "healing",
-								colors: [songs.healing.colors[0], songs.healing.colors[1], colors.black[2]],
-								platforms: [{x: 0, y: 11, color: colors.black[2], note: songs.healing.melody[0], number: songs.healing.numbers[0]}, {x: 1, y: 11, color: colors.black[2], note: songs.healing.melody[1], number: songs.healing.numbers[1]}, {x: 2, y: 11, color: colors.black[2], note: songs.healing.melody[2], number: songs.healing.numbers[2]}, {x: 3, y: 8, color: colors.black[2], note: songs.healing.melody[3], number: songs.healing.numbers[3]}, {x: 0, y: 7, color: colors.black[2], note: songs.healing.melody[0], number: songs.healing.numbers[0]}, {x: 1, y: 7, color: colors.black[2], note: songs.healing.melody[1], number: songs.healing.numbers[1]}, {x: 2, y: 7, color: colors.black[2], note: songs.healing.melody[2], number: songs.healing.numbers[2]}, {x: 3, y: 4, color: colors.black[2], note: songs.healing.melody[3], number: songs.healing.numbers[3]}]
+								name: "rapidfire",
+								colors: [songs.rapidfire.colors[0], songs.rapidfire.colors[1], colors.black[2]],
+								platforms: [{x: 0, y: 11, color: colors.black[2], note: songs.rapidfire.melody[0], number: songs.rapidfire.numbers[0]}, {x: 1, y: 11, color: colors.black[2], note: songs.rapidfire.melody[1], number: songs.rapidfire.numbers[1]}, {x: 2, y: 11, color: colors.black[2], note: songs.rapidfire.melody[2], number: songs.rapidfire.numbers[2]}, {x: 3, y: 8, color: colors.black[2], note: songs.rapidfire.melody[3], number: songs.rapidfire.numbers[3]}, {x: 0, y: 7, color: colors.black[2], note: songs.rapidfire.melody[0], number: songs.rapidfire.numbers[0]}, {x: 1, y: 7, color: colors.black[2], note: songs.rapidfire.melody[1], number: songs.rapidfire.numbers[1]}, {x: 2, y: 7, color: colors.black[2], note: songs.rapidfire.melody[2], number: songs.rapidfire.numbers[2]}, {x: 3, y: 4, color: colors.black[2], note: songs.rapidfire.melody[3], number: songs.rapidfire.numbers[3]}]
 							},
 							{
 								name: "protection",
@@ -377,14 +377,14 @@
 								platforms: [{x: 0, y: 11, color: colors.black[2], note: songs.confusion.melody[0], number: songs.confusion.numbers[0]}, {x: 1, y: 10, color: colors.black[2], note: songs.confusion.melody[1], number: songs.confusion.numbers[1]}, {x: 2, y: 8, color: colors.black[2], note: songs.confusion.melody[2], number: songs.confusion.numbers[2]}, {x: 3, y: 8, color: colors.black[2], note: songs.confusion.melody[3], number: songs.confusion.numbers[3]}, {x: 0, y: 7, color: colors.black[2], note: songs.confusion.melody[0], number: songs.confusion.numbers[0]}, {x: 1, y: 6, color: colors.black[2], note: songs.confusion.melody[1], number: songs.confusion.numbers[1]}, {x: 2, y: 4, color: colors.black[2], note: songs.confusion.melody[2], number: songs.confusion.numbers[2]}, {x: 3, y: 4, color: colors.black[2], note: songs.confusion.melody[3], number: songs.confusion.numbers[3]}]
 							},
 							{
-								name: "gravity",
-								colors: [songs.gravity.colors[0], songs.gravity.colors[1], colors.black[2]],
-								platforms: [{x: 0, y: 11, color: colors.black[2], note: songs.gravity.melody[0], number: songs.gravity.numbers[0]}, {x: 1, y: 9, color: colors.black[2], note: songs.gravity.melody[1], number: songs.gravity.numbers[1]}, {x: 2, y: 9, color: colors.black[2], note: songs.gravity.melody[2], number: songs.gravity.numbers[2]}, {x: 3, y: 8, color: colors.black[2], note: songs.gravity.melody[3], number: songs.gravity.numbers[3]}, {x: 0, y: 7, color: colors.black[2], note: songs.gravity.melody[0], number: songs.gravity.numbers[0]}, {x: 1, y: 5, color: colors.black[2], note: songs.gravity.melody[1], number: songs.gravity.numbers[1]}, {x: 2, y: 5, color: colors.black[2], note: songs.gravity.melody[2], number: songs.gravity.numbers[2]}, {x: 3, y: 4, color: colors.black[2], note: songs.gravity.melody[3], number: songs.gravity.numbers[3]}]
+								name: "sliding",
+								colors: [songs.sliding.colors[0], songs.sliding.colors[1], colors.black[2]],
+								platforms: [{x: 0, y: 11, color: colors.black[2], note: songs.sliding.melody[0], number: songs.sliding.numbers[0]}, {x: 1, y: 9, color: colors.black[2], note: songs.sliding.melody[1], number: songs.sliding.numbers[1]}, {x: 2, y: 9, color: colors.black[2], note: songs.sliding.melody[2], number: songs.sliding.numbers[2]}, {x: 3, y: 8, color: colors.black[2], note: songs.sliding.melody[3], number: songs.sliding.numbers[3]}, {x: 0, y: 7, color: colors.black[2], note: songs.sliding.melody[0], number: songs.sliding.numbers[0]}, {x: 1, y: 5, color: colors.black[2], note: songs.sliding.melody[1], number: songs.sliding.numbers[1]}, {x: 2, y: 5, color: colors.black[2], note: songs.sliding.melody[2], number: songs.sliding.numbers[2]}, {x: 3, y: 4, color: colors.black[2], note: songs.sliding.melody[3], number: songs.sliding.numbers[3]}]
 							},
 							{
-								name: "pain",
-								colors: [songs.pain.colors[0], songs.pain.colors[1], colors.black[2]],
-								platforms: [{x: 0, y: 11, color: colors.black[2], note: songs.pain.melody[0], number: songs.pain.numbers[0]}, {x: 1, y: 9, color: colors.black[2], note: songs.pain.melody[1], number: songs.pain.numbers[1]}, {x: 2, y: 8, color: colors.black[2], note: songs.pain.melody[2], number: songs.pain.numbers[2]}, {x: 3, y: 8, color: colors.black[2], note: songs.pain.melody[3], number: songs.pain.numbers[3]}, {x: 0, y: 7, color: colors.black[2], note: songs.pain.melody[0], number: songs.pain.numbers[0]}, {x: 1, y: 5, color: colors.black[2], note: songs.pain.melody[1], number: songs.pain.numbers[1]}, {x: 2, y: 4, color: colors.black[2], note: songs.pain.melody[2], number: songs.pain.numbers[2]}, {x: 3, y: 4, color: colors.black[2], note: songs.pain.melody[3], number: songs.pain.numbers[3]}]
+								name: "darkness",
+								colors: [songs.darkness.colors[0], songs.darkness.colors[1], colors.black[2]],
+								platforms: [{x: 0, y: 11, color: colors.black[2], note: songs.darkness.melody[0], number: songs.darkness.numbers[0]}, {x: 1, y: 9, color: colors.black[2], note: songs.darkness.melody[1], number: songs.darkness.numbers[1]}, {x: 2, y: 8, color: colors.black[2], note: songs.darkness.melody[2], number: songs.darkness.numbers[2]}, {x: 3, y: 8, color: colors.black[2], note: songs.darkness.melody[3], number: songs.darkness.numbers[3]}, {x: 0, y: 7, color: colors.black[2], note: songs.darkness.melody[0], number: songs.darkness.numbers[0]}, {x: 1, y: 5, color: colors.black[2], note: songs.darkness.melody[1], number: songs.darkness.numbers[1]}, {x: 2, y: 4, color: colors.black[2], note: songs.darkness.melody[2], number: songs.darkness.numbers[2]}, {x: 3, y: 4, color: colors.black[2], note: songs.darkness.melody[3], number: songs.darkness.numbers[3]}]
 							}
 						]
 					break									
@@ -598,9 +598,10 @@
 
 					case "sample":
 						return [
-							[{"bottom":0,"top":3},{"bottom":11,"top":11,"note":"A","team":"heroes"},{"bottom":7,"top":7,"note":"A","team":"heroes"}],[{"bottom":0,"top":3},{"bottom":9,"top":9,"note":"C","team":"heroes"},{"bottom":5,"top":5,"note":"C","team":"heroes"}],[{"bottom":0,"top":3},{"bottom":8,"top":8,"note":"A","team":"heroes"},{"bottom":4,"top":4,"note":"A","team":"heroes"}],[{"bottom":0,"top":2},{"bottom":8,"top":8,"note":"E","team":"heroes"},{"bottom":4,"top":4,"note":"E","team":"heroes"}],[{"bottom":0,"top":2}],[{"bottom":0,"top":3}],[{"bottom":0,"top":4}],[{"bottom":0,"top":4}],[{"bottom":0,"top":4}],[null],[null],[{"bottom":0,"top":3}],[{"bottom":0,"top":5}],[{"bottom":0,"top":5}],[{"bottom":0,"top":5}],[{"bottom":0,"top":4}],[null],[null],[null],[{"bottom":0,"top":5}],[{"bottom":0,"top":5}],[{"bottom":0,"top":5}],[{"bottom":0,"top":5}],[{"bottom":0,"top":5}],[{"bottom":0,"top":5}],[{"bottom":0,"top":5}],[{"bottom":0,"top":5}],[{"bottom":0,"top":4}],[{"bottom":0,"top":1}],[{"bottom":0,"top":1}],[{"bottom":0,"top":1},{"bottom":4,"top":4}],[{"bottom":0,"top":1},{"bottom":5,"top":5}],[{"bottom":0,"top":1},{"bottom":6,"top":6}],[{"bottom":0,"top":4},{"bottom":9,"top":9}],[{"bottom":0,"top":4},{"bottom":9,"top":9}],[{"bottom":0,"top":4},{"bottom":8,"top":8}],[{"bottom":0,"top":4},{"bottom":7,"top":7}],[{"bottom":0,"top":7},{"bottom":10,"top":10}],[{"bottom":0,"top":5}],[{"bottom":0,"top":5}],[{"bottom":0,"top":5}],[{"bottom":0,"top":7}],[{"bottom":0,"top":7}],[{"bottom":0,"top":7}],[{"bottom":0,"top":7}],[{"bottom":0,"top":8}],[{"bottom":0,"top":8}],[{"bottom":0,"top":8}],[null],[null],[{"bottom":0,"top":9}],[{"bottom":0,"top":9}],[{"bottom":0,"top":9}],[{"bottom":0,"top":8}],[{"bottom":0,"top":7}],[{"bottom":0,"top":5}],[{"bottom":0,"top":5}],[{"bottom":0,"top":5}],[{"bottom":0,"top":6}],[null],[{"bottom":0,"top":8}],[null],[null],[null],
-							[{"bottom":0,"top":3},{"bottom":11,"top":11,"note":"C","team":null},{"bottom":7,"top":7,"note":"C","team":null}],[{"bottom":0,"top":3},{"bottom":10,"top":10,"note":"G","team":null},{"bottom":6,"top":6,"note":"G","team":null}],[{"bottom":0,"top":2},{"bottom":10,"top":10,"note":"E","team":null},{"bottom":6,"top":6,"note":"E","team":null}],[{"bottom":0,"top":3},{"bottom":8,"top":8,"note":"G","team":null},{"bottom":4,"top":4,"note":"G","team":null}],[{"bottom":0,"top":3}],[{"bottom":0,"top":1}],[{"bottom":0,"top":1}],[{"bottom":0,"top":2}],[{"bottom":0,"top":4}],[{"bottom":0,"top":4}],[{"bottom":0,"top":3}],[{"bottom":0,"top":3}],[{"bottom":0,"top":3}],[{"bottom":0,"top":3}],[{"bottom":0,"top":3}],[{"bottom":0,"top":3}],[{"bottom":0,"top":3}],[{"bottom":0,"top":1}],[{"bottom":0,"top":1}],[{"bottom":0,"top":1}],[{"bottom":0,"top":1}],[{"bottom":0,"top":1}],[{"bottom":0,"top":1}],[{"bottom":0,"top":2}],[{"bottom":0,"top":4}],[null],[null],[{"bottom":0,"top":1}],[{"bottom":0,"top":2}],[{"bottom":0,"top":2}],[{"bottom":0,"top":4},{"bottom":7,"top":7}],[{"bottom":0,"top":4},{"bottom":8,"top":8}],[{"bottom":0,"top":4},{"bottom":8,"top":8}],[{"bottom":0,"top":4},{"bottom":9,"top":9}],[{"bottom":0,"top":4},{"bottom":9,"top":9}],[{"bottom":0,"top":3},{"bottom":7,"top":7}],[null,{"bottom":6,"top":6}],[null,{"bottom":6,"top":6}],[{"bottom":0,"top":4}],[{"bottom":0,"top":3}],[{"bottom":0,"top":4}],[{"bottom":0,"top":4}],[{"bottom":0,"top":4}],[{"bottom":0,"top":4}],[{"bottom":0,"top":4}],[{"bottom":0,"top":3}],[{"bottom":0,"top":3}],[{"bottom":0,"top":2}],[{"bottom":0,"top":1}],[null],[null],[null],[{"bottom":0,"top":1}],[{"bottom":0,"top":2}],[{"bottom":0,"top":2}],[{"bottom":0,"top":5}],[{"bottom":0,"top":3}],[{"bottom":0,"top":3}],[{"bottom":0,"top":1}],[{"bottom":0,"top":1}],[{"bottom":0,"top":1}],[{"bottom":0,"top":2}],[{"bottom":0,"top":1}],[null],
-							[{"bottom":0,"top":1},{"bottom":11,"top":11,"note":"E","team":"demons"},{"bottom":7,"top":7,"note":"E","team":"demons"}],[{"bottom":0,"top":2},{"bottom":9,"top":9,"note":"C","team":"demons"},{"bottom":5,"top":5,"note":"C","team":"demons"}],[{"bottom":0,"top":1},{"bottom":9,"top":9,"note":"D","team":"demons"},{"bottom":5,"top":5,"note":"D","team":"demons"}],[{"bottom":0,"top":1},{"bottom":8,"top":8,"note":"G","team":"demons"},{"bottom":4,"top":4,"note":"G","team":"demons"}],[{"bottom":0,"top":2}],[{"bottom":0,"top":2}],[{"bottom":0,"top":2}],[{"bottom":0,"top":2}],[{"bottom":0,"top":3}],[{"bottom":0,"top":6}],[{"bottom":0,"top":6}],[{"bottom":0,"top":6}],[{"bottom":0,"top":6}],[{"bottom":0,"top":7}],[{"bottom":0,"top":7}],[{"bottom":0,"top":4}],[{"bottom":0,"top":4}],[{"bottom":0,"top":4}],[{"bottom":0,"top":7}],[{"bottom":0,"top":7}],[{"bottom":0,"top":4}],[null],[null],[null],[{"bottom":0,"top":4}],[{"bottom":0,"top":6}],[{"bottom":0,"top":6}],[{"bottom":0,"top":6}],[{"bottom":0,"top":9}],[{"bottom":0,"top":8}],[{"bottom":0,"top":9},{"bottom":12,"top":12}],[{"bottom":0,"top":9},{"bottom":12,"top":12}],[{"bottom":0,"top":9},{"bottom":14,"top":14}],[null,{"bottom":14,"top":14}],[{"bottom":0,"top":8},{"bottom":13,"top":13}],[{"bottom":0,"top":9},{"bottom":13,"top":13}],[{"bottom":0,"top":9},{"bottom":12,"top":12}],[{"bottom":0,"top":9},{"bottom":12,"top":12}],[{"bottom":0,"top":8}],[{"bottom":0,"top":8}],[{"bottom":0,"top":7}],[null],[null],[{"bottom":0,"top":4}],[{"bottom":0,"top":3}],[{"bottom":0,"top":4}],[{"bottom":0,"top":4}],[{"bottom":0,"top":5}],[{"bottom":0,"top":5}],[{"bottom":0,"top":4}],[{"bottom":0,"top":4}],[null],[null],[{"bottom":0,"top":4}],[{"bottom":0,"top":4}],[{"bottom":0,"top":4}],[{"bottom":0,"top":4}],[{"bottom":0,"top":5}],[{"bottom":0,"top":5}],[{"bottom":0,"top":5}],[{"bottom":0,"top":5}],[{"bottom":0,"top":5}],[{"bottom":0,"top":4}],[{"bottom":0,"top":3}]
+							[{bottom:0,top:3},{bottom:11,top:11,note:'G',team:'heroes'},{bottom:7,top:7,note:'G',team:'heroes'}],[{bottom:0,top:3},{bottom:11,top:11,note:'A',team:'heroes'},{bottom:7,top:7,note:'A',team:'heroes'}],[{bottom:0,top:1},{bottom:10,top:10,note:'D',team:'heroes'},{bottom:6,top:6,note:'D',team:'heroes'}],[{bottom:0,top:2},{bottom:8,top:8,note:'E',team:'heroes'},{bottom:4,top:4,note:'E',team:'heroes'}],[null],[null],[{bottom:0,top:1}],[null],[{bottom:0,top:3}],[{bottom:0,top:3}],[{bottom:0,top:3}],[{bottom:0,top:3}],[{bottom:0,top:4}],[{bottom:0,top:3}],[{bottom:0,top:3},{bottom:6,top:6}],[{bottom:0,top:3},{bottom:7,top:7}],[{bottom:0,top:4},{bottom:8,top:8}],[{bottom:0,top:4},{bottom:9,top:9}],[{bottom:0,top:4},{bottom:9,top:9}],[{bottom:0,top:1},{bottom:5,top:5}],[{bottom:0,top:1},{bottom:4,top:4}],[null,{bottom:6,top:6}],[{bottom:0,top:1}],[null],[null],[null],[{bottom:0,top:1}],[{bottom:0,top:1}],[{bottom:0,top:1}],[{bottom:0,top:4}],[{bottom:0,top:4}],[{bottom:0,top:4}],
+							[{bottom:0,top:2},{bottom:11,top:11,note:'E',team:null},{bottom:7,top:7,note:'E',team:null}],[{bottom:0,top:1},{bottom:9,top:9,note:'D',team:null},{bottom:5,top:5,note:'D',team:null}],[{bottom:0,top:2},{bottom:9,top:9,note:'G',team:null},{bottom:5,top:5,note:'G',team:null}],[{bottom:0,top:2},{bottom:8,top:8,note:'A',team:null},{bottom:4,top:4,note:'A',team:null}],[{bottom:0,top:2}],[{bottom:0,top:1}],[null],[null],[null],[{bottom:0,top:1}],[{bottom:0,top:1}],[null],[{bottom:0,top:1}],[{bottom:0,top:1}],[{bottom:0,top:1},{bottom:4,top:4}],[{bottom:0,top:1},{bottom:5,top:5}],[{bottom:0,top:1},{bottom:6,top:6}],[{bottom:0,top:1},{bottom:6,top:6}],[{bottom:0,top:1},{bottom:6,top:6}],[{bottom:0,top:1},{bottom:5,top:5}],[null,{bottom:5,top:5}],[{bottom:0,top:1},{bottom:4,top:4}],[{bottom:0,top:1}],[{bottom:0,top:4}],[{bottom:0,top:3}],[{bottom:0,top:6}],[{bottom:0,top:6}],[{bottom:0,top:7}],[{bottom:0,top:7}],[{bottom:0,top:7}],[{bottom:0,top:4}],[{bottom:0,top:4}],
+							[{bottom:0,top:2},{bottom:11,top:11,note:'C',team:'demons'},{bottom:7,top:7,note:'C',team:'demons'}],[{bottom:0,top:1},{bottom:10,top:10,note:'A',team:'demons'},{bottom:6,top:6,note:'A',team:'demons'}],[{bottom:0,top:2},{bottom:8,top:8,note:'D',team:'demons'},{bottom:4,top:4,note:'D',team:'demons'}],[{bottom:0,top:2},{bottom:8,top:8,note:'E',team:'demons'},{bottom:4,top:4,note:'E',team:'demons'}],[{bottom:0,top:2}],[{bottom:0,top:2}],[{bottom:0,top:2}],[{bottom:0,top:2}],[{bottom:0,top:2}],[{bottom:0,top:2}],[{bottom:0,top:1}],[null],[null],[null],[{bottom:0,top:1},{bottom:4,top:4}],[{bottom:0,top:2},{bottom:4,top:4}],[{bottom:0,top:3},{bottom:8,top:8}],[{bottom:0,top:1},{bottom:6,top:6}],[null,{bottom:6,top:6}],[null,{bottom:6,top:6}],[{bottom:0,top:1},{bottom:5,top:5}],[{bottom:0,top:1},{bottom:4,top:4}],[null],[null],[null],[{bottom:0,top:1}],[{bottom:0,top:2}],[{bottom:0,top:1}],[{bottom:0,top:1}],[{bottom:0,top:1}],[{bottom:0,top:1}],[{bottom:0,top:1}],
+							[{bottom:0,top:2},{bottom:11,top:11,note:'D',team:null},{bottom:7,top:7,note:'D',team:null}],[{bottom:0,top:1},{bottom:11,top:11,note:'E',team:null},{bottom:7,top:7,note:'E',team:null}],[{bottom:0,top:1},{bottom:11,top:11,note:'A',team:null},{bottom:7,top:7,note:'A',team:null}],[{bottom:0,top:3},{bottom:8,top:8,note:'C',team:null},{bottom:4,top:4,note:'C',team:null}],[{bottom:0,top:3}],[{bottom:0,top:4}],[{bottom:0,top:4}],[{bottom:0,top:4}],[{bottom:0,top:4}],[{bottom:0,top:4}],[{bottom:0,top:4}],[{bottom:0,top:3}],[{bottom:0,top:3}],[{bottom:0,top:3}],[{bottom:0,top:3},{bottom:6,top:6}],[null,{bottom:6,top:6}],[null,{bottom:7,top:7}],[{bottom:0,top:6},{bottom:11,top:11}],[{bottom:0,top:6},{bottom:11,top:11}],[{bottom:0,top:5},{bottom:9,top:9}],[null,{bottom:8,top:8}],[{bottom:0,top:6},{bottom:9,top:9}],[{bottom:0,top:7}],[{bottom:0,top:8}],[{bottom:0,top:9}],[null],[null],[null],[{bottom:0,top:8}],[{bottom:0,top:8}],[{bottom:0,top:4}],[{bottom:0,top:4}]
 						]
 					break
 
@@ -632,6 +633,10 @@
 										team:      null,
 										color:     null,
 										countdown: 512
+									},
+									message: {
+										text:      null,
+										countdown: 0
 									}
 								},
 								theme:  null,
@@ -639,8 +644,7 @@
 								demons: {},
 								towers: [],
 								map:    [],
-								arrows: [],
-								auras:  []
+								arrows: []
 							}
 						}
 					break
@@ -657,6 +661,17 @@
 					break
 
 					case "state":
+						var songs = getAsset("songs")
+						var auras = {}
+						for (var s in songs) {
+							auras[s] = {
+								name:   s,
+								colors: [songs[s].colors[0],songs[s].colors[1]],
+								radius: 0,
+								tower:  false
+							}
+						}
+
 						return {
 							left:      false,
 							right:     false,
@@ -678,7 +693,7 @@
 							cooldown:  0,
 							keys:      [[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]],
 							songs:     [],
-							effects:   [],
+							auras:     auras,
 							collision: false,
 							shot:      false
 						}
@@ -693,19 +708,6 @@
 							vx:     0,
 							vy:     0,
 							radius: 16,
-							colors: []
-						}
-					break
-
-					case "aura":
-						return {
-							name:   null,
-							team:   null,
-							song:   null,
-							melody: "",
-							x:      0,
-							y:      0,
-							radius: 0,
 							colors: []
 						}
 					break

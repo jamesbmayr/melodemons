@@ -39,7 +39,7 @@ melodemons
 |   |- logic.js (logError, logStatus, logMessage, logTime; getEnvironment, getAsset, getSchema; isNumLet, isBot; renderHTML, sanitizeString, duplicateObject; generateRandom, chooseRandom, sortRandom; determineSession, cleanDatabase)
 |   |- stylesheet.css
 |   |- audio.js (buildAudio; buildInstrument, getInstruments)
-|   |- draw.js (drawLine, drawCircle, drawTriangle, drawRectangle, drawText, drawGradient; drawMap, drawSky, drawBackground, drawForeground; drawAvatar, drawArrow, drawAura, drawPit, drawSections, drawTower, drawTowerLetters)
+|   |- draw.js (drawLine, drawCircle, drawTriangle, drawRectangle, drawText, drawGradient; drawMap, drawSky, drawBackground, drawForeground; drawAvatar, drawArrow, drawPit, drawSections, drawTower, drawTowerLetters)
 |   |- icon.png
 |   |- logo.png
 |   |- banner.png
@@ -58,7 +58,7 @@ melodemons
 |   |- script.js (sanitizeString, sendPost, displayError; submitFeedback; drawLoop)
 |
 |- game
-    |- logic.js (addPlayer, removePlayer; submitArrow, submitNote, submitTeam; changeSelection, launchGame; createAvatar, createTower, createColumn, createStartPosition, createAura, createArrow; triggerMove, triggerNote; getAngle, getScalar, getCells, getAvatar, getTower, getMatch, getWithin, getBeatAgo; updateBeat, updateState, updateEffects, updateAura, updateArrow, updateTower, updateVelocity, updateCollisions, updatePosition, updateHealth, updateMusic, updateWinning)
+    |- logic.js (addPlayer, removePlayer; submitArrow, submitNote, submitTeam; changeSelection, launchGame; createAvatar, createTower, createColumn, createStartPosition, createArrow; triggerMove, triggerNote; getAngle, getScalar, getCells, getAvatar, getTower, getMatch, getBeatAgo; updateBeat, updateState, updateEffects, updateArrow, updateTower, updateVelocity, updateCollisions, updatePosition, updateHealth, updateMusic, updateMessage, updateWinning)
     |- index.html
     |- stylesheet.css
     |- script.js (createSocket, checkLoop; submitClick, submitKey, submitTouch; receivePost; createOverlay, drawMessage, drawMenu; drawDPad, drawKeyboard, drawEscape, buildMobileControls; setInstruments, playMusic, playSoundEffects, playSoundtrack, playAvatarSounds)

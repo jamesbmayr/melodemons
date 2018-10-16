@@ -183,6 +183,11 @@
 					firstClick = true
 				}
 
+			// again
+				else if (event.target.id == "again") {
+					window.location = "../../../../"
+				}
+
 			// save click & create audio
 				if (firstClick) {
 					data.clicked = true
@@ -227,7 +232,7 @@
 				}
 
 			// overlay or message
-				if (post.intro || post.rejoin) {
+				if (post.intro || post.rejoin || (data.state && data.state.end && !data.again)) {
 					createOverlay(post)
 				}
 				else if (post.message) {
@@ -317,13 +322,49 @@
 						
 					document.body.appendChild(rejoin)
 				}
+
+			// again
+				else {
+					data.again = true
+					document.body.className = ""
+
+					var again = document.createElement("a")
+						again.id = "again"
+						again.href = "../../../../"
+						again.addEventListener("click", submitClick)
+
+					var inner = document.createElement("div")
+						inner.id = "again-inner"
+						inner.innerText = "[ play again ]"
+					again.append(inner)
+						
+					document.body.appendChild(again)
+				}
 		}
 
 	/* drawMessage */
 		function drawMessage() {
-			if (data.message) {
-				drawText(canvas.width / 2, (7 * canvas.height / 8), data.message, {color: colors.black[4]})
-			}
+			// messages
+				if (data.message) { // message (out of game)
+					drawText(canvas.width / 2, (7 * canvas.height / 8), data.message                                  , {color: colors.black[4]})
+				}
+				else if (data.state.message.text) { // message (in game)
+					drawText(canvas.width / 2, (7 * canvas.height / 8), data.state.message.text                       , {color: colors.black[4]})
+				}
+				else if (data.state && data.state.start && ((data.heroes && data.heroes[id] && !data.heroes[id].state.health) || (data.demons && data.demons[id] && !data.demons[id].state.health))) { // dead
+					drawText(canvas.width / 2, (7 * canvas.height / 8), "resurrect at your tower"                     , {color: colors.black[4]})
+				}
+
+			// countdowns
+				if (data.state && data.state.start && !data.state.end && data.state.beat <= 128) { // game launch
+					drawText(canvas.width / 2, 3 * canvas.height / 4, 8 - Math.floor(data.state.beat / 16)            , {color: colors.black[4], size: 64, blur: 8})
+				}
+				else if (data.state && data.state.end && data.state.winning.team) { // game over
+					drawText(canvas.width / 2,     canvas.height / 2, (data.state.winning.team.toUpperCase() + " WIN"), {color: data.state.winning.color, size: 64, blur: 8, shadow: data.state.winning.color})
+				}
+				else if (data.state && data.state.winning.team && data.state.winning.countdown < 256) { // win countdown
+					drawText(canvas.width / 2, 3 * canvas.height / 4, Math.ceil(data.state.winning.countdown / 16)    , {color: data.state.winning.color, size: 64})
+				}
 		}
 
 	/* drawMenu */
@@ -561,7 +602,7 @@
 							section = 0
 						}
 						else if (data.state.winning.team && data.state.winning.countdown <= 256) {
-							if (data.state.winning.countdown < 2) {
+							if (data.state.winning.countdown < 5) {
 								var soundtrack = "menu"
 								section = 0
 							}

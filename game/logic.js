@@ -50,7 +50,6 @@
 							towers:      request.game.data.towers,
 							map:         request.game.data.map,
 							arrows:      request.game.data.arrows,
-							auras:       request.game.data.auras,
 							soundtracks: main.getAsset("soundtracks")
 						})
 					}
@@ -250,15 +249,14 @@
 					else {
 						// variables
 							var colors = main.getAsset("colors")
-							var songs  = main.getAsset("songs")
 							var towers = main.getAsset("towers")
 
 						// towers
-							var towerCount = 3
-							var mapLength = towerCount * 64
+							var towerCount = 4
+							var mapLength = towerCount * 32
 							while (request.game.data.towers.length < towerCount) {
 								var team = (request.game.data.towers.length == 0) ? "heroes" : (request.game.data.towers.length == Math.ceil(towerCount / 2)) ? "demons" : null
-								request.game.data.towers.push(createTower(request, team, mapLength * 32, colors, songs, towers))
+								request.game.data.towers.push(createTower(request, team, colors, towers))
 							}
 
 						// map
@@ -286,8 +284,7 @@
 								demons: request.game.data.demons,
 								towers: request.game.data.towers,
 								map:    request.game.data.map,
-								arrows: request.game.data.arrows,
-								auras:  request.game.data.auras
+								arrows: request.game.data.arrows
 							})
 					}
 			}
@@ -331,7 +328,7 @@
 
 	/* createTower */
 		module.exports.createTower = createTower
-		function createTower(request, team, mapLength, colors, songs, towers) {
+		function createTower(request, team, colors, towers) {
 			try {
 				// get existing towers
 					var currentTowers = request.game.data.towers.map(function(t) {
@@ -371,17 +368,6 @@
 						})
 					}
 
-				// create aura
-					var aura = createAura(request, {
-						name: tower.name,
-						team: tower.team,
-						state: {
-							x: (32 * 64 * currentTowers.length) + 48,
-							y: (32 * 12)
-						}
-					}, songs[tower.name], mapLength)
-					request.game.data.auras.push(aura)
-
 				return tower
 			}
 			catch (error) {main.logError(error)}
@@ -409,7 +395,7 @@
 				}
 
 			// starting terrain
-				if (map.length % 64 < 4) { // tower
+				if (map.length % 32 < 4) { // tower
 					column = [{bottom: 0, top: Math.floor(Math.random() * 3) + 1}]
 				}
 
@@ -461,39 +447,39 @@
 				}
 
 			// tower
-				if ([62,63,4,5].includes(map.length % 64)) { // columns around tower
+				if ([30,31,4,5].includes(map.length % 32)) { // columns around tower
 					if (column[0]) { 
 						column[0].top = Math.max(1, Math.min(4, column[0].top))
 					}
 				}
-				else if ([0,1,2,3].includes(map.length % 64)) { // first 4 columns
+				else if ([0,1,2,3].includes(map.length % 32)) { // first 4 columns
 					if (column[0]) { 
 						column[0].top = Math.max(1, Math.min(3, column[0].top))
 					}
 
-					var tower = request.game.data.towers[Math.floor(map.length / 64)]
-					var towerX = map.length % 64
+					var tower = request.game.data.towers[Math.floor(map.length / 32)]
+					var towerX = map.length % 32
 
 					column[1] = {bottom: tower.platforms[towerX    ].y, top: tower.platforms[towerX    ].y, note: tower.platforms[towerX    ].note, team: tower.platforms[towerX    ].team}
 					column[2] = {bottom: tower.platforms[towerX + 4].y, top: tower.platforms[towerX + 4].y, note: tower.platforms[towerX + 4].note, team: tower.platforms[towerX + 4].team}
 				}
 
 			// obstacle
-				else if (map.length % 64 >= 30 && map.length % 64 < 38) { // middle 8 columns
-					var obstacleX = (map.length % 64)
-					if      ([30,37].includes(obstacleX)) { // space around edges
+				else if (map.length % 32 > 13 && map.length % 32 < 22) { // middle 8 columns
+					var obstacleX = (map.length % 32)
+					if      ([14,21].includes(obstacleX)) { // space around edges
 						var level = (column[0] ? column[0].top : lastFullColumn[0].top) + 3
 						column[1] = {bottom: level, top: level}
 					}
-					else if ([31,36].includes(obstacleX)) { // space around edges
+					else if ([15,20].includes(obstacleX)) { // space around edges
 						var level = (column[0] ? column[0].top : lastFullColumn[0].top) + 3 + Math.floor(Math.random() * 2)
 						column[1] = {bottom: level, top: level}
 					}
-					else if ([32,35].includes(obstacleX)) { // obstacle
+					else if ([16,19].includes(obstacleX)) { // obstacle
 						var level = (column[0] ? column[0].top : lastFullColumn[0].top) + 4 + Math.floor(Math.random() * 2)
 						column[1] = {bottom: level, top: level}
 					}
-					else if ([33,34].includes(obstacleX)) { // obstacle
+					else if ([17,18].includes(obstacleX)) { // obstacle
 						var level = (column[0] ? column[0].top : lastFullColumn[0].top) + 5
 						column[1] = {bottom: level, top: level}
 					}
@@ -530,7 +516,7 @@
 
 						do {
 							var platform   = main.chooseRandom(tower.platforms)
-							avatar.state.x = (platform.x + (64 * Math.ceil(request.game.data.towers.length / 2))) * 32
+							avatar.state.x = (platform.x + (32 * Math.ceil(request.game.data.towers.length / 2))) * 32
 							avatar.state.y = (platform.y + 1)                                                     * 32 + 16
 						}
 						while (keys.find(function(k) {
@@ -559,32 +545,12 @@
 			catch (error) {main.logError(error)}
 		}
 
-	/* createAura */
-		module.exports.createAura = createAura
-		function createAura(request, avatar, song, mapLength) {
-			try {
-				var aura           = main.getSchema("aura")
-					aura.x         = mapLength ? (avatar.state.x + 16 + mapLength) % mapLength : (avatar.state.x + 16)
-					aura.y         = avatar.state.y + 48
-					aura.name      = avatar.name
-					aura.team      = avatar.team
-					aura.song      = song.name
-					aura.melody    = song.melody
-					aura.radius    = song.radius * 32
-					aura.colors[0] = song.colors[0]
-					aura.colors[1] = song.colors[1]
-
-				return aura
-			}
-			catch (error) {main.logError(error)}
-		}
-
 	/* createArrow */
 		module.exports.createArrow = createArrow
 		function createArrow(request, avatar, mapLength) {
 			try {
 				var arrow           = main.getSchema("arrow")
-					arrow.radius    = avatar.state.effects.includes("strength") ? (arrow.radius * 2) : arrow.radius
+					arrow.radius    = (avatar.state.auras.strength.radius || avatar.state.auras.strength.tower) ? (arrow.radius * 2) : arrow.radius
 					arrow.vx        =   avatar.state.facing == "left" ? -16 : 16
 					arrow.x         = ((avatar.state.facing == "left" ? avatar.state.x + arrow.vx : avatar.state.x + 32 + arrow.vx) + mapLength) % mapLength
 					arrow.y         = avatar.state.y + 32
@@ -686,28 +652,28 @@
 					}
 					
 				// left side
-					if (avatar.state.colLeft  % 64 < 4) {
-						var tower = request.game.data.towers[Math.floor(avatar.state.colLeft  / 64)]
-						if      (tower.platforms[avatar.state.colLeft  % 64    ].y == avatar.state.rowDown - 1) {
+					if (avatar.state.colLeft  % 32 < 4) {
+						var tower = request.game.data.towers[Math.floor(avatar.state.colLeft  / 32)]
+						if      (tower.platforms[avatar.state.colLeft  % 32    ].y == avatar.state.rowDown - 1) {
 							touchedTower.name = tower.name
-							touchedTower.platforms.push(main.duplicateObject(tower.platforms[avatar.state.colLeft  % 64    ]))
+							touchedTower.platforms.push(main.duplicateObject(tower.platforms[avatar.state.colLeft  % 32    ]))
 						}
-						else if (tower.platforms[avatar.state.colLeft  % 64 + 4].y == avatar.state.rowDown - 1) {
+						else if (tower.platforms[avatar.state.colLeft  % 32 + 4].y == avatar.state.rowDown - 1) {
 							touchedTower.name = tower.name
-							touchedTower.platforms.push(main.duplicateObject(tower.platforms[avatar.state.colLeft  % 64 + 4]))
+							touchedTower.platforms.push(main.duplicateObject(tower.platforms[avatar.state.colLeft  % 32 + 4]))
 						}
 					}
 
 				// right side
-					if (avatar.state.colRight % 64 < 4) {
-						var tower = request.game.data.towers[Math.floor(avatar.state.colRight / 64)]
-						if      (tower.platforms[avatar.state.colRight % 64    ].y == avatar.state.rowDown - 1) {
+					if (avatar.state.colRight % 32 < 4) {
+						var tower = request.game.data.towers[Math.floor(avatar.state.colRight / 32)]
+						if      (tower.platforms[avatar.state.colRight % 32    ].y == avatar.state.rowDown - 1) {
 							touchedTower.name = tower.name
-							touchedTower.platforms.push(main.duplicateObject(tower.platforms[avatar.state.colRight % 64    ]))
+							touchedTower.platforms.push(main.duplicateObject(tower.platforms[avatar.state.colRight % 32    ]))
 						}
-						else if (tower.platforms[avatar.state.colRight % 64 + 4].y == avatar.state.rowDown - 1) {
+						else if (tower.platforms[avatar.state.colRight % 32 + 4].y == avatar.state.rowDown - 1) {
 							touchedTower.name = tower.name
-							touchedTower.platforms.push(main.duplicateObject(tower.platforms[avatar.state.colRight % 64 + 4]))
+							touchedTower.platforms.push(main.duplicateObject(tower.platforms[avatar.state.colRight % 32 + 4]))
 						}
 					}
 
@@ -757,35 +723,6 @@
 			catch (error) {main.logError(error)}
 		}
 
-	/* getWithin */
-		module.exports.getWithin = getWithin
-		function getWithin(mapLength, x1, y1, r1, x2, y2, r2) {
-			try {
-				// relevant column check
-					if ((x1 - r1 < x2) && (x2 < x1 + r1)) {
-						var distance = getScalar(x1 - x2, y1 - y2)
-					}
-					else if ((x2 < r1) && (x1 > mapLength - r1) && (x1 - r1 < x2 + mapLength) && (x2 + mapLength < x1 + r1)) {
-						var distance = getScalar(x1 - (x2 + mapLength), y1 - y2)
-					}
-					else if ((x1 < r1) && (x2 > mapLength - r1) && (x1 - r1 < x2 - mapLength) && (x2 - mapLength < x1 + r1)) {
-						var distance = getScalar((x1 + mapLength) - x2, y1 - y2)
-					}
-					else {
-						return false
-					}
-
-				// radius check
-					if (distance > r1 + r2) {
-						return false
-					}
-					else {
-						return distance
-					}
-			}
-			catch (error) {main.logError(error)}
-		}
-
 	/* getBeatAgo */
 		module.exports.getBeatAgo = getBeatAgo
 		function getBeatAgo(avatar, ago, length) {
@@ -825,14 +762,13 @@
 
 				// data
 					callback(request.game.keys, {
-						beat:   true,
-						keys:   request.game.keys,
-						state:  request.game.data.state,
-						heroes: request.game.data.heroes,
-						demons: request.game.data.demons,
-						towers: request.game.data.towers,
-						arrows: request.game.data.arrows,
-						auras:  request.game.data.auras
+						beat:    true,
+						keys:    request.game.keys,
+						state:   request.game.data.state,
+						heroes:  request.game.data.heroes,
+						demons:  request.game.data.demons,
+						towers:  request.game.data.towers,
+						arrows:  request.game.data.arrows
 					})
 
 			}
@@ -860,7 +796,6 @@
 							var mapLength = request.game.data.map.length * 32
 							var towers    = request.game.data.towers
 							var arrows    = request.game.data.arrows
-							var auras     = request.game.data.auras
 							var keys      = request.game.keys
 
 						// reset avatars
@@ -869,11 +804,7 @@
 								updateEffects(   request,    avatar)
 							}
 
-						// auras, arrows, towers
-							for (var a in auras) {
-								updateAura(      request,  auras[a], keys,      mapLength)
-							}
-
+						// arrows & towers
 							for (var a in arrows) {
 								updateArrow(     request, arrows[a], keys, map, mapLength, a)
 							}
@@ -896,7 +827,8 @@
 								updateMusic(     request,    avatar, keys,      mapLength)
 							}
 
-						// winning
+						// game
+							updateMessage(       request)
 							updateWinning(       request,    towers, keys)
 					}
 			}
@@ -909,45 +841,28 @@
 			try {
 				if (avatar) {
 					// aura effects
-						avatar.state.effects   = []
+						for (var a in avatar.state.auras) {
+							avatar.state.auras[a].radius = Math.max(0, avatar.state.auras[a].radius - 1)
+							avatar.state.auras[a].tower = false
+						}
+
+					// tower effects
+						if (avatar.state.tower) {
+							avatar.state.auras[avatar.state.tower.name].tower = true
+						}
 
 					// sound effects
 						avatar.state.collision = false
 						avatar.state.shot      = false
 
 					// cooldown
-						if (avatar.state.cooldown > 0) {
-							avatar.state.cooldown = avatar.state.cooldown - 1
-						}
+						avatar.state.cooldown = Math.max(0, avatar.state.cooldown - 1)
 
 					// cycle beats
 						avatar.state.keys.shift()
 						while (avatar.state.keys.length < 64) {
 							avatar.state.keys.push([])
 						}
-				}
-			}
-			catch (error) {main.logError(error)}
-		}
-
-	/* updateAura */
-		module.exports.updateAura = updateAura
-		function updateAura(request, aura, keys, mapLength) {
-			try {
-				for (var k in keys) {
-					var avatar = request.game.data.demons[keys[k]] || request.game.data.heroes[keys[k]]
-					if (aura.name == avatar.name) {
-						aura.x = avatar.state.x + 16
-						aura.y = avatar.state.y + 48
-					}
-					else if (!avatar.state.health) {
-						continue
-					}
-					else if (getWithin(mapLength, aura.x, aura.y, aura.radius, avatar.state.x + 16, avatar.state.y + 32, 16)) {
-						if (!avatar.state.effects.includes(aura.song)) {
-							avatar.state.effects.push(aura.song)
-						}
-					}
 				}
 			}
 			catch (error) {main.logError(error)}
@@ -983,19 +898,6 @@
 								request.game.data.arrows.splice(a, 1)
 								a--
 							}
-
-						// collision with aura
-							else {
-								auraLoop:
-								for (var r in request.game.data.auras) {
-									var aura = request.game.data.auras[r]
-									if ((aura.song == "protection") && getWithin(mapLength, aura.x, aura.y, aura.radius, arrow.x, arrow.y, arrow.radius)) {
-										request.game.data.arrows.splice(a, 1)
-										a--
-										break auraLoop
-									}
-								}
-							}
 					}
 			}
 			catch (error) {main.logError(error)}
@@ -1024,6 +926,10 @@
 						var colors = main.getAsset("colors")
 						tower.colors[2] = (tower.team == "heroes") ? colors.blue[2] : (tower.team == "demons") ? colors.red[2] : colors.black[2]
 					
+					// post message
+						request.game.data.state.message.text = tower.team ? (tower.team + " take the tower of " + tower.name) : ("the tower of " + tower.name + " is lost")
+						request.game.data.state.message.countdown = 64
+					
 					// change songs
 						for (var k in keys) {
 							var avatar = request.game.data.demons[keys[k]] || request.game.data.heroes[keys[k]]
@@ -1047,24 +953,31 @@
 		function updateVelocity(request, avatar, keys, mapLength) {
 			try {
 				// adjust vx
-					var minVX = avatar.state.effects.includes("slow") ? -4 : -10
-					var maxVX = avatar.state.effects.includes("slow") ?  4 :  10
+					var minVX     = (avatar.state.auras.slow.radius      || avatar.state.auras.slow.tower)      ? -4 : -10
+					var maxVX     = (avatar.state.auras.slow.radius      || avatar.state.auras.slow.tower)      ?  4 :  10
+					var    AX     = (avatar.state.auras.sliding.radius   || avatar.state.auras.sliding.tower)   ?  4 : 2
+					var confusion = (avatar.state.auras.confusion.radius || avatar.state.auras.confusion.tower) || false
+					var flight    = (avatar.state.auras.flight.radius    || avatar.state.auras.flight.tower)    || false
 
 					if (avatar.state.left && avatar.state.right) {
-						avatar.state.vx = Math.max(minVX, Math.min(maxVX, avatar.state.vx))
+						avatar.state.vx = Math.max(minVX, Math.min(maxVX, Math.round(avatar.state.vx)))
 					}
-					else if ((avatar.state.left  && !avatar.state.effects.includes("confusion")) || (avatar.state.right && avatar.state.effects.includes("confusion"))) {
-						avatar.state.vx = Math.max(minVX, Math.min(maxVX, avatar.state.vx - 2))
+					else if ((avatar.state.left  && !confusion) || (avatar.state.right && confusion)) {
+						avatar.state.vx = Math.max(minVX, Math.min(maxVX, Math.round(avatar.state.vx - AX)))
 					}
-					else if ((avatar.state.right && !avatar.state.effects.includes("confusion")) || (avatar.state.left  && avatar.state.effects.includes("confusion"))) {
-						avatar.state.vx = Math.max(minVX, Math.min(maxVX, avatar.state.vx + 2))
+					else if ((avatar.state.right && !confusion) || (avatar.state.left  && confusion)) {
+						avatar.state.vx = Math.max(minVX, Math.min(maxVX, Math.round(avatar.state.vx + AX)))
 					}
-					else {
-						avatar.state.vx = Math.max(minVX, Math.min(maxVX, Math.sign(avatar.state.vx) * (Math.abs(avatar.state.vx) - 2)))
+					else if (AX == 2) {
+						avatar.state.vx = Math.max(minVX, Math.min(maxVX, Math.round(Math.sign(avatar.state.vx) * (Math.abs(avatar.state.vx) - AX))))
+					}
+
+					if (-1 <= avatar.state.vx && avatar.state.vx <= 1) {
+						avatar.state.vx = 0
 					}
 
 				// adjust vy
-					if (avatar.state.up && (avatar.state.jumpable || !avatar.state.health || avatar.state.effects.includes("flight")) && avatar.state.y < 544) {
+					if (avatar.state.up && (avatar.state.jumpable || !avatar.state.health || flight) && avatar.state.y < 544) {
 						avatar.state.vy = Math.max(-24, Math.min(24, avatar.state.vy + 8))
 
 						if (avatar.state.vy > 16) {
@@ -1074,35 +987,6 @@
 					else {
 						avatar.state.vy = Math.max(-24, Math.min(24, avatar.state.vy - 4))
 						avatar.state.jumpable = false
-					}
-
-				// gravity
-					if (avatar.state.health && avatar.state.effects.includes("gravity")) {
-						var distance = 1000000
-						var closestAura = null
-
-						for (var a in request.game.data.auras) {
-							var aura = request.game.data.auras[a]
-							if ((aura.name !== avatar.name) && (aura.song == "gravity") && getWithin(mapLength, aura.x, aura.y, aura.radius, avatar.state.x + 16, avatar.state.y + 32, 16) < distance) {
-								closestAura = aura
-							}
-						}
-
-						if (closestAura) {
-							// y
-								avatar.state.vy += (closestAura.y > avatar.state.y) ? 2 : -1
-
-							// x
-								if ((avatar.state.x + 16) < closestAura.radius && closestAura.x > (mapLength - closestAura.radius)) {
-									avatar.state.vx += -1
-								}
-								else if ((avatar.state.x + 16) > (mapLength - closestAura.radius) && closestAura.x < closestAura.radius) {
-									avatar.state.vx += 1
-								}
-								else {
-									avatar.state.vx += (closestAura.x > avatar.state.x + 16) ? 1 : -1
-								}
-						}
 					}
 			}
 			catch (error) {main.logError(error)}
@@ -1329,7 +1213,7 @@
 					}
 
 				// towers
-					if (avatar.state.tower && !avatar.state.health) {
+					if (avatar.state.tower) {
 						// get tower
 							var tower = request.game.data.towers.find(function(t) {
 								return (t.name == avatar.state.tower.name)
@@ -1337,7 +1221,12 @@
 
 						// friendly tower
 							if (tower && tower.team == avatar.team) {
-								avatar.state.health = 255
+								if (avatar.state.health) {
+									avatar.state.health = Math.min(255, avatar.state.health + 4)
+								}
+								else {
+									avatar.state.health = 255
+								}
 							}
 					}
 
@@ -1346,24 +1235,19 @@
 						for (var a = 0; a < request.game.data.arrows.length; a++) {
 							var arrow = request.game.data.arrows[a]
 							
-							if ((arrow.name !== avatar.name) && (arrow.team !== avatar.team)
+							if ((arrow.team !== avatar.team)
 							 && (avatar.state.y < arrow.y + arrow.radius && arrow.y - arrow.radius < avatar.state.y + 64)
 							 && (avatar.state.x < arrow.x + arrow.radius && arrow.x - arrow.radius < avatar.state.x + 32)) {
-								avatar.state.health = Math.max(0, Math.min(255, avatar.state.health - (2 * arrow.radius)))
-								avatar.state.shot   = true
-								avatar.state.vx     = Math.max(-10, Math.min(10, avatar.state.vx + (Math.floor(arrow.radius / 4) * Math.sign(arrow.vx))))
+							 	if (!(avatar.state.auras.protection.radius || avatar.state.auras.protection.tower)) {
+									avatar.state.health = Math.max(0, Math.min(255, Math.round(avatar.state.health - (2 * arrow.radius))))
+									avatar.state.shot   = true
+									avatar.state.vx     = Math.max(-10, Math.min(10, Math.round(avatar.state.vx + (Math.floor(arrow.radius / 2) * Math.sign(arrow.vx)))))
+								}
+								
 								request.game.data.arrows.splice(a, 1)
 								a--
 							}
 						}
-					}
-
-				// healing & pain
-					if (avatar.state.health && avatar.state.effects.includes("healing")) {
-						avatar.state.health = Math.max(0, Math.min(255, avatar.state.health + 8))
-					}
-					if (avatar.state.health && avatar.state.effects.includes("pain")) {
-						avatar.state.health = Math.max(0, Math.min(255, avatar.state.health - 2))
 					}
 
 			}
@@ -1375,6 +1259,9 @@
 		function updateMusic(request, avatar, keys, mapLength) {
 			try {
 				if (avatar.state.health && !avatar.state.cooldown) {
+					// cooldown
+						var cooldown = (avatar.state.auras.rapidfire.radius || avatar.state.auras.rapidfire.tower) ? 4 : 12
+
 					// beats
 						var beats = [
 							getBeatAgo(avatar, 2.75, 1.5),
@@ -1396,7 +1283,7 @@
 
 							platform.team  = avatar.team
 							platform.color = avatar.colors[2]
-							avatar.state.cooldown = 4
+							avatar.state.cooldown = cooldown / 4
 						}
 						else if (avatar.state.tower && avatar.state.tower.platforms[1] && (avatar.state.tower.platforms[1].team !== avatar.team) && beats[4].includes(avatar.state.tower.platforms[1].note)) {
 							var tower = request.game.data.towers.find(function (t) {
@@ -1409,50 +1296,50 @@
 								
 							platform.team  = avatar.team
 							platform.color = avatar.colors[2]
-							avatar.state.cooldown = 4
+							avatar.state.cooldown = cooldown / 4
 						}
 
 					// arrows
 						else if (beats[4].length == 3) {
 							request.game.data.arrows.push(createArrow(request, avatar, mapLength))
-							avatar.state.cooldown = 16
+							avatar.state.cooldown = cooldown
 						}
 
 					// auras
 						else {
-							// existing aura
-								var auraExists = false
-								for (var a = 0; a < request.game.data.auras.length; a++) {
-									var aura = request.game.data.auras[a]
+							var songs = main.getAsset("songs")
+							var songKeys  = Object.keys(songs)
+							for (var k in songKeys) {
+								if ((avatar.song == songKeys[k] || avatar.state.songs.includes(songKeys[k])) && getMatch(songs[songKeys[k]].melody, beats)) {
+									var song = songs[songKeys[k]]
+									var team = (song.affects == "allies") ? avatar.team : (avatar.team == "heroes" ? "demons" : "heroes")
+									
+									for (var a in request.game.data[team]) {
+										request.game.data[team][a].state.auras[songKeys[k]].radius = request.game.data[team][a].state.auras[songKeys[k]].radius || 128
+									}
 
-									if (aura.name !== avatar.name) {
-										continue
-									}
-									else if (!avatar.state.health || !getMatch(aura.melody, beats)) {
-										request.game.data.auras.splice(a, 1)
-										a--
-									}
-									else {
-										auraExists = true
-										avatar.state.cooldown = 8
-									}
-								}
+									request.game.data.state.message.text = avatar.team + " cast " + songKeys[k]
+									request.game.data.state.message.countdown = 64
 
-							// new aura
-								if (!auraExists) {
-									var songs = main.getAsset("songs")
-									var songKeys  = Object.keys(songs)
-									for (var k in songKeys) {
-										if ((avatar.song == songKeys[k] || avatar.state.songs.includes(songKeys[k])) && getMatch(songs[songKeys[k]].melody, beats)) {
-											var aura = createAura(request, avatar, songs[songKeys[k]], mapLength)
-											request.game.data.auras.push(aura)
-
-											avatar.state.cooldown = 8
-											break
-										}
-									}
+									avatar.state.cooldown = cooldown / 2
+									break
 								}
 							}
+						}
+				}
+			}
+			catch (error) {main.logError(error)}
+		}
+
+	/* updateMessage */
+		module.exports.updateMessage = updateMessage
+		function updateMessage(request) {
+			try {
+				if (request.game.data.state.message.countdown) {
+					request.game.data.state.message.countdown = Math.max(0, request.game.data.state.message.countdown - 1)
+				}
+				else {
+					request.game.data.state.message.text = null
 				}
 			}
 			catch (error) {main.logError(error)}

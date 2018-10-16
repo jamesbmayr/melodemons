@@ -88,8 +88,8 @@
 			box-shadow: 0px 0px 20px var(--red-2);	
 		}
 
-/*** rejoin overlay ***/
-	#rejoin {
+/*** rejoin / again overlay ***/
+	#rejoin, #again {
 		position: absolute;
 		top: 0px;
 		left: 0px;
@@ -98,11 +98,11 @@
 		cursor: pointer;
 	}
 
-	#rejoin-inner {
+	#rejoin-inner, #again-inner {
 		position: absolute;
 		top: 50%;
 		left: 50%;
-		transform: translateX(-50%) translateY(-50%);
+		transform: translateX(-50%);
 		height: auto;
 		width: auto;
 		font-family: var(--font);

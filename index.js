@@ -414,7 +414,8 @@
 								}
 								
 								if (data.delete) {
-									clearInterval(request.game.loop)
+									clearInterval(request.game.beatLoop)
+									clearInterval(request.game.stateLoop)
 									delete db[request.game.id]
 								}
 							})
