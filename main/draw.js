@@ -327,12 +327,12 @@
 					var shadowColor = avatar.colors[2]
 				}
 
-			// name & healthbar
+			// notes & healthbar
 				if (avatar.state) {
 					drawLine(x              , y + (9  * height / 8), x + healthWidth, y + (9 * height / 8), {opacity: opacity, color: healthColor, blur: 8, shadow: colors.black[4], border: 4}) // health bar
 
-					if ((data.heroes[id] && data.heroes[id].name == avatar.name) || (data.demons[id] && data.demons[id].name == avatar.name)) {
-						drawText(x + (width / 2), y + (5  * height / 4), avatar.numbers, {opacity: opacity, color: colors.white[4], blur: 4, shadow: colors.black[4], size: (3 * width / 8)}) // melody
+					if ((data.heroes[id] && data.heroes[id].instrument == avatar.instrument) || (data.demons[id] && data.demons[id].instrument == avatar.instrument)) {
+						drawText(x + (width / 2), y + (5  * height / 4), avatar.melody, {opacity: opacity, color: colors.white[4], blur: 4, shadow: colors.black[4], size: (3 * width / 8)}) // melody
 					}
 				}
 				else {
@@ -497,13 +497,13 @@
 					)
 				}
 
-			// name & flag
+			// song & flag
 				xPlacement = foreground ? (canvasX * multiplier) + centerDelta : 1280 - ((canvasX * multiplier) + centerDelta)
 
 				drawLine(     xPlacement          , (32 * multiplier * 14)                     + yOffset,        xPlacement, (32 * multiplier * 16) + yOffset, {color:  flagColor, shadow: flagColor, blur: flash ? 1 : 0})
 				drawRectangle(xPlacement + xOffset, (32 * multiplier * 14) + (20 * multiplier) + yOffset, (60 * multiplier), (40 * multiplier)               , {color:  flagColor, shadow: flagColor, blur: flash ? 1 : 0, radii: {topLeft: 4, topRight: 4, bottomRight: 4, bottomLeft: 4}})
 				if (tower) {
-					drawText(     xPlacement + xOffset + (30 * multiplier), (32 * multiplier * 14) + (35 * multiplier) + yOffset,                      tower.name, {color:  colors.white[4], size:   10 * multiplier})
+					drawText(     xPlacement + xOffset + (30 * multiplier), (32 * multiplier * 14) + (35 * multiplier) + yOffset,                  tower.song, {color:  colors.white[4], size:   10 * multiplier})
 				}
 		}
 
@@ -518,7 +518,7 @@
 				
 			// high platform
 				var platform = tower.platforms[columnNumber % 32]
-				drawText(xPlacement, (platform.y * 32 * multiplier) + (4 * multiplier) + yOffset, platform.number, {
+				drawText(xPlacement, (platform.y * 32 * multiplier) + (4 * multiplier) + yOffset, platform.note, {
 					size:   32 * multiplier,
 					color:  platform.color,
 					style: "bold"
@@ -526,7 +526,7 @@
 
 			// low platform
 				var platform = tower.platforms[columnNumber % 32 + 4]
-				drawText(xPlacement, (platform.y * 32 * multiplier) + (4 * multiplier) + yOffset, platform.number, {
+				drawText(xPlacement, (platform.y * 32 * multiplier) + (4 * multiplier) + yOffset, platform.note, {
 					size:   32 * multiplier,
 					color:  platform.color,
 					style: "bold"

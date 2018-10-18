@@ -16,7 +16,7 @@
 				else {
 					request.game.players[request.session.id].connected  = true
 					request.game.players[request.session.id].connection = request.connection
-					request.game.keys = Object.keys(request.game.players)
+					request.game.data.keys = Object.keys(request.game.players)
 
 					if (!request.game.data.state.start) {
 						// intro text
@@ -27,30 +27,30 @@
 
 						callback([request.session.id], {success: true,
 							id:          request.game.id,
-							keys:        request.game.keys,
 							intro:       intro,
+							theme:       request.game.theme,
+							soundtracks: main.getAsset("soundtracks"),
+							sample:      main.getAsset("sample"),
 							selection:   request.game.players[request.session.id].selection,
-							state:       request.game.data.state,
-							theme:       request.game.data.theme,
+							keys:        request.game.data.keys,
+							state:       request.game.data.state,							
 							heroes:      request.game.data.heroes,
 							demons:      request.game.data.demons,
-							soundtracks: main.getAsset("soundtracks"),
-							sample:      main.getAsset("sample")
 						})
 					}
 					else {
 						callback([request.session.id], {success: true,
 							id:          request.game.id,
-							keys:        request.game.keys,
 							rejoin:      (request.game.data.state.end ? null : main.getAsset("text").rejoin),
+							theme:       request.game.theme,
+							map:         request.game.map,
+							soundtracks: main.getAsset("soundtracks"),
+							keys:        request.game.data.keys,
 							state:       request.game.data.state,
-							theme:       request.game.data.theme,
 							heroes:      request.game.data.heroes,
 							demons:      request.game.data.demons,
 							towers:      request.game.data.towers,
-							map:         request.game.data.map,
-							arrows:      request.game.data.arrows,
-							soundtracks: main.getAsset("soundtracks")
+							arrows:      request.game.data.arrows
 						})
 					}
 				}
@@ -70,7 +70,7 @@
 					// remove player or connection?
 						if (request.game.data.state.end) {
 							delete request.game.players[request.session.id]
-							request.game.keys = Object.keys(request.game.players)
+							request.game.data.keys = Object.keys(request.game.players)
 						}
 						else if (request.game.data.state.start && request.game.players[request.session.id]) {
 							request.game.players[request.session.id].connected = false
@@ -92,11 +92,11 @@
 							}
 
 							delete request.game.players[request.session.id]
-							request.game.keys = Object.keys(request.game.players)
+							request.game.data.keys = Object.keys(request.game.players)
 						}
 
 					// delete game ?
-						var others = request.game.keys.filter(function (p) {
+						var others = request.game.data.keys.filter(function (p) {
 							return request.game.players[p].connected
 						}) || []
 
@@ -260,12 +260,12 @@
 							}
 
 						// map
-							while (request.game.data.map.length < mapLength) {
-								request.game.data.map.push(createColumn(request))
+							while (request.game.map.length < mapLength) {
+								request.game.map.push(createColumn(request))
 							}
 
 						// heroes & demons - positions
-							var keys = request.game.keys
+							var keys = request.game.data.keys
 							for (var k in keys) {
 								var avatar = request.game.data.demons[keys[k]] || request.game.data.heroes[keys[k]]
 								createStartPosition(request, avatar)
@@ -278,13 +278,13 @@
 							request.game.data.state.start = new Date().getTime()
 							callback(players, {success: true,
 								launch: true,
+								theme:  request.game.theme,
+								map:    request.game.map,
 								state:  request.game.data.state,
-								theme:  request.game.data.theme,
 								heroes: request.game.data.heroes,
 								demons: request.game.data.demons,
 								towers: request.game.data.towers,
-								map:    request.game.data.map,
-								arrows: request.game.data.arrows
+								arrows: request.game.data.arrows,
 							})
 					}
 			}
@@ -304,12 +304,12 @@
 					var currentAvatars = []
 					for (var k in currentKeys) {
 						if (request.game.data[avatar.team][currentKeys[k]]) {
-							currentAvatars.push(request.game.data[avatar.team][currentKeys[k]].name)
+							currentAvatars.push(request.game.data[avatar.team][currentKeys[k]].instrument)
 						}
 					}
 
 				// already chosen ?
-					if (currentAvatars.includes(avatar.name)) {
+					if (currentAvatars.includes(avatar.instrument)) {
 						avatar = null
 					}
 
@@ -317,7 +317,6 @@
 					else {
 						var songs = main.getAsset("songs")
 						avatar.melody  = songs[avatar.song].melody
-						avatar.numbers = songs[avatar.song].numbers
 						avatar.state   = main.getSchema("state")
 					}
 
@@ -332,11 +331,11 @@
 			try {
 				// get existing towers
 					var currentTowers = request.game.data.towers.map(function(t) {
-						return t.name
+						return t.song
 					}) || []
 					var allTowers = towers
 						allTowers = allTowers.filter(function(t) {
-							return !currentTowers.includes(t.name)
+							return !currentTowers.includes(t.song)
 						})
 
 				// create tower
@@ -377,7 +376,7 @@
 		module.exports.createColumn = createColumn
 		function createColumn(request) {
 			// variables
-				var map    = request.game.data.map
+				var map    = request.game.map
 				var random = Math.floor(Math.random() * 20)
 				var column = null
 
@@ -503,9 +502,9 @@
 							avatar.state.y = (platform.y + 1) * 32 + 16
 						}
 						while (keys.find(function(k) {
-							return ((request.game.data.heroes[k].name   !== avatar.name)
-								 && (request.game.data.heroes[k].state.x == avatar.state.x)
-								 && (request.game.data.heroes[k].state.y == avatar.state.y))
+							return ((request.game.data.heroes[k].instrument !== avatar.instrument)
+								 && (request.game.data.heroes[k].state.x     == avatar.state.x)
+								 && (request.game.data.heroes[k].state.y     == avatar.state.y))
 						}))
 					}
 
@@ -520,23 +519,23 @@
 							avatar.state.y = (platform.y + 1)                                                     * 32 + 16
 						}
 						while (keys.find(function(k) {
-							return ((request.game.data.demons[k].name   !== avatar.name)
-								 && (request.game.data.demons[k].state.x == avatar.state.x)
-								 && (request.game.data.demons[k].state.y == avatar.state.y))
+							return ((request.game.data.demons[k].instrument !== avatar.instrument)
+								 && (request.game.data.demons[k].state.x     == avatar.state.x)
+								 && (request.game.data.demons[k].state.y     == avatar.state.y))
 						}))
 					}
 
 				// set tower
 					avatar.state.tower = {
-						name: tower.name,
+						song: tower.song,
 						platforms: [main.duplicateObject(platform)]
 					}
 
 				// set songs
-					avatar.state.songs.push(tower.name)
+					avatar.state.songs.push(tower.song)
 
 				// set cells
-					var cells = getCells(request.game.data.map.length, avatar.state.x, avatar.state.y, 32, 64)
+					var cells = getCells(request.game.map.length, avatar.state.x, avatar.state.y, 32, 64)
 						avatar.state.colLeft  = cells.colLeft
 						avatar.state.colRight = cells.colRight
 						avatar.state.rowUp    = cells.rowUp
@@ -549,16 +548,16 @@
 		module.exports.createArrow = createArrow
 		function createArrow(request, avatar, mapLength) {
 			try {
-				var arrow           = main.getSchema("arrow")
-					arrow.radius    = (avatar.state.auras.strength.radius || avatar.state.auras.strength.tower) ? (arrow.radius * 2) : arrow.radius
-					arrow.vx        =   avatar.state.facing == "left" ? -16 : 16
-					arrow.x         = ((avatar.state.facing == "left" ? avatar.state.x + arrow.vx : avatar.state.x + 32 + arrow.vx) + mapLength) % mapLength
-					arrow.y         = avatar.state.y + 32
-					arrow.vy        = 0
-					arrow.name      = avatar.name
-					arrow.team      = avatar.team
-					arrow.colors[0] = avatar.colors[0]
-					arrow.colors[1] = avatar.colors[1]
+				var arrow            = main.getSchema("arrow")
+					arrow.radius     = (avatar.state.auras.strength.radius || avatar.state.auras.strength.tower) ? (arrow.radius * 2) : arrow.radius
+					arrow.vx         =   avatar.state.facing == "left" ? -16 : 16
+					arrow.x          = ((avatar.state.facing == "left" ? avatar.state.x + arrow.vx : avatar.state.x + 32 + arrow.vx) + mapLength) % mapLength
+					arrow.y          = avatar.state.y + 32
+					arrow.vy         = 0
+					arrow.instrument = avatar.instrument
+					arrow.team       = avatar.team
+					arrow.colors[0]  = avatar.colors[0]
+					arrow.colors[1]  = avatar.colors[1]
 
 				return arrow
 			}
@@ -647,7 +646,7 @@
 			try {
 				// blank data
 					var touchedTower = {
-						name: null,
+						song: null,
 						platforms: []
 					}
 					
@@ -655,11 +654,11 @@
 					if (avatar.state.colLeft  % 32 < 4) {
 						var tower = request.game.data.towers[Math.floor(avatar.state.colLeft  / 32)]
 						if      (tower.platforms[avatar.state.colLeft  % 32    ].y == avatar.state.rowDown - 1) {
-							touchedTower.name = tower.name
+							touchedTower.song = tower.song
 							touchedTower.platforms.push(main.duplicateObject(tower.platforms[avatar.state.colLeft  % 32    ]))
 						}
 						else if (tower.platforms[avatar.state.colLeft  % 32 + 4].y == avatar.state.rowDown - 1) {
-							touchedTower.name = tower.name
+							touchedTower.song = tower.song
 							touchedTower.platforms.push(main.duplicateObject(tower.platforms[avatar.state.colLeft  % 32 + 4]))
 						}
 					}
@@ -668,17 +667,17 @@
 					if (avatar.state.colRight % 32 < 4) {
 						var tower = request.game.data.towers[Math.floor(avatar.state.colRight / 32)]
 						if      (tower.platforms[avatar.state.colRight % 32    ].y == avatar.state.rowDown - 1) {
-							touchedTower.name = tower.name
+							touchedTower.song = tower.song
 							touchedTower.platforms.push(main.duplicateObject(tower.platforms[avatar.state.colRight % 32    ]))
 						}
 						else if (tower.platforms[avatar.state.colRight % 32 + 4].y == avatar.state.rowDown - 1) {
-							touchedTower.name = tower.name
+							touchedTower.song = tower.song
 							touchedTower.platforms.push(main.duplicateObject(tower.platforms[avatar.state.colRight % 32 + 4]))
 						}
 					}
 
 				// data ?
-					if (touchedTower.name) {
+					if (touchedTower.song) {
 						return touchedTower
 					}
 			}
@@ -761,16 +760,7 @@
 					request.game.data.state.beat++
 
 				// data
-					callback(request.game.keys, {
-						beat:    true,
-						keys:    request.game.keys,
-						state:   request.game.data.state,
-						heroes:  request.game.data.heroes,
-						demons:  request.game.data.demons,
-						towers:  request.game.data.towers,
-						arrows:  request.game.data.arrows
-					})
-
+					callback(request.game.data.keys, request.game.data)
 			}
 			catch (error) {main.logError(error)}
 		}
@@ -782,7 +772,7 @@
 				// menu / launch / game over
 					if (!request.game.data.state.start || (request.game.data.state.beat < 128) || request.game.data.state.end) {
 						// sounds
-							var keys   = request.game.keys
+							var keys   = request.game.data.keys
 							for (var k in keys) {
 								var avatar = request.game.data.demons[keys[k]] || request.game.data.heroes[keys[k]] || null
 								updateEffects(   request,    avatar)
@@ -792,11 +782,11 @@
 				// gameplay
 					else {
 						// data
-							var map       = request.game.data.map
-							var mapLength = request.game.data.map.length * 32
+							var map       = request.game.map
+							var mapLength = map.length * 32
 							var towers    = request.game.data.towers
 							var arrows    = request.game.data.arrows
-							var keys      = request.game.keys
+							var keys      = request.game.data.keys
 
 						// reset avatars
 							for (var k in keys) {
@@ -848,7 +838,7 @@
 
 					// tower effects
 						if (avatar.state.tower) {
-							avatar.state.auras[avatar.state.tower.name].tower = true
+							avatar.state.auras[avatar.state.tower.song].tower = true
 						}
 
 					// sound effects
@@ -883,7 +873,7 @@
 						// update size & position
 							arrow.radius = (arrow.radius * 4 - 1) / 4
 							arrow.x = (arrow.x + arrow.vx + mapLength) % mapLength
-							var future = getCells(request.game.data.map.length, arrow.x, arrow.y, arrow.radius * 2, arrow.radius * 2)
+							var future = getCells(request.game.map.length, arrow.x, arrow.y, arrow.radius * 2, arrow.radius * 2)
 
 						// collision left
 							if      ((map[future.colLeft ][0] && future.rowUp   >= map[future.colLeft ][0].bottom && future.rowUp   <= map[future.colLeft ][0].top)
@@ -927,7 +917,7 @@
 						tower.colors[2] = (tower.team == "heroes") ? colors.blue[2] : (tower.team == "demons") ? colors.red[2] : colors.black[2]
 					
 					// post message
-						request.game.data.state.message.text = tower.team ? (tower.team + " take the tower of " + tower.name) : ("the tower of " + tower.name + " is lost")
+						request.game.data.state.message.text = tower.team ? (tower.team + " take the tower of " + tower.song) : ("the tower of " + tower.song + " is lost")
 						request.game.data.state.message.countdown = 64
 					
 					// change songs
@@ -935,11 +925,11 @@
 							var avatar = request.game.data.demons[keys[k]] || request.game.data.heroes[keys[k]]
 
 							if (avatar.team == tower.team) {
-								avatar.state.songs.push(tower.name)
+								avatar.state.songs.push(tower.song)
 							}
 							else {
 								avatar.state.songs = avatar.state.songs.filter(function(s) {
-									return s !== tower.name
+									return s !== tower.song
 								}) 
 							}
 						}
@@ -953,11 +943,11 @@
 		function updateVelocity(request, avatar, keys, mapLength) {
 			try {
 				// adjust vx
-					var minVX     = (avatar.state.auras.slow.radius      || avatar.state.auras.slow.tower)      ? -4 : -10
-					var maxVX     = (avatar.state.auras.slow.radius      || avatar.state.auras.slow.tower)      ?  4 :  10
-					var    AX     = (avatar.state.auras.sliding.radius   || avatar.state.auras.sliding.tower)   ?  4 : 2
-					var confusion = (avatar.state.auras.confusion.radius || avatar.state.auras.confusion.tower) || false
-					var flight    = (avatar.state.auras.flight.radius    || avatar.state.auras.flight.tower)    || false
+					var minVX     =  avatar.state.health && (avatar.state.auras.slow.radius      || avatar.state.auras.slow.tower)      ? -4 : -10
+					var maxVX     =  avatar.state.health && (avatar.state.auras.slow.radius      || avatar.state.auras.slow.tower)      ?  4 :  10
+					var    AX     =  avatar.state.health && (avatar.state.auras.sliding.radius   || avatar.state.auras.sliding.tower)   ?  4 : 2
+					var confusion =  avatar.state.health && (avatar.state.auras.confusion.radius || avatar.state.auras.confusion.tower) || false
+					var flight    = !avatar.state.health || (avatar.state.auras.flight.radius    || avatar.state.auras.flight.tower)    || false
 
 					if (avatar.state.left && avatar.state.right) {
 						avatar.state.vx = Math.max(minVX, Math.min(maxVX, Math.round(avatar.state.vx)))
@@ -977,7 +967,7 @@
 					}
 
 				// adjust vy
-					if (avatar.state.up && (avatar.state.jumpable || !avatar.state.health || flight) && avatar.state.y < 544) {
+					if (avatar.state.up && (avatar.state.jumpable || flight) && avatar.state.y < 544) {
 						avatar.state.vy = Math.max(-24, Math.min(24, avatar.state.vy + 8))
 
 						if (avatar.state.vy > 16) {
@@ -1005,7 +995,7 @@
 								var avLeft = (  avatar.state.colLeft == map.length - 1 && opponent.state.colLeft == 0) ? (-1 * map.length) : 0
 								var opLeft = (opponent.state.colLeft == map.length - 1 &&   avatar.state.colLeft == 0) ? (-1 * map.length) : 0
 							
-							if ((opponent.name !== avatar.name) && (opponent.state.health)
+							if ((opponent.instrument !== avatar.instrument) && (opponent.state.health)
 							 && ((avatar.state.rowUp                >= opponent.state.rowDown          && avatar.state.rowUp                 <= opponent.state.rowUp)
 							  || (avatar.state.rowDown              >= opponent.state.rowDown          && avatar.state.rowDown               <= opponent.state.rowUp + 1)) // standing on someone's head
 							 && ((avatar.state.colLeft + avLeft     >= opponent.state.colLeft + opLeft && avatar.state.colLeft + avLeft      <= opponent.state.colLeft + opLeft + 1)
@@ -1216,7 +1206,7 @@
 					if (avatar.state.tower) {
 						// get tower
 							var tower = request.game.data.towers.find(function(t) {
-								return (t.name == avatar.state.tower.name)
+								return (t.song == avatar.state.tower.song)
 							})
 
 						// friendly tower
@@ -1274,7 +1264,7 @@
 					// towers
 						if (avatar.state.tower && avatar.state.tower.platforms[0] && (avatar.state.tower.platforms[0].team !== avatar.team) && beats[4].includes(avatar.state.tower.platforms[0].note)) {
 							var tower = request.game.data.towers.find(function (t) {
-								return t.name == avatar.state.tower.name
+								return t.song == avatar.state.tower.song
 							})
 
 							var platform = tower.platforms.find(function (p) {
@@ -1287,7 +1277,7 @@
 						}
 						else if (avatar.state.tower && avatar.state.tower.platforms[1] && (avatar.state.tower.platforms[1].team !== avatar.team) && beats[4].includes(avatar.state.tower.platforms[1].note)) {
 							var tower = request.game.data.towers.find(function (t) {
-								return t.name == avatar.state.tower.name
+								return t.song == avatar.state.tower.song
 							})
 							
 							var platform = tower.platforms.find(function (p) {

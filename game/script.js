@@ -19,53 +19,53 @@
 			"ArrowUp": "up",
 			"ArrowDown": "down",
 			"ArrowRight": "right",
-			"KeyZ": "C2",
-			"KeyX": "D2",
-			"KeyC": "E2",
-			"KeyB": "G2",
-			"KeyN": "A2",
-			"Comma": "C3",
-			"Period": "D3",
-			"Slash": "E3",
-			"KeyA": "C3",
-			"KeyS": "D3",
-			"KeyD": "E3",
-			"KeyG": "G3",
-			"KeyH": "A3",
-			"KeyK": "C4",
-			"KeyL": "D4",
-			"Semicolon": "E4",
-			"KeyQ": "C4",
-			"KeyW": "D4",
-			"KeyE": "E4",
-			"KeyT": "G4",
-			"KeyY": "A4",
-			"KeyI": "C5",
-			"KeyO": "D5",
-			"KeyP": "E5",
-			"BracketRight": "G5",
-			"Backslash": "A5",
-			"Digit1": "C3",
-			"Digit2": "D3",
-			"Digit3": "E3",
-			"Digit5": "G3",
-			"Digit6": "A3",
-			"Digit8": "C4",
-			"Digit9": "D4",
-			"Digit0": "E4"
+			"Digit1": "1-C3",
+			"Digit2": "2-D3",
+			"Digit3": "3-E3",
+			"Digit5": "5-G3",
+			"Digit6": "6-A3",
+			"Digit8": "1-C4",
+			"Digit9": "2-D4",
+			"Digit0": "3-E4",
+			"KeyQ": "1-C4",
+			"KeyW": "2-D4",
+			"KeyE": "3-E4",
+			"KeyT": "5-G4",
+			"KeyY": "6-A-4",
+			"KeyI": "1-C5",
+			"KeyO": "2-D5",
+			"KeyP": "3-E5",
+			"BracketRight": "5-G5",
+			"Backslash": "6-A5",
+			"KeyA": "1-C3",
+			"KeyS": "2-D3",
+			"KeyD": "3-E3",
+			"KeyG": "5-G3",
+			"KeyH": "6-A3",
+			"KeyK": "1-C4",
+			"KeyL": "2-D4",
+			"Semicolon": "3-E4",
+			"KeyZ": "1-C2",
+			"KeyX": "2-D2",
+			"KeyC": "3-E2",
+			"KeyB": "5-G2",
+			"KeyN": "6-A2",
+			"Comma": "1-C3",
+			"Period": "2-D3",
+			"Slash": "3-E3"			
 		}
 
 		var keyNotes = {
-			"C3": ["Digit1","KeyQ","KeyA","KeyZ"],
-			"D3": ["Digit2","KeyW","KeyS","KeyX"],
-			"E3": ["Digit3","KeyE","KeyD","KeyC"],
-			"F3": [],
-			"G3": ["Digit5","KeyT","KeyG","KeyB"],
-			"A3": ["Digit6","KeyY","KeyH","KeyN"],
-			"B3": [],
-			"C4": ["Digit8","KeyI","KeyK","Comma"],
-			"D4": ["Digit9","KeyO","KeyL","Period"],
-			"E4": ["Digit0","KeyP","Semicolon","Slash"]
+			"1-C3": ["Digit1","KeyQ","KeyA","KeyZ"],
+			"2-D3": ["Digit2","KeyW","KeyS","KeyX"],
+			"3-E3": ["Digit3","KeyE","KeyD","KeyC"],
+			"4-F3": [],
+			"5-G3": ["Digit5","KeyT","KeyG","KeyB"],
+			"6-A3": ["Digit6","KeyY","KeyH","KeyN"],
+			"7-B3": [],
+			"1-C4": ["Digit8","KeyI","KeyK","Comma"],
+			"2-D4": ["Digit9","KeyO","KeyL","Period"],
+			"3-E4": ["Digit0","KeyP","Semicolon","Slash"]
 		}
 
 /*** websocket ***/
@@ -374,7 +374,7 @@
 				var takenAvatars = []
 				for (var d in data[data.team]) {
 					if (data[data.team][d]) {
-						takenAvatars.push(data[data.team][d].name)
+						takenAvatars.push(data[data.team][d].instrument)
 					}
 				}
 
@@ -382,7 +382,7 @@
 				var optionKeys = Object.keys(data.options)
 				for (var o = 0; o < optionKeys.length; o++) {
 					var shadow = (o == data.selection) ? (data.team == "heroes" ? colors.blue[2] : colors.red[2]) : colors.black[1] // shadow as selection tool
-					var color = (chosenAvatar && chosenAvatar.name == data.options[optionKeys[o]].name) ? (data.team == "heroes" ? colors.blue[1] : colors.red[1]) : takenAvatars.includes(data.options[optionKeys[o]].name) ? colors.black[4] : (o == data.selection) ? (data.team == "heroes" ? colors.blue[0] : colors.red[0]) : colors.white[4]
+					var color = (chosenAvatar && chosenAvatar.instrument == data.options[optionKeys[o]].instrument) ? (data.team == "heroes" ? colors.blue[1] : colors.red[1]) : takenAvatars.includes(data.options[optionKeys[o]].instrument) ? colors.black[4] : (o == data.selection) ? (data.team == "heroes" ? colors.blue[0] : colors.red[0]) : colors.white[4]
 					var x = (canvas.width  / 2) + 400 - ((optionKeys.length - o) * 100) + 50
 					var y = (canvas.height / 2)
 
@@ -392,7 +392,7 @@
 
 			// melody
 				if (chosenAvatar) {
-					drawText(canvas.width / 2, 13 * canvas.height / 16, "melody: " + chosenAvatar.numbers, {color: chosenAvatar.colors[0], size: 32, shadow: colors.black[4], blur: 16, style: "bold"})
+					drawText(canvas.width / 2, 13 * canvas.height / 16, "melody: " + chosenAvatar.melody, {color: chosenAvatar.colors[0], size: 32, shadow: colors.black[4], blur: 16, style: "bold"})
 				}
 		}
 
@@ -635,14 +635,14 @@
 
 						var notes = opponent.state.keys[opponent.state.keys.length - 1]
 						for (var n in notes) {
-							instruments[opponent.instrument].press(frequencies[notes[n][0]][notes[n][1]])
+							instruments[opponent.instrument].press(frequencies[notes[n][2]][notes[n][3]])
 						}
 					}
 			}
 			else if (avatar) {
 				var notes = avatar.state.keys[avatar.state.keys.length - 1]
 				for (var n in notes) {
-					instruments[avatar.instrument].press(frequencies[notes[n][0]][notes[n][1]])
+					instruments[avatar.instrument].press(frequencies[notes[n][2]][notes[n][3]])
 				}
 			}
 		}

@@ -83,7 +83,7 @@
 			cursor: default;
 			text-align: center;
 			box-shadow: 0px 0px 25px var(--black-4);
-			padding: 8px 0px 8px 0px;
+			padding: 5% 0px 0px 0px;
 		}
 
 		.content {
@@ -104,17 +104,18 @@
 
 	/* feedback */
 		#feedback-text {
-			padding: 10px;
-			max-width: calc(100% - 28px);
-			min-width: calc(100% - 28px);
+			padding: 10px 5px 5px 5px;
+			max-width: calc(100% - 20px);
+			min-width: calc(100% - 20px);
 			margin-bottom: 2%;
 			border-radius: var(--borderRadius);
 			border: 0px;
+			min-height: 50px;
 		}
 
 		#feedback-email {
-			width: calc(100% - 28px - 100px);
-			padding: 10px;
+			width: calc(100% - 20px - 100px);
+			padding: 10px 5px 5px 5px;
 			border-radius: var(--borderRadius) 0px 0px var(--borderRadius);
 			border: 0px;
 			line-height: 1;
@@ -123,7 +124,7 @@
 
 		#feedback-submit {
 			vertical-align: bottom;
-			padding: 10px;
+			padding: 10px 5px 5px;
 			width: 100px;
 			line-height: 1.05;
 			font-size: 100%;

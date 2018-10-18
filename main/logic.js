@@ -148,56 +148,48 @@
 
 						return [
 							{
-								name: "Gaden",
 								team: "heroes",
 								instrument: "clarinaut",
 								colors: [songs.protection.colors[0], songs.protection.colors[1], colors.blue[2]],
 								song: "protection"
 							},
 							{
-								name: "Acadia",
 								team: "heroes",
 								instrument: "jangle",
 								colors: [songs.flight.colors[0], songs.flight.colors[1], colors.blue[2]],
 								song: "flight"
 							},
 							{
-								name: "Deacon",
 								team: "heroes",
 								instrument: "glassical",
 								colors: [songs.rapidfire.colors[0], songs.rapidfire.colors[1], colors.blue[2]],
 								song: "rapidfire"
 							},
 							{
-								name: "Aeden",
 								team: "heroes",
 								instrument: "shimmer",
 								colors: [songs.strength.colors[0], songs.strength.colors[1], colors.blue[2]],
 								song: "strength"
 							},
 							{
-								name: "Adagio",
 								team: "heroes",
 								instrument: "buzzorgan",
 								colors: [songs.slow.colors[0], songs.slow.colors[1], colors.blue[2]],
 								song: "slow"
 							},
 							{
-								name: "Cadence",
 								team: "heroes",
 								instrument: "sine",
 								colors: [songs.confusion.colors[0], songs.confusion.colors[1], colors.blue[2]],
 								song: "confusion"
 							},
 							{
-								name: "Edgar",
 								team: "heroes",
 								instrument: "triangle",
 								colors: [songs.sliding.colors[0], songs.sliding.colors[1], colors.blue[2]],
 								song: "sliding"
 							},							
 							{
-								name: "Cager",
 								team: "heroes",
 								instrument: "qube",
 								colors: [songs.darkness.colors[0], songs.darkness.colors[1], colors.blue[2]],
@@ -212,56 +204,48 @@
 
 						return [
 							{
-								name: "Gademur",
 								team: "demons",
 								instrument: "lazerz",
 								colors: [songs.protection.colors[0], songs.protection.colors[1], colors.red[2]],
 								song: "protection"
 							},
 							{
-								name: "Acadrus",
 								team: "demons",
 								instrument: "sharpsichord",
 								colors: [songs.flight.colors[0], songs.flight.colors[1], colors.red[2]],
 								song: "flight"
 							},
 							{
-								name: "Deacrog",
 								team: "demons",
 								instrument: "square",
 								colors: [songs.rapidfire.colors[0], songs.rapidfire.colors[1], colors.red[2]],
 								song: "rapidfire"
 							},
 							{
-								name: "Aederos",
 								team: "demons",
 								instrument: "sawtooth",
 								colors: [songs.strength.colors[0], songs.strength.colors[1], colors.red[2]],
 								song: "strength"
 							},
 							{
-								name: "Adaglun",
 								team: "demons",
 								instrument: "swello",
 								colors: [songs.slow.colors[0], songs.slow.colors[1], colors.red[2]],
 								song: "slow"
 							},
 							{
-								name: "Cadelfo",
 								team: "demons",
 								instrument: "reedles",
 								colors: [songs.confusion.colors[0], songs.confusion.colors[1], colors.red[2]],
 								song: "confusion"
 							},
 							{
-								name: "Edganis",
 								team: "demons",
 								instrument: "chordstrum",
 								colors: [songs.sliding.colors[0], songs.sliding.colors[1], colors.red[2]],
 								song: "sliding"
 							},
 							{
-								name: "Cagelth",
 								team: "demons",
 								instrument: "accordienne",
 								colors: [songs.darkness.colors[0], songs.darkness.colors[1], colors.red[2]],
@@ -278,64 +262,56 @@
 								name: "protection",
 								affects: "allies",
 								description: "your team is immune to magic arrows",
-								melody: "GADE",
-								numbers: "5623",
+								melody: "5623",
 								colors: [colors.green[3], colors.green[1]]
 							},
 							"flight": {
 								name: "flight",
 								affects: "allies",
 								description: "your team can fly without landing",
-								melody: "ACAD",
-								numbers: "6162",
+								melody: "6162",
 								colors: [colors.cerulean[3], colors.cerulean[1]]
 							},
 							"rapidfire": {
 								name: "rapidfire",
 								affects: "allies",
 								description: "your team can shoot arrows at a faster rate",
-								melody: "DEAC",
-								numbers: "2361",
+								melody: "2361",
 								colors: [colors.magenta[3], colors.magenta[1]]
 							},
 							"strength": {
 								name: "strength",
 								affects: "allies",
 								description: "your team's arrows are twice as powerful",
-								melody: "AEDE",
-								numbers: "6323",
+								melody: "6323",
 								colors: [colors.orange[3], colors.orange[1]]
 							},
 							"slow": {
 								name: "slow",
 								affects: "opponents",
 								description: "opponents move at a reduced rate",
-								melody: "ADAG",
-								numbers: "6265",
+								melody: "6265",
 								colors: [colors.yellow[3], colors.yellow[1]]
 							},
 							"confusion": {
 								name: "confusion",
 								affects: "opponents",
 								description: "opponents' left and right controls are reversed",
-								melody: "CADE",
-								numbers: "1623",
+								melody: "1623",
 								colors: [colors.purple[3], colors.purple[1]]
 							},
 							"sliding": {
 								name: "sliding",
 								affects: "opponents",
 								description: "opponents have no friction when moving",
-								melody: "EDGA",
-								numbers: "3256",
+								melody: "3256",
 								colors: [colors.cyan[3], colors.cyan[1]]
 							},
 							"darkness": {
 								name: "darkness",
 								affects: "opponents",
 								description: "opponents can barely see the world",
-								melody: "CAGE",
-								numbers: "1653",
+								melody: "1653",
 								colors: [colors.browngray[3], colors.browngray[1]]
 							}
 						}
@@ -347,44 +323,44 @@
 
 						return [
 							{
-								name: "rapidfire",
+								song: "rapidfire",
 								colors: [songs.rapidfire.colors[0], songs.rapidfire.colors[1], colors.black[2]],
-								platforms: [{x: 0, y: 11, color: colors.black[2], note: songs.rapidfire.melody[0], number: songs.rapidfire.numbers[0]}, {x: 1, y: 11, color: colors.black[2], note: songs.rapidfire.melody[1], number: songs.rapidfire.numbers[1]}, {x: 2, y: 11, color: colors.black[2], note: songs.rapidfire.melody[2], number: songs.rapidfire.numbers[2]}, {x: 3, y: 8, color: colors.black[2], note: songs.rapidfire.melody[3], number: songs.rapidfire.numbers[3]}, {x: 0, y: 7, color: colors.black[2], note: songs.rapidfire.melody[0], number: songs.rapidfire.numbers[0]}, {x: 1, y: 7, color: colors.black[2], note: songs.rapidfire.melody[1], number: songs.rapidfire.numbers[1]}, {x: 2, y: 7, color: colors.black[2], note: songs.rapidfire.melody[2], number: songs.rapidfire.numbers[2]}, {x: 3, y: 4, color: colors.black[2], note: songs.rapidfire.melody[3], number: songs.rapidfire.numbers[3]}]
+								platforms: [{x: 0, y: 11, color: colors.black[2], note: songs.rapidfire.melody[0]}, {x: 1, y: 11, color: colors.black[2], note: songs.rapidfire.melody[1]}, {x: 2, y: 11, color: colors.black[2], note: songs.rapidfire.melody[2]}, {x: 3, y: 8, color: colors.black[2], note: songs.rapidfire.melody[3]}, {x: 0, y: 7, color: colors.black[2], note: songs.rapidfire.melody[0]}, {x: 1, y: 7, color: colors.black[2], note: songs.rapidfire.melody[1]}, {x: 2, y: 7, color: colors.black[2], note: songs.rapidfire.melody[2]}, {x: 3, y: 4, color: colors.black[2], note: songs.rapidfire.melody[3]}]
 							},
 							{
-								name: "protection",
+								song: "protection",
 								colors: [songs.protection.colors[0], songs.protection.colors[1], colors.black[2]],
-								platforms: [{x: 0, y: 11, color: colors.black[2], note: songs.protection.melody[0], number: songs.protection.numbers[0]}, {x: 1, y: 11, color: colors.black[2], note: songs.protection.melody[1], number: songs.protection.numbers[1]}, {x: 2, y: 10, color: colors.black[2], note: songs.protection.melody[2], number: songs.protection.numbers[2]}, {x: 3, y: 8, color: colors.black[2], note: songs.protection.melody[3], number: songs.protection.numbers[3]}, {x: 0, y: 7, color: colors.black[2], note: songs.protection.melody[0], number: songs.protection.numbers[0]}, {x: 1, y: 7, color: colors.black[2], note: songs.protection.melody[1], number: songs.protection.numbers[1]}, {x: 2, y: 6, color: colors.black[2], note: songs.protection.melody[2], number: songs.protection.numbers[2]}, {x: 3, y: 4, color: colors.black[2], note: songs.protection.melody[3], number: songs.protection.numbers[3]}]
+								platforms: [{x: 0, y: 11, color: colors.black[2], note: songs.protection.melody[0]}, {x: 1, y: 11, color: colors.black[2], note: songs.protection.melody[1]}, {x: 2, y: 10, color: colors.black[2], note: songs.protection.melody[2]}, {x: 3, y: 8, color: colors.black[2], note: songs.protection.melody[3]}, {x: 0, y: 7, color: colors.black[2], note: songs.protection.melody[0]}, {x: 1, y: 7, color: colors.black[2], note: songs.protection.melody[1]}, {x: 2, y: 6, color: colors.black[2], note: songs.protection.melody[2]}, {x: 3, y: 4, color: colors.black[2], note: songs.protection.melody[3]}]
 							},
 							{
-								name: "strength",
+								song: "strength",
 								colors: [songs.strength.colors[0], songs.strength.colors[1], colors.black[2]],
-								platforms: [{x: 0, y: 11, color: colors.black[2], note: songs.strength.melody[0], number: songs.strength.numbers[0]}, {x: 1, y: 11, color: colors.black[2], note: songs.strength.melody[1], number: songs.strength.numbers[1]}, {x: 2, y: 9, color: colors.black[2], note: songs.strength.melody[2], number: songs.strength.numbers[2]}, {x: 3, y: 8, color: colors.black[2], note: songs.strength.melody[3], number: songs.strength.numbers[3]}, {x: 0, y: 7, color: colors.black[2], note: songs.strength.melody[0], number: songs.strength.numbers[0]}, {x: 1, y: 7, color: colors.black[2], note: songs.strength.melody[1], number: songs.strength.numbers[1]}, {x: 2, y: 5, color: colors.black[2], note: songs.strength.melody[2], number: songs.strength.numbers[2]}, {x: 3, y: 4, color: colors.black[2], note: songs.strength.melody[3], number: songs.strength.numbers[3]}]
+								platforms: [{x: 0, y: 11, color: colors.black[2], note: songs.strength.melody[0]}, {x: 1, y: 11, color: colors.black[2], note: songs.strength.melody[1]}, {x: 2, y: 9, color: colors.black[2], note: songs.strength.melody[2]}, {x: 3, y: 8, color: colors.black[2], note: songs.strength.melody[3]}, {x: 0, y: 7, color: colors.black[2], note: songs.strength.melody[0]}, {x: 1, y: 7, color: colors.black[2], note: songs.strength.melody[1]}, {x: 2, y: 5, color: colors.black[2], note: songs.strength.melody[2]}, {x: 3, y: 4, color: colors.black[2], note: songs.strength.melody[3]}]
 							},
 							{
-								name: "flight",
+								song: "flight",
 								colors: [songs.flight.colors[0], songs.flight.colors[1], colors.black[2]],
-								platforms: [{x: 0, y: 11, color: colors.black[2], note: songs.flight.melody[0], number: songs.flight.numbers[0]}, {x: 1, y: 10, color: colors.black[2], note: songs.flight.melody[1], number: songs.flight.numbers[1]}, {x: 2, y: 10, color: colors.black[2], note: songs.flight.melody[2], number: songs.flight.numbers[2]}, {x: 3, y: 8, color: colors.black[2], note: songs.flight.melody[3], number: songs.flight.numbers[3]}, {x: 0, y: 7, color: colors.black[2], note: songs.flight.melody[0], number: songs.flight.numbers[0]}, {x: 1, y: 6, color: colors.black[2], note: songs.flight.melody[1], number: songs.flight.numbers[1]}, {x: 2, y: 6, color: colors.black[2], note: songs.flight.melody[2], number: songs.flight.numbers[2]}, {x: 3, y: 4, color: colors.black[2], note: songs.flight.melody[3], number: songs.flight.numbers[3]}]
+								platforms: [{x: 0, y: 11, color: colors.black[2], note: songs.flight.melody[0]}, {x: 1, y: 10, color: colors.black[2], note: songs.flight.melody[1]}, {x: 2, y: 10, color: colors.black[2], note: songs.flight.melody[2]}, {x: 3, y: 8, color: colors.black[2], note: songs.flight.melody[3]}, {x: 0, y: 7, color: colors.black[2], note: songs.flight.melody[0]}, {x: 1, y: 6, color: colors.black[2], note: songs.flight.melody[1]}, {x: 2, y: 6, color: colors.black[2], note: songs.flight.melody[2]}, {x: 3, y: 4, color: colors.black[2], note: songs.flight.melody[3]}]
 							},
 							{
-								name: "slow",
+								song: "slow",
 								colors: [songs.slow.colors[0], songs.slow.colors[1], colors.black[2]],
-								platforms: [{x: 0, y: 11, color: colors.black[2], note: songs.slow.melody[0], number: songs.slow.numbers[0]}, {x: 1, y: 10, color: colors.black[2], note: songs.slow.melody[1], number: songs.slow.numbers[1]}, {x: 2, y: 9, color: colors.black[2], note: songs.slow.melody[2], number: songs.slow.numbers[2]}, {x: 3, y: 8, color: colors.black[2], note: songs.slow.melody[3], number: songs.slow.numbers[3]}, {x: 0, y: 7, color: colors.black[2], note: songs.slow.melody[0], number: songs.slow.numbers[0]}, {x: 1, y: 6, color: colors.black[2], note: songs.slow.melody[1], number: songs.slow.numbers[1]}, {x: 2, y: 5, color: colors.black[2], note: songs.slow.melody[2], number: songs.slow.numbers[2]}, {x: 3, y: 4, color: colors.black[2], note: songs.slow.melody[3], number: songs.slow.numbers[3]}]
+								platforms: [{x: 0, y: 11, color: colors.black[2], note: songs.slow.melody[0]}, {x: 1, y: 10, color: colors.black[2], note: songs.slow.melody[1]}, {x: 2, y: 9, color: colors.black[2], note: songs.slow.melody[2]}, {x: 3, y: 8, color: colors.black[2], note: songs.slow.melody[3]}, {x: 0, y: 7, color: colors.black[2], note: songs.slow.melody[0]}, {x: 1, y: 6, color: colors.black[2], note: songs.slow.melody[1]}, {x: 2, y: 5, color: colors.black[2], note: songs.slow.melody[2]}, {x: 3, y: 4, color: colors.black[2], note: songs.slow.melody[3]}]
 							},
 							{
-								name: "confusion",
+								song: "confusion",
 								colors: [songs.confusion.colors[0], songs.confusion.colors[1], colors.black[2]],
-								platforms: [{x: 0, y: 11, color: colors.black[2], note: songs.confusion.melody[0], number: songs.confusion.numbers[0]}, {x: 1, y: 10, color: colors.black[2], note: songs.confusion.melody[1], number: songs.confusion.numbers[1]}, {x: 2, y: 8, color: colors.black[2], note: songs.confusion.melody[2], number: songs.confusion.numbers[2]}, {x: 3, y: 8, color: colors.black[2], note: songs.confusion.melody[3], number: songs.confusion.numbers[3]}, {x: 0, y: 7, color: colors.black[2], note: songs.confusion.melody[0], number: songs.confusion.numbers[0]}, {x: 1, y: 6, color: colors.black[2], note: songs.confusion.melody[1], number: songs.confusion.numbers[1]}, {x: 2, y: 4, color: colors.black[2], note: songs.confusion.melody[2], number: songs.confusion.numbers[2]}, {x: 3, y: 4, color: colors.black[2], note: songs.confusion.melody[3], number: songs.confusion.numbers[3]}]
+								platforms: [{x: 0, y: 11, color: colors.black[2], note: songs.confusion.melody[0]}, {x: 1, y: 10, color: colors.black[2], note: songs.confusion.melody[1]}, {x: 2, y: 8, color: colors.black[2], note: songs.confusion.melody[2]}, {x: 3, y: 8, color: colors.black[2], note: songs.confusion.melody[3]}, {x: 0, y: 7, color: colors.black[2], note: songs.confusion.melody[0]}, {x: 1, y: 6, color: colors.black[2], note: songs.confusion.melody[1]}, {x: 2, y: 4, color: colors.black[2], note: songs.confusion.melody[2]}, {x: 3, y: 4, color: colors.black[2], note: songs.confusion.melody[3]}]
 							},
 							{
-								name: "sliding",
+								song: "sliding",
 								colors: [songs.sliding.colors[0], songs.sliding.colors[1], colors.black[2]],
-								platforms: [{x: 0, y: 11, color: colors.black[2], note: songs.sliding.melody[0], number: songs.sliding.numbers[0]}, {x: 1, y: 9, color: colors.black[2], note: songs.sliding.melody[1], number: songs.sliding.numbers[1]}, {x: 2, y: 9, color: colors.black[2], note: songs.sliding.melody[2], number: songs.sliding.numbers[2]}, {x: 3, y: 8, color: colors.black[2], note: songs.sliding.melody[3], number: songs.sliding.numbers[3]}, {x: 0, y: 7, color: colors.black[2], note: songs.sliding.melody[0], number: songs.sliding.numbers[0]}, {x: 1, y: 5, color: colors.black[2], note: songs.sliding.melody[1], number: songs.sliding.numbers[1]}, {x: 2, y: 5, color: colors.black[2], note: songs.sliding.melody[2], number: songs.sliding.numbers[2]}, {x: 3, y: 4, color: colors.black[2], note: songs.sliding.melody[3], number: songs.sliding.numbers[3]}]
+								platforms: [{x: 0, y: 11, color: colors.black[2], note: songs.sliding.melody[0]}, {x: 1, y: 9, color: colors.black[2], note: songs.sliding.melody[1]}, {x: 2, y: 9, color: colors.black[2], note: songs.sliding.melody[2]}, {x: 3, y: 8, color: colors.black[2], note: songs.sliding.melody[3]}, {x: 0, y: 7, color: colors.black[2], note: songs.sliding.melody[0]}, {x: 1, y: 5, color: colors.black[2], note: songs.sliding.melody[1]}, {x: 2, y: 5, color: colors.black[2], note: songs.sliding.melody[2]}, {x: 3, y: 4, color: colors.black[2], note: songs.sliding.melody[3]}]
 							},
 							{
-								name: "darkness",
+								song: "darkness",
 								colors: [songs.darkness.colors[0], songs.darkness.colors[1], colors.black[2]],
-								platforms: [{x: 0, y: 11, color: colors.black[2], note: songs.darkness.melody[0], number: songs.darkness.numbers[0]}, {x: 1, y: 9, color: colors.black[2], note: songs.darkness.melody[1], number: songs.darkness.numbers[1]}, {x: 2, y: 8, color: colors.black[2], note: songs.darkness.melody[2], number: songs.darkness.numbers[2]}, {x: 3, y: 8, color: colors.black[2], note: songs.darkness.melody[3], number: songs.darkness.numbers[3]}, {x: 0, y: 7, color: colors.black[2], note: songs.darkness.melody[0], number: songs.darkness.numbers[0]}, {x: 1, y: 5, color: colors.black[2], note: songs.darkness.melody[1], number: songs.darkness.numbers[1]}, {x: 2, y: 4, color: colors.black[2], note: songs.darkness.melody[2], number: songs.darkness.numbers[2]}, {x: 3, y: 4, color: colors.black[2], note: songs.darkness.melody[3], number: songs.darkness.numbers[3]}]
+								platforms: [{x: 0, y: 11, color: colors.black[2], note: songs.darkness.melody[0]}, {x: 1, y: 9, color: colors.black[2], note: songs.darkness.melody[1]}, {x: 2, y: 8, color: colors.black[2], note: songs.darkness.melody[2]}, {x: 3, y: 8, color: colors.black[2], note: songs.darkness.melody[3]}, {x: 0, y: 7, color: colors.black[2], note: songs.darkness.melody[0]}, {x: 1, y: 5, color: colors.black[2], note: songs.darkness.melody[1]}, {x: 2, y: 4, color: colors.black[2], note: songs.darkness.melody[2]}, {x: 3, y: 4, color: colors.black[2], note: songs.darkness.melody[3]}]
 							}
 						]
 					break									
@@ -620,11 +596,16 @@
 				switch (index) {
 					case "game":
 						return {
-							id: null,
-							created: (new Date().getTime()),
-							loop: null,
-							players: {},
+							id:        null,
+							created:   (new Date().getTime()),
+							stateLoop: null,
+							beatLoop:  null,
+							players:   {},
+							map:       [],
+							theme:     null,
 							data: {
+								beat: true,
+								keys: [],
 								state: {
 									start:   false,
 									end:     false,
@@ -639,11 +620,9 @@
 										countdown: 0
 									}
 								},
-								theme:  null,
 								heroes: {},
 								demons: {},
 								towers: [],
-								map:    [],
 								arrows: []
 							}
 						}

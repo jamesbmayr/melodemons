@@ -25,7 +25,7 @@
 				<div id="gameplay" class="section">
 					<div class="header">Gameplay</div>
 					<div class="content">
-						In this real-time game, <span class="redtext">demons</span> seek to control <span class="orangetext">towers</span> so they can play the song to end the world. The <span class="bluetext">heroes</span> must work together to stop them, performing music to cast magic auras and control the <span class="orangetext">towers</span> themselves.
+						In this real-time game, <span class="redtext">demons</span> seek to control <span class="orangetext">towers</span> so they can play the song to end the world. The <span class="bluetext">heroes</span> must work together to stop them, performing <span class="purpletext">songs</span> to cast magic <span class="greentext">auras</span> and control the <span class="orangetext">towers</span> themselves.
 						<br><br>
 						With randomly generated maps, eight magic <span class="purpletext">songs</span>, and a whole cast of characters, the game is different every time.
 					</div>
@@ -41,7 +41,7 @@
 
 							for (var i = 0; i < keys.length; i++) {
 								text += "<li>" +
-									"<span class='purpletext'>" + songs[keys[i]].numbers + "</span>: " +
+									"<span class='purpletext'>" + songs[keys[i]].melody + "</span>: " +
 									"<b><span class='greentext'>" + keys[i] + "</span></b><br>" +
 									" <span>" + songs[keys[i]].description + "</span><br><br>"
 								"</li>"
@@ -62,7 +62,7 @@
 					<div class="header">Feedback</div>
 					<div class="content">
 						<textarea id="feedback-text" rows="4" placeholder="your feedback" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"></textarea>
-						<input type="email" id="feedback-email" placeholder="email" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/><button id="feedback-submit" value="submit">&#8595;</button>
+						<input type="email" id="feedback-email" placeholder="email" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/><button id="feedback-submit" value="submit">&#8680;</button>
 					</div>
 				</div>
 				<div id="code" class="section">
