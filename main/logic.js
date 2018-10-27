@@ -138,7 +138,7 @@
 							auras:  "AURAS - play your avatar or tower melodies",
 							arrows: "ARROWS - play three-note chords to attack",							
 							goal:   "Claim the 4 towers to sound the song of victory.",
-							rejoin: "[ click to rejoin ]"
+							rejoin: "[click to rejoin]"
 						}
 					break
 
@@ -150,8 +150,8 @@
 							{
 								team: "heroes",
 								instrument: "clarinaut",
-								colors: [songs.protection.colors[0], songs.protection.colors[1], colors.blue[2]],
-								song: "protection"
+								colors: [songs.defense.colors[0], songs.defense.colors[1], colors.blue[2]],
+								song: "defense"
 							},
 							{
 								team: "heroes",
@@ -206,8 +206,8 @@
 							{
 								team: "demons",
 								instrument: "lazerz",
-								colors: [songs.protection.colors[0], songs.protection.colors[1], colors.red[2]],
-								song: "protection"
+								colors: [songs.defense.colors[0], songs.defense.colors[1], colors.red[2]],
+								song: "defense"
 							},
 							{
 								team: "demons",
@@ -258,10 +258,10 @@
 						var colors = getAsset("colors")
 
 						return {
-							"protection": {
-								name: "protection",
+							"defense": {
+								name: "defense",
 								affects: "allies",
-								description: "your team is immune to magic arrows",
+								description: "your team is hurt less by magic arrows",
 								melody: "5623",
 								colors: [colors.green[3], colors.green[1]]
 							},
@@ -282,7 +282,7 @@
 							"strength": {
 								name: "strength",
 								affects: "allies",
-								description: "your team's arrows are twice as powerful",
+								description: "your team's arrows are more powerful",
 								melody: "6323",
 								colors: [colors.orange[3], colors.orange[1]]
 							},
@@ -328,9 +328,9 @@
 								platforms: [{x: 0, y: 11, color: colors.black[2], note: songs.rapidfire.melody[0]}, {x: 1, y: 11, color: colors.black[2], note: songs.rapidfire.melody[1]}, {x: 2, y: 11, color: colors.black[2], note: songs.rapidfire.melody[2]}, {x: 3, y: 8, color: colors.black[2], note: songs.rapidfire.melody[3]}, {x: 0, y: 7, color: colors.black[2], note: songs.rapidfire.melody[0]}, {x: 1, y: 7, color: colors.black[2], note: songs.rapidfire.melody[1]}, {x: 2, y: 7, color: colors.black[2], note: songs.rapidfire.melody[2]}, {x: 3, y: 4, color: colors.black[2], note: songs.rapidfire.melody[3]}]
 							},
 							{
-								song: "protection",
-								colors: [songs.protection.colors[0], songs.protection.colors[1], colors.black[2]],
-								platforms: [{x: 0, y: 11, color: colors.black[2], note: songs.protection.melody[0]}, {x: 1, y: 11, color: colors.black[2], note: songs.protection.melody[1]}, {x: 2, y: 10, color: colors.black[2], note: songs.protection.melody[2]}, {x: 3, y: 8, color: colors.black[2], note: songs.protection.melody[3]}, {x: 0, y: 7, color: colors.black[2], note: songs.protection.melody[0]}, {x: 1, y: 7, color: colors.black[2], note: songs.protection.melody[1]}, {x: 2, y: 6, color: colors.black[2], note: songs.protection.melody[2]}, {x: 3, y: 4, color: colors.black[2], note: songs.protection.melody[3]}]
+								song: "defense",
+								colors: [songs.defense.colors[0], songs.defense.colors[1], colors.black[2]],
+								platforms: [{x: 0, y: 11, color: colors.black[2], note: songs.defense.melody[0]}, {x: 1, y: 11, color: colors.black[2], note: songs.defense.melody[1]}, {x: 2, y: 10, color: colors.black[2], note: songs.defense.melody[2]}, {x: 3, y: 8, color: colors.black[2], note: songs.defense.melody[3]}, {x: 0, y: 7, color: colors.black[2], note: songs.defense.melody[0]}, {x: 1, y: 7, color: colors.black[2], note: songs.defense.melody[1]}, {x: 2, y: 6, color: colors.black[2], note: songs.defense.melody[2]}, {x: 3, y: 4, color: colors.black[2], note: songs.defense.melody[3]}]
 							},
 							{
 								song: "strength",

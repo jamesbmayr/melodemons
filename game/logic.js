@@ -549,7 +549,7 @@
 		function createArrow(request, avatar, mapLength) {
 			try {
 				var arrow            = main.getSchema("arrow")
-					arrow.radius     = (avatar.state.auras.strength.radius || avatar.state.auras.strength.tower) ? (arrow.radius * 2) : arrow.radius
+					arrow.radius     = (avatar.state.auras.strength.radius || avatar.state.auras.strength.tower) ? (arrow.radius * 1.5) : arrow.radius
 					arrow.vx         =   avatar.state.facing == "left" ? -16 : 16
 					arrow.x          = ((avatar.state.facing == "left" ? avatar.state.x + arrow.vx : avatar.state.x + 32 + arrow.vx) + mapLength) % mapLength
 					arrow.y          = avatar.state.y + 32
@@ -1047,7 +1047,7 @@
 												  avatar.state.x  = ((avatar.state.x + 4) + mapLength) % mapLength
 												  avatar.state.collision = true
 												opponent.state.collision = true
-												opponent.state.vx = Math.max(-16, Math.min(16, opponent.state.vx - 4))
+												opponent.state.vx = Math.max(-16, Math.min(16, opponent.state.vx - 8))
 											}
 
 										// collision right
@@ -1056,7 +1056,7 @@
 												  avatar.state.x  = ((avatar.state.x - 4) + mapLength) % mapLength
 												  avatar.state.collision = true
 												opponent.state.collision = true
-												opponent.state.vx = Math.max(-16, Math.min(16, opponent.state.vx + 4))
+												opponent.state.vx = Math.max(-16, Math.min(16, opponent.state.vx + 8))
 											}
 									}
 
@@ -1228,12 +1228,15 @@
 							if ((arrow.team !== avatar.team)
 							 && (avatar.state.y < arrow.y + arrow.radius && arrow.y - arrow.radius < avatar.state.y + 64)
 							 && (avatar.state.x < arrow.x + arrow.radius && arrow.x - arrow.radius < avatar.state.x + 32)) {
-							 	if (!(avatar.state.auras.protection.radius || avatar.state.auras.protection.tower)) {
+							 	if (avatar.state.auras.defense.radius || avatar.state.auras.defense.tower) {
+									avatar.state.health = Math.max(0, Math.min(255, Math.round(avatar.state.health - (arrow.radius))))
+								}
+								else {
 									avatar.state.health = Math.max(0, Math.min(255, Math.round(avatar.state.health - (2 * arrow.radius))))
-									avatar.state.shot   = true
 									avatar.state.vx     = Math.max(-10, Math.min(10, Math.round(avatar.state.vx + (Math.floor(arrow.radius / 2) * Math.sign(arrow.vx)))))
 								}
 								
+								avatar.state.shot   = true
 								request.game.data.arrows.splice(a, 1)
 								a--
 							}
@@ -1250,19 +1253,18 @@
 			try {
 				if (avatar.state.health && !avatar.state.cooldown) {
 					// cooldown
-						var cooldown = (avatar.state.auras.rapidfire.radius || avatar.state.auras.rapidfire.tower) ? 4 : 12
+						var cooldown = (avatar.state.auras.rapidfire.radius || avatar.state.auras.rapidfire.tower) ? 6 : 12
 
 					// beats
 						var beats = [
-							getBeatAgo(avatar, 2.75, 1.5),
-							getBeatAgo(avatar, 1.75, 1.5),
-							getBeatAgo(avatar, 0.75, 1.5),
-							getBeatAgo(avatar, 0   , 1.25),
+							getBeatAgo(avatar, 2.75, 0.5),
+							getBeatAgo(avatar, 1.75, 0.5),
+							getBeatAgo(avatar, 0.75, 0.5),
 							getBeatAgo(avatar, 0   , 0.5),
 						]
 
 					// towers
-						if (avatar.state.tower && avatar.state.tower.platforms[0] && (avatar.state.tower.platforms[0].team !== avatar.team) && beats[4].includes(avatar.state.tower.platforms[0].note)) {
+						if (avatar.state.tower && avatar.state.tower.platforms[0] && (avatar.state.tower.platforms[0].team !== avatar.team) && beats[3].includes(avatar.state.tower.platforms[0].note)) {
 							var tower = request.game.data.towers.find(function (t) {
 								return t.song == avatar.state.tower.song
 							})
@@ -1275,7 +1277,7 @@
 							platform.color = avatar.colors[2]
 							avatar.state.cooldown = cooldown / 4
 						}
-						else if (avatar.state.tower && avatar.state.tower.platforms[1] && (avatar.state.tower.platforms[1].team !== avatar.team) && beats[4].includes(avatar.state.tower.platforms[1].note)) {
+						else if (avatar.state.tower && avatar.state.tower.platforms[1] && (avatar.state.tower.platforms[1].team !== avatar.team) && beats[3].includes(avatar.state.tower.platforms[1].note)) {
 							var tower = request.game.data.towers.find(function (t) {
 								return t.song == avatar.state.tower.song
 							})
@@ -1290,7 +1292,7 @@
 						}
 
 					// arrows
-						else if (beats[4].length == 3) {
+						else if (beats[3].length == 3) {
 							request.game.data.arrows.push(createArrow(request, avatar, mapLength))
 							avatar.state.cooldown = cooldown
 						}

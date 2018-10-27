@@ -260,7 +260,7 @@
 				if (data.clicked && !data.state.end && data.showControls) { // show controls
 					drawDPad((13 * canvas.width / 16), (canvas.height / 4), (canvas.height / 8), data.pressed)
 					drawKeyboard((5 * canvas.width / 16), (canvas.height / 4), (canvas.width / 2), (canvas.height / 4), data.pressed)
-					drawEscape(100, canvas.height - 50, 30)
+					drawEscape((canvas.width / 16), (3 * canvas.height / 8), 30)
 				}
 
 			// music

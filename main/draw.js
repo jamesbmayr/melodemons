@@ -157,8 +157,8 @@
 				drawBackground(avatar, map, theme, data, isSample, flash)
 				drawForeground(avatar, map, theme, data, isSample, flash)
 
-				if (avatar.state && avatar.state.health && avatar.state.auras && (avatar.state.auras.darkness.radius || avatar.state.auras.darkness.tower)) {
-					drawRectangle(0, 0, canvas.width, canvas.height, {color: colors.black[4], opacity: 0.95})
+				if (avatar.state && avatar.state.health && avatar.state.auras && (data.state.beat > 128) && (avatar.state.auras.darkness.radius || avatar.state.auras.darkness.tower)) {
+					drawRectangle(0, 0, canvas.width, canvas.height, {color: colors.black[4], opacity: 0.97})
 				}
 		}
 
