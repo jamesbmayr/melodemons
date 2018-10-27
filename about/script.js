@@ -81,22 +81,26 @@
 				displayError("Please enter a valid email.")
 			}
 			else {
-				displayError("Thanks! Feedback sent!")
-
 				try {
 					var time = new Date()
 					var text = sanitizeString(text).replace(/\&/gi, "%26")
 
 					var request = new XMLHttpRequest()
-						request.open("GET", "https://script.google.com/macros/s/AKfycbzF3NfxiIEEoofvMLq0nNk5VQVBC7ucMl9HivJLs1-hvOkwOVQ/exec?time=" + time + "&email=" + email + "&text=" + text, true)
+						request.open("GET", "https://script.google.com/macros/s/AKfycbzfQhGlEqH9aQiYaHMYR1-c7BRnSDY2YACWk7GSzkQs2zPNLoc/exec?project=melodemons&time=" + time + "&email=" + email + "&text=" + text, true)
 						request.onload = function() {
-							displayError("Thanks! Feedback sent!")
+							if (request.readyState === XMLHttpRequest.DONE && request.status === 200) {
+								displayError("Thanks! Feedback sent!")
+								document.getElementById("feedback-text").value  = ""
+								document.getElementById("feedback-email").value = ""
+							}
+							else {
+								displayError("Unable to send feedback at this time.")
+							}
 						}
-					request.send("")
-				} catch (error) {}
-
-				document.getElementById("feedback-text").value  = ""
-				document.getElementById("feedback-email").value = ""
+					request.send()
+				} catch (error) {
+					displayError("Unable to send feedback at this time.")
+				}
 			}
 		}
 
