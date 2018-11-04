@@ -1257,10 +1257,10 @@
 
 					// beats
 						var beats = [
-							getBeatAgo(avatar, 2.75, 0.5),
-							getBeatAgo(avatar, 1.75, 0.5),
-							getBeatAgo(avatar, 0.75, 0.5),
-							getBeatAgo(avatar, 0   , 0.5),
+							getBeatAgo(avatar, 2.5,   1),
+							getBeatAgo(avatar, 1.5,   1),
+							getBeatAgo(avatar, 0.5,   1),
+							getBeatAgo(avatar, 0  , 0.5),
 						]
 
 					// towers
