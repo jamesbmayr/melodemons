@@ -92,12 +92,12 @@
 					case "meta":
 						return '<meta charset="UTF-8"/>\
 								<meta name="description" content="Melodemons is a real-time multiplayer music-based post-capturing platformer."/>\
-								<meta name="keywords" content="game,word,guess,party,chaos,switch,swap,play"/>\
+								<meta name="keywords" content="game,music,platformer,video game,multiplayer,heroes,demons,magic"/>\
 								<meta name="author" content="James Mayr"/>\
 								<meta property="og:title" content="Melodemons: a real-time multiplayer music-based post-capturing platformer"/>\
-								<meta property="og:url" content="https://melodemons.com"/>\
+								<meta property="og:url" content="https://melodemons.herokuapp.com"/>\
 								<meta property="og:description" content="Melodemons is a real-time multiplayer music-based post-capturing platformer."/>\
-								<meta property="og:image" content="https://melodemons.herokuapp..com/banner.png"/>\
+								<meta property="og:image" content="https://melodemons.herokuapp.com/banner.png"/>\
 								<meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>'
 					break
 					case "css variables":

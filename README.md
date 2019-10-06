@@ -1,6 +1,6 @@
 # Melodemons
 
-a real-time multiplayer music-based post-capturing platformer: http://www.melodemons.com
+a real-time multiplayer music-based post-capturing platformer: http://melodemons.herokuapp.com
 
 ---
 <pre>
