@@ -12,6 +12,7 @@
 		var data        = window.data = {}
 		var instruments = window.instruments = {}
 		var socket      = null
+		var pingInterval = 60 * 1000
 
 	/* key mapping */
 		var keyboard = {
@@ -89,6 +90,15 @@
 				}
 				catch (error) {}
 			}
+
+			if (socket.pingLoop) {
+				clearInterval(socket.pingLoop)
+			}
+			socket.pingLoop = setInterval(function() {
+				fetch("/ping", {method: "GET"})
+					.then(function(response){ return response.json() })
+					.then(function(data) {})
+			}, pingInterval)
 		}
 
 	/* checkLoop */

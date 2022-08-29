@@ -115,18 +115,20 @@
 
 		#feedback-email {
 			width: calc(100% - 20px - 100px);
-			padding: 10px 5px 5px 5px;
+			padding: 5px 5px 5px 5px;
 			border-radius: var(--borderRadius) 0px 0px var(--borderRadius);
 			border: 0px;
 			line-height: 1;
 			font-size: 100%;
+			height: 40px;
 		}
 
 		#feedback-submit {
 			vertical-align: bottom;
-			padding: 10px 5px 5px;
+			padding: 5px 5px 5px 5px;
 			width: 100px;
-			line-height: 1.05;
+			height: 50px;
+			line-height: 1;
 			font-size: 100%;
 			border-radius: 0px var(--borderRadius) var(--borderRadius) 0px;
 			border: 0px;

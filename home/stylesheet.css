@@ -63,7 +63,8 @@
 		#gameCode {
 			float: left;
 			width: calc(60% - 10px);
-			padding: 10px 5px 5px 5px;
+			height: 40px;
+			padding: 5px 5px 5px 5px;
 			text-align: center;
 			line-height: 1;
 			font-size: 100%;
@@ -76,10 +77,11 @@
 			float: left;
 			display: block;
 			width: 100%;
+			height: 50px;
 			text-align: center;
 			line-height: 1;
 			font-size: 100%;
-			padding: 10px 5px 5px 5px;
+			padding: 5px 5px 5px 5px;
 			margin: 5% 0% 5% 0%;
 			border-radius: var(--borderRadius);
 			border: 0px;
@@ -89,9 +91,10 @@
 			float: left;
 			width: 40%;
 			text-align: center;
-			line-height: 1.05;
+			line-height: 1;
 			font-size: 100%;
-			padding: 10px 5px 5px 5px;
+			height: 50px;
+			padding: 5px 5px 5px 5px;
 			border-radius: 0px var(--borderRadius) var(--borderRadius) 0px;
 			border: 0px;
 		}
